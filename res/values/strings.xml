@@ -18,10 +18,10 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
   <!-- Name of the application -->
-  <string name="app_name">Google Authenticator</string>
+  <string name="app_name">Authenticator++</string>
 
   <!-- Shortened version of the application name, without Google branding -->
-  <string name="app_name_short">Authenticator</string>
+  <string name="app_name_short">Authenticator++</string>
 
   <!-- Title displayed at the top when adding new OTP account manually -->
   <string name="enter_key_title">Manual account entry</string>

@@ -1,0 +1,7 @@
+.settings/
+bin/
+tests/.settings/
+tests/bin/
+tests/libs/
+*.class
+*~
