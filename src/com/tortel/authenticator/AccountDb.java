@@ -440,6 +440,8 @@ public class AccountDb {
   }
 
   private static class AccountDbOpenException extends RuntimeException {
+    private static final long serialVersionUID = -4561104600253698948L;
+
     public AccountDbOpenException(String message, Exception e) {
       super(message, e);
     }

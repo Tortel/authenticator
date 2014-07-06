@@ -299,5 +299,5 @@ public class WizardPageActivity<WizardState extends Serializable> extends Testab
    *
    * @throws IllegalStateException if the state is invalid.
    */
-  protected void checkWizardStateValidity(@SuppressWarnings("unused") WizardState wizardState) {}
+  protected void checkWizardStateValidity(WizardState wizardState) {}
 }

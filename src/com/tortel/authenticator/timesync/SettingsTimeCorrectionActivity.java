@@ -28,6 +28,7 @@ import android.os.Bundle;
  */
 public class SettingsTimeCorrectionActivity extends TestablePreferenceActivity {
 
+  @SuppressWarnings("deprecation")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

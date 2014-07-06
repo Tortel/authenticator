@@ -23,7 +23,9 @@ package com.tortel.authenticator;
  * @author klyubin@google.com (Alex Klyubin)
  */
 public class OtpGenerationNotPermittedException extends OtpSourceException {
-  public OtpGenerationNotPermittedException(String message) {
-    super(message);
-  }
+    private static final long serialVersionUID = 822429897995102097L;
+
+    public OtpGenerationNotPermittedException(String message) {
+        super(message);
+    }
 }

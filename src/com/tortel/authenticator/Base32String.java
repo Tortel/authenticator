@@ -154,6 +154,8 @@ public class Base32String {
   }
 
   public static class DecodingException extends Exception {
+    private static final long serialVersionUID = 4254314179551657251L;
+
     public DecodingException(String message) {
       super(message);
     }

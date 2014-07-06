@@ -22,11 +22,13 @@ package com.tortel.authenticator;
  * @author klyubin@google.com (Alex Klyubin)
  */
 public class OtpSourceException extends Exception {
-  public OtpSourceException(String message) {
-    super(message);
-  }
+    private static final long serialVersionUID = 5235217078272987970L;
 
-  public OtpSourceException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public OtpSourceException(String message) {
+        super(message);
+    }
+
+    public OtpSourceException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -29,16 +29,18 @@ import android.os.Bundle;
  */
 public class SettingsAboutActivity extends TestablePreferenceActivity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    addPreferencesFromResource(R.xml.preferences_about);
+        addPreferencesFromResource(R.xml.preferences_about);
 
-    String packageVersion = "";
-    try {
-      packageVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-    } catch (NameNotFoundException e) {}
-    findPreference("version").setSummary(packageVersion);
-  }
+        String packageVersion = "";
+        try {
+            packageVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
+        }
+        findPreference("version").setSummary(packageVersion);
+    }
 }

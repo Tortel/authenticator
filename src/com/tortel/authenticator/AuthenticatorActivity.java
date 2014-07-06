@@ -36,7 +36,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.text.ClipboardManager;
+import android.content.ClipboardManager;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -61,6 +61,7 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * The main activity that displays usernames and codes
@@ -130,9 +131,6 @@ public class AuthenticatorActivity extends TestableActivity {
   private double mTotpCountdownPhase;
   private AccountDb mAccountDb;
   private OtpSource mOtpProvider;
-
-  /** Whether the importing of data from the "old" app has been started and has not yet finished. */
-  private boolean mDataImportInProgress;
 
   /**
    * Key under which the {@link #mSaveKeyDialogParams} is stored in the instance state
@@ -483,7 +481,7 @@ public class AuthenticatorActivity extends TestableActivity {
    *                          account information.
    */
   private void parseSecret(Uri uri, boolean confirmBeforeSave) {
-    final String scheme = uri.getScheme().toLowerCase();
+    final String scheme = uri.getScheme().toLowerCase(Locale.ENGLISH);
     final String path = uri.getPath();
     final String authority = uri.getAuthority();
     final String user;

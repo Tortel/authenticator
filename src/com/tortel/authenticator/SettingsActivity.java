@@ -28,10 +28,11 @@ import android.os.Bundle;
  */
 public class SettingsActivity extends TestablePreferenceActivity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    addPreferencesFromResource(R.xml.preferences);
-  }
+        addPreferencesFromResource(R.xml.preferences);
+    }
 }
