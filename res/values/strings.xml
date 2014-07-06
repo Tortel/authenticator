@@ -280,7 +280,7 @@
        verified the user can tell Google not to ask for a verification code when signing from that
        computer/device. -->
   <string name="howitworks_page_verify_device_details">
-    You can also choose to remember the computer and Google won\'t ask you for a code there again.
+    You can also choose to remember the computer and the service won\'t ask you for a code there again.
   </string>
 
   <!-- Label of the button to exit the "How it works" introductory flow. -->
