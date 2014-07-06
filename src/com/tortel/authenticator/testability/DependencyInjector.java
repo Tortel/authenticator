@@ -22,8 +22,6 @@ import com.tortel.authenticator.MarketBuildOptionalFeatures;
 import com.tortel.authenticator.OptionalFeatures;
 import com.tortel.authenticator.OtpSource;
 import com.tortel.authenticator.TotpClock;
-import com.tortel.authenticator.dataimport.ExportServiceBasedImportController;
-import com.tortel.authenticator.dataimport.ImportController;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -60,7 +58,6 @@ public final class DependencyInjector {
   private static PackageManager sPackageManager;
   private static StartActivityListener sStartActivityListener;
   private static HttpClient sHttpClient;
-  private static ImportController sImportController;
   private static OptionalFeatures sOptionalFeatures;
 
   private enum Mode {
@@ -162,30 +159,6 @@ public final class DependencyInjector {
   }
 
   /**
-   * Sets the {@link ImportController} instance returned by this injector. This will prevent the
-   * injector from creating its own instance.
-   */
-  public static synchronized void setDataImportController(ImportController importController) {
-    sImportController = importController;
-  }
-
-  public static synchronized ImportController getDataImportController() {
-    if (sImportController == null) {
-      if (sMode == Mode.PRODUCTION) {
-        sImportController = new ExportServiceBasedImportController();
-      } else {
-        // By default, use a no-op controller during tests to avoid them being dependent on the
-        // presence of the "old" app on the device under test.
-        sImportController = new ImportController() {
-          @Override
-          public void start(Context context, Listener listener) {}
-        };
-      }
-    }
-    return sImportController;
-  }
-
-  /**
    * Sets the {@link HttpClient} instance returned by this injector. This will prevent the
    * injector from creating its own instance.
    */
@@ -277,7 +250,6 @@ public final class DependencyInjector {
     sPackageManager = null;
     sStartActivityListener = null;
     sHttpClient = null;
-    sImportController = null;
     sOptionalFeatures = null;
   }
 }

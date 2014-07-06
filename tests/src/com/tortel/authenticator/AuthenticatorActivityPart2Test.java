@@ -20,7 +20,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.dataimport.ImportController;
 import com.tortel.authenticator.testability.DependencyInjector;
 
 import android.app.Activity;
@@ -29,8 +28,6 @@ import android.net.Uri;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.MoreAsserts;
 import android.view.View;
-
-import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +41,6 @@ public class AuthenticatorActivityPart2Test
     extends ActivityInstrumentationTestCase2<AuthenticatorActivity> {
 
   private AccountDb mAccountDb;
-  @Mock private ImportController mMockDataImportController;
 
   public AuthenticatorActivityPart2Test() {
     super(TestUtilities.APP_PACKAGE_NAME, AuthenticatorActivity.class);
@@ -57,7 +53,6 @@ public class AuthenticatorActivityPart2Test
     DependencyInjector.resetForIntegrationTesting(getInstrumentation().getTargetContext());
     mAccountDb = DependencyInjector.getAccountDb();
     initMocks(this);
-    DependencyInjector.setDataImportController(mMockDataImportController);
   }
 
   @Override

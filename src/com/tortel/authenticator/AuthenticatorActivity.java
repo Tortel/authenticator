@@ -18,7 +18,6 @@ package com.tortel.authenticator;
 
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.dataimport.ImportController;
 import com.tortel.authenticator.howitworks.IntroEnterPasswordActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
 import com.tortel.authenticator.testability.TestableActivity;
@@ -94,9 +93,6 @@ public class AuthenticatorActivity extends TestableActivity {
   private static final long HOTP_DISPLAY_TIMEOUT = 2 * 60 * 1000;
 
   // @VisibleForTesting
-  static final int DIALOG_ID_UNINSTALL_OLD_APP = 12;
-
-  // @VisibleForTesting
   static final int DIALOG_ID_SAVE_KEY = 13;
 
   /**
@@ -134,22 +130,6 @@ public class AuthenticatorActivity extends TestableActivity {
   private double mTotpCountdownPhase;
   private AccountDb mAccountDb;
   private OtpSource mOtpProvider;
-
-  /**
-   * Key under which the {@link #mOldAppUninstallIntent} is stored in the instance state
-   * {@link Bundle}.
-   */
-  private static final String KEY_OLD_APP_UNINSTALL_INTENT = "oldAppUninstallIntent";
-
-  /**
-   * {@link Intent} for uninstalling the "old" app or {@code null} if not known/available.
-   *
-   * <p>
-   * Note: this field is persisted in the instance state {@link Bundle}. We need to resolve to this
-   * error-prone mechanism because showDialog on Eclair doesn't take parameters. Once Froyo is
-   * the minimum targetted SDK, this contrived code can be removed.
-   */
-  private Intent mOldAppUninstallIntent;
 
   /** Whether the importing of data from the "old" app has been started and has not yet finished. */
   private boolean mDataImportInProgress;
@@ -222,7 +202,6 @@ public class AuthenticatorActivity extends TestableActivity {
     }
 
     if (savedInstanceState != null) {
-      mOldAppUninstallIntent = savedInstanceState.getParcelable(KEY_OLD_APP_UNINSTALL_INTENT);
       mSaveKeyDialogParams =
           (SaveKeyDialogParams) savedInstanceState.getSerializable(KEY_SAVE_KEY_DIALOG_PARAMS);
     }
@@ -271,7 +250,6 @@ public class AuthenticatorActivity extends TestableActivity {
       // This is the first time this Activity is starting (i.e., not restoring previous state which
       // was saved, for example, due to orientation change)
       DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreated(this);
-      importDataFromOldAppIfNecessary();
       handleIntent(getIntent());
     }
   }
@@ -302,7 +280,6 @@ public class AuthenticatorActivity extends TestableActivity {
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
 
-    outState.putParcelable(KEY_OLD_APP_UNINSTALL_INTENT, mOldAppUninstallIntent);
     outState.putSerializable(KEY_SAVE_KEY_DIALOG_PARAMS, mSaveKeyDialogParams);
   }
 
@@ -331,8 +308,6 @@ public class AuthenticatorActivity extends TestableActivity {
   protected void onResume() {
     super.onResume();
     Log.i(getString(R.string.app_name), LOCAL_TAG + ": onResume");
-
-    importDataFromOldAppIfNecessary();
   }
 
   @Override
@@ -948,26 +923,6 @@ public class AuthenticatorActivity extends TestableActivity {
         markDialogAsResultOfSaveKeyIntent(dialog);
         break;
 
-      case DIALOG_ID_UNINSTALL_OLD_APP:
-        dialog = new AlertDialog.Builder(this)
-            .setTitle(R.string.dataimport_import_succeeded_uninstall_dialog_title)
-            .setMessage(
-                DependencyInjector.getOptionalFeatures().appendDataImportLearnMoreLink(
-                    this,
-                    getString(R.string.dataimport_import_succeeded_uninstall_dialog_prompt)))
-            .setCancelable(true)
-            .setPositiveButton(
-                R.string.button_uninstall_old_app,
-                new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int whichButton) {
-                    startActivity(mOldAppUninstallIntent);
-                  }
-                })
-            .setNegativeButton(R.string.cancel, null)
-            .create();
-        break;
-
       default:
         dialog =
             DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreateDialog(this, id);
@@ -1168,45 +1123,6 @@ public class AuthenticatorActivity extends TestableActivity {
 
      return row;
     }
-  }
-
-  private void importDataFromOldAppIfNecessary() {
-    if (mDataImportInProgress) {
-      return;
-    }
-    mDataImportInProgress = true;
-    DependencyInjector.getDataImportController().start(this, new ImportController.Listener() {
-      @Override
-      public void onOldAppUninstallSuggested(Intent uninstallIntent) {
-        if (isFinishing()) {
-          return;
-        }
-
-        mOldAppUninstallIntent = uninstallIntent;
-        showDialog(DIALOG_ID_UNINSTALL_OLD_APP);
-      }
-
-      @Override
-      public void onDataImported() {
-        if (isFinishing()) {
-          return;
-        }
-
-        refreshUserList(true);
-
-        DependencyInjector.getOptionalFeatures().onDataImportedFromOldApp(
-            AuthenticatorActivity.this);
-      }
-
-      @Override
-      public void onFinished() {
-        if (isFinishing()) {
-          return;
-        }
-
-        mDataImportInProgress = false;
-      }
-    });
   }
 
   /**

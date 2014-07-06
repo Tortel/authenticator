@@ -66,20 +66,6 @@ public class SettingsAboutActivityTest
         intent);
   }
 
-  public void testTermsOfServicePreferenceOpensUrl() throws Exception {
-    Intent intent = tapOnPreferenceAndCatchFiredIntent("terms");
-    assertDefaultViewActionIntent(
-        getInstrumentation().getTargetContext().getString(R.string.terms_page_url),
-        intent);
-  }
-
-  public void testPrivacyPolicyPreferenceOpensUrl() throws Exception {
-    Intent intent = tapOnPreferenceAndCatchFiredIntent("privacy");
-    assertDefaultViewActionIntent(
-        getInstrumentation().getTargetContext().getString(R.string.privacy_page_url),
-        intent);
-  }
-
   private static void assertDefaultViewActionIntent(String expectedData, Intent intent) {
     assertEquals("android.intent.action.VIEW", intent.getAction());
     assertEquals(expectedData, intent.getDataString());

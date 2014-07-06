@@ -24,7 +24,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.dataimport.ImportController;
 import com.tortel.authenticator.howitworks.IntroEnterPasswordActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
 import com.tortel.authenticator.testability.StartActivityListener;
@@ -58,7 +57,6 @@ public class AuthenticatorActivityTest extends
     ActivityInstrumentationTestCase2<AuthenticatorActivity> {
 
   private AccountDb mAccountDb;
-  @Mock private ImportController mMockDataImportController;
 
   public AuthenticatorActivityTest() {
     super(TestUtilities.APP_PACKAGE_NAME, AuthenticatorActivity.class);
@@ -72,7 +70,6 @@ public class AuthenticatorActivityTest extends
     mAccountDb = DependencyInjector.getAccountDb();
 
     initMocks(this);
-    DependencyInjector.setDataImportController(mMockDataImportController);
     TestUtilities.withLaunchPreventingStartActivityListenerInDependencyResolver();
   }
 
@@ -328,80 +325,4 @@ public class AuthenticatorActivityTest extends
         getActivity(), Utilities.DOWNLOAD_DIALOG);
   }
 
-  ///////////////////////////   Data Import tests  /////////////////////////////
-
-  public void testLaunchingActivityStartsImportController() {
-    AuthenticatorActivity activity = getActivity();
-
-    ArgumentCaptor<Context> contextArgCaptor = ArgumentCaptor.forClass(Context.class);
-    verify(mMockDataImportController)
-        .start(contextArgCaptor.capture(), Mockito.<ImportController.Listener>anyObject());
-    assertEquals(activity, contextArgCaptor.getValue());
-  }
-
-  public void testImportControllerOldAppUninstallCallbackDisplaysDialog() {
-    final ImportController.Listener listener = startActivityAndGetDataImportListener();
-    assertNotNull(listener);
-    invokeDataImportListenerOnOldAppUninstallSuggestedOnMainThread(listener, new Intent());
-    invokeDataImportListenerFinishedOnMainThread(listener);
-
-    TestUtilities.assertDialogWasDisplayed(
-        getActivity(), AuthenticatorActivity.DIALOG_ID_UNINSTALL_OLD_APP);
-  }
-
-  public void testImportControllerDataImportedDoesNotBlowUp() {
-    final ImportController.Listener listener = startActivityAndGetDataImportListener();
-    assertNotNull(listener);
-    invokeDataImportListenerOnDataImportedOnMainThread(listener);
-    invokeDataImportListenerFinishedOnMainThread(listener);
-    getInstrumentation().waitForIdleSync();
-  }
-
-  public void testImportControllerUnknownFailureDoesNotBlowUp() {
-    final ImportController.Listener listener = startActivityAndGetDataImportListener();
-    assertNotNull(listener);
-    invokeDataImportListenerFinishedOnMainThread(listener);
-    getInstrumentation().waitForIdleSync();
-  }
-
-  private ImportController.Listener startActivityAndGetDataImportListener() {
-    ArgumentCaptor<ImportController.Listener> listenerArgCaptor =
-        ArgumentCaptor.forClass(ImportController.Listener.class);
-    doNothing().when(mMockDataImportController).start(
-        Mockito.<Context>anyObject(), listenerArgCaptor.capture());
-
-    getActivity();
-
-    return listenerArgCaptor.getValue();
-  }
-
-  private void invokeDataImportListenerOnOldAppUninstallSuggestedOnMainThread(
-      final ImportController.Listener listener, final Intent uninstallIntent) {
-    getInstrumentation().runOnMainSync(new Runnable() {
-      @Override
-      public void run() {
-        listener.onOldAppUninstallSuggested(uninstallIntent);
-      }
-    });
-  }
-
-  private void invokeDataImportListenerOnDataImportedOnMainThread(
-      final ImportController.Listener listener) {
-    getInstrumentation().runOnMainSync(new Runnable() {
-      @Override
-      public void run() {
-        listener.onDataImported();
-      }
-    });
-  }
-
-  private void invokeDataImportListenerFinishedOnMainThread(
-      final ImportController.Listener listener) {
-    getInstrumentation().runOnMainSync(new Runnable() {
-      @Override
-      public void run() {
-        listener.onFinished();
-      }
-    });
-  }
 }

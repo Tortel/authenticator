@@ -132,19 +132,7 @@
   <string name="opensource_preference_title">Open-source project</string>
 
   <!-- DO NOT TRANSLATE. URL of the Open-Source project's page. -->
-  <string name="opensource_page_url">http://code.google.com/p/google-authenticator/</string>
-
-  <!-- Preference title, used to view the terms of service from Google web page -->
-  <string name="terms_preference_title">Terms of service</string>
-
-  <!-- DO NOT TRANSLATE. URL of the Terms of Service page. -->
-  <string name="terms_page_url">http://m.google.com/tospage</string>
-
-  <!-- Preference title, used to view the privacy policy from Google web page -->
-  <string name="privacy_preference_title">Privacy policy</string>
-
-  <!-- DO NOT TRANSLATE. URL of the Privacy Policy page. -->
-  <string name="privacy_page_url">http://www.google.com/policies/privacy/</string>
+  <string name="opensource_page_url">https://github.com/Tortel/authenticator</string>
 
   <!-- Information displayed on the check-key screen, explaining use of the integrity check -->
   <string name="check_code">
@@ -252,21 +240,6 @@
     <item>Counter based</item>
   </string-array>
 
-  <!-- Title of the prompt/dialog displayed to the user on application startup when data from the
-       deprecated/old Authenticator app has been imported into this app and thus the
-       deprecated/old app can be uninstalled. The text of the prompt is defined in
-       dataimport_import_succeeded_uninstall_dialog_prompt. -->
-  <string name="dataimport_import_succeeded_uninstall_dialog_title">Import succeeded</string>
-
-  <!-- Text of the prompt displayed to the user on application startup when data from the
-       deprecated/old Authenticator app has been imported into this app and thus the
-       deprecated/old app can be uninstalled.
-       The dialog offers two buttons: Uninstall (button_uninstall_old_app) and Cancel. -->
-  <string name="dataimport_import_succeeded_uninstall_dialog_prompt">
-    Your data has been successfully imported from the deprecated Google Authenticator app.
-    It is now safe to uninstall the prior version of the app by clicking below.
-  </string>
-
   <!-- Text on the button to uninstall the deprecated/old app. Clicking the button displays the
        system UI for uninstalling the deprecated/old app. -->
   <string name="button_uninstall_old_app">Uninstall</string>
@@ -280,7 +253,7 @@
   <!-- Details (HTML) of the "How it works" wizard page which explains that in addition to entering
        a password during sign in a verification code may need to be entered. -->
   <string name="howitworks_page_enter_password_details">
-    However, if you\'re at a new computer or device, Google will ask you for a special code to make
+    However, if you\'re at a new computer or device, you will be asked for a special code to make
     sure it\'s really you.
   </string>
 
@@ -320,7 +293,7 @@
 
   <!-- Subheading in the main screen of the app when there are no accounts configured (yet).  -->
   <string name="welcome_page_details">
-    2-step verification protects your Google account even if your password is stolen.
+    2-step verification protects your accounts even if your password is stolen.
   </string>
 
 </resources>
