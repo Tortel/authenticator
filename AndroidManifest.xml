@@ -16,9 +16,9 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.tortel.authenticator"
-          android:versionCode="21" android:versionName="2.21">
+          android:versionCode="1" android:versionName="1.0">
 
-  <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
+  <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19" />
 
   <uses-permission android:name="android.permission.VIBRATE" />
   <uses-permission android:name="android.permission.INTERNET" />
@@ -81,7 +81,7 @@
               android:label="@string/timesync_about_feature_screen_title" />
 
     <activity android:name="com.tortel.authenticator.timesync.SyncNowActivity"
-              android:theme="@android:style/Theme.Translucent.NoTitleBar"
+              android:theme="@android:style/Theme.Holo.Dialog"
               android:label="@string/timesync_sync_now_screen_title" />
 
   </application>
