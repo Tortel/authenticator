@@ -295,5 +295,10 @@
   <string name="welcome_page_details">
     2-step verification protects your accounts even if your password is stolen.
   </string>
+  
+  <!-- File export strings -->
+  <string name="file_export_title">Export to File</string>
+  
+  <string name="file_export_info">Blah blah summary</string>
 
 </resources>

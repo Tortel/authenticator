@@ -62,6 +62,9 @@
 
     <activity android:name="com.tortel.authenticator.SettingsActivity"
               android:label="@string/main_preference_screen_title" />
+    
+    <activity android:name="com.tortel.authenticator.export.FileExportActivity"
+              android:label="@string/file_export_title" />
 
     <activity android:name="com.tortel.authenticator.howitworks.IntroEnterPasswordActivity"
               android:theme="@style/AuthenticatorTheme.NoTitleBar"
