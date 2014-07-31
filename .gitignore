@@ -3,5 +3,6 @@ bin/
 tests/.settings/
 tests/bin/
 tests/libs/
+gen/
 *.class
 *~
