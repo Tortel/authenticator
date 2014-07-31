@@ -19,6 +19,7 @@ package com.tortel.authenticator;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.AccountDb.OtpType;
 import com.tortel.authenticator.export.FileExportActivity;
+import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.howitworks.IntroEnterPasswordActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
 import com.tortel.authenticator.testability.TestableActivity;
@@ -753,6 +754,10 @@ public class AuthenticatorActivity extends TestableActivity {
 			return true;
 		case R.id.export_file:
 			intent = new Intent(this, FileExportActivity.class);
+			startActivity(intent);
+			return true;
+		case R.id.import_file:
+			intent = new Intent(this, FileImportActivity.class);
 			startActivity(intent);
 			return true;
 		}

@@ -14,14 +14,15 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 /**
- * Class for handling exporting the accounts to a file
+ * Class for handling importing the accounts from a file
  */
-public class FileExportActivity extends Activity {
+public class FileImportActivity extends Activity {
     private EditText passPhraseInput;
     
     public void onCreate(Bundle savedInstanceState){
@@ -63,25 +64,16 @@ public class FileExportActivity extends Activity {
          */
         @Override
         protected String doInBackground(Void... params) {
-            List<String> emails = new LinkedList<String>();
-            accountDb.getNames(emails);
-            
-            for(String email : emails){
-                AccountContainer.Account account = new AccountContainer.Account();
-                account.setEmail(email);
-                account.setSecret(accountDb.getSecret(email));
-                account.setCounter(accountDb.getCounter(email));
-                account.setType(accountDb.getType(email));
-                
-                container.addAccount(account);
-            }
-            
             try {
             	ObjectMapper mapper = new ObjectMapper();
-            	String json = mapper.writeValueAsString(container);
             	
             	String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/authenticator.bk";
-            	EncryptionUtils.writeFile(fileName, key, json);
+            	String json = EncryptionUtils.readFile(fileName, key);
+            	
+            	Log.v("Tortel", json);
+            	
+            	container = mapper.readValue(json, AccountContainer.class);
+            	
             	
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block

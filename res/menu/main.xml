@@ -31,5 +31,8 @@
         <item
             android:id="@+id/export_file"
             android:title="@string/file_export_title" />
+        <item
+            android:id="@+id/import_file"
+            android:title="@string/file_import_title" />
     </group>
 </menu>
