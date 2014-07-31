@@ -13,38 +13,34 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:clipToPadding="true">
-  <ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    
-      <TextView 
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="@string/file_export_info"
-          />
-      
-      <EditText
-          android:id="@+id/file_export_pass"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:inputType="textPassword"
-          android:hint="Passphrase"
-          />
-      
-      <Button 
-          android:id="@+id/file_export_ok"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:onClick="onClick"
-          android:text="Export"
-          /> 
-      
-      
-  </ScrollView>
-</LinearLayout>
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/file_export_info" />
+
+        <EditText
+            android:id="@+id/file_export_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Passphrase"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/file_export_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="Export" />
+    </LinearLayout>
+
+</ScrollView>

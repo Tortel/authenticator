@@ -18,6 +18,7 @@ package com.tortel.authenticator;
 
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.AccountDb.OtpType;
+import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.howitworks.IntroEnterPasswordActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
 import com.tortel.authenticator.testability.TestableActivity;
@@ -736,22 +737,28 @@ public class AuthenticatorActivity extends TestableActivity {
     return true;
   }
 
-  @Override
-  public boolean onMenuItemSelected(int featureId, MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.add_account:
-        addAccount();
-        return true;
-      case R.id.how_it_works:
-        displayHowItWorksInstructions();
-        return true;
-      case R.id.settings:
-        showSettings();
-        return true;
-    }
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		Intent intent;
+		
+		switch (item.getItemId()) {
+		case R.id.add_account:
+			addAccount();
+			return true;
+		case R.id.how_it_works:
+			displayHowItWorksInstructions();
+			return true;
+		case R.id.settings:
+			showSettings();
+			return true;
+		case R.id.export_file:
+			intent = new Intent(this, FileExportActivity.class);
+			startActivity(intent);
+			return true;
+		}
 
-    return super.onMenuItemSelected(featureId, item);
-  }
+		return super.onMenuItemSelected(featureId, item);
+	}
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent intent) {
