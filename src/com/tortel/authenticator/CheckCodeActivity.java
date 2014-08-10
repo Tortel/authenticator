@@ -34,68 +34,69 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * The activity that displays the integrity check value for a key.
- * The user is passed in via the extra bundle in "user".
+ * The activity that displays the integrity check value for a key. The user is
+ * passed in via the extra bundle in "user".
  *
  * @author sweis@google.com (Steve Weis)
  */
 public class CheckCodeActivity extends Activity {
-  private TextView mCheckCodeTextView;
-  private TextView mCodeTextView;
-  private TextView mCounterValue;
+    public static final String EXTRA_ID = "id";
+    
+    private TextView mCheckCodeTextView;
+    private TextView mCodeTextView;
+    private TextView mCounterValue;
 
-  /** Called when the activity is first created. */
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.check_code);
-    mCodeTextView = (TextView) findViewById(R.id.code_value);
-    mCheckCodeTextView = (TextView) findViewById(R.id.check_code);
-    mCounterValue = (TextView) findViewById(R.id.counter_value);
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.check_code);
+        mCodeTextView = (TextView) findViewById(R.id.code_value);
+        mCheckCodeTextView = (TextView) findViewById(R.id.check_code);
+        mCounterValue = (TextView) findViewById(R.id.counter_value);
 
-    Intent intent = getIntent();
-    Bundle extras = intent.getExtras();
-    String user = extras.getString("user");
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        int id = extras.getInt(EXTRA_ID);
 
-    AccountDb accountDb = DependencyInjector.getAccountDb();
-    AccountDb.OtpType type = accountDb.getType(user);
-    if (type == AccountDb.OtpType.HOTP) {
-      mCounterValue.setText(accountDb.getCounter(user).toString());
-      findViewById(R.id.counter_area).setVisibility(View.VISIBLE);
-    } else {
-      findViewById(R.id.counter_area).setVisibility(View.GONE);
+        AccountDb accountDb = DependencyInjector.getAccountDb();
+        AccountDb.OtpType type = accountDb.getType(id);
+        if (type == AccountDb.OtpType.HOTP) {
+            mCounterValue.setText(accountDb.getCounter(id).toString());
+            findViewById(R.id.counter_area).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.counter_area).setVisibility(View.GONE);
+        }
+
+        String secret = accountDb.getSecret(id);
+        String checkCode = null;
+        String errorMessage = null;
+        try {
+            checkCode = getCheckCode(secret);
+        } catch (GeneralSecurityException e) {
+            errorMessage = getString(R.string.general_security_exception);
+        } catch (DecodingException e) {
+            errorMessage = getString(R.string.decoding_exception);
+        }
+        if (errorMessage != null) {
+            mCheckCodeTextView.setText(errorMessage);
+            return;
+        }
+        mCodeTextView.setText(checkCode);
+        String checkCodeMessage = String.format(getString(R.string.check_code),
+                TextUtils.htmlEncode(accountDb.getEmail(id)));
+        CharSequence styledCheckCode = Html.fromHtml(checkCodeMessage);
+        mCheckCodeTextView.setText(styledCheckCode);
+        mCheckCodeTextView.setVisibility(View.VISIBLE);
+        findViewById(R.id.code_area).setVisibility(View.VISIBLE);
     }
 
-    String secret = accountDb.getSecret(user);
-    String checkCode = null;
-    String errorMessage = null;
-    try {
-      checkCode = getCheckCode(secret);
-    } catch (GeneralSecurityException e) {
-      errorMessage = getString(R.string.general_security_exception);
-    } catch (DecodingException e) {
-      errorMessage = getString(R.string.decoding_exception);
+    static String getCheckCode(String secret) throws GeneralSecurityException, DecodingException {
+        final byte[] keyBytes = Base32String.decode(secret);
+        Mac mac = Mac.getInstance("HMACSHA1");
+        mac.init(new SecretKeySpec(keyBytes, ""));
+        PasscodeGenerator pcg = new PasscodeGenerator(mac);
+        return pcg.generateResponseCode(0L);
     }
-    if (errorMessage != null) {
-      mCheckCodeTextView.setText(errorMessage);
-      return;
-    }
-    mCodeTextView.setText(checkCode);
-    String checkCodeMessage = String.format(getString(R.string.check_code),
-        TextUtils.htmlEncode(user));
-    CharSequence styledCheckCode = Html.fromHtml(checkCodeMessage);
-    mCheckCodeTextView.setText(styledCheckCode);
-    mCheckCodeTextView.setVisibility(View.VISIBLE);
-    findViewById(R.id.code_area).setVisibility(View.VISIBLE);
-  }
-
-  static String getCheckCode(String secret) throws GeneralSecurityException,
-      DecodingException {
-    final byte[] keyBytes = Base32String.decode(secret);
-    Mac mac = Mac.getInstance("HMACSHA1");
-    mac.init(new SecretKeySpec(keyBytes, ""));
-    PasscodeGenerator pcg = new PasscodeGenerator(mac);
-    return pcg.generateResponseCode(0L);
-  }
 
 }

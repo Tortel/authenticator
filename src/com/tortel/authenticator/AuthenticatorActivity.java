@@ -390,10 +390,10 @@ public class AuthenticatorActivity extends TestableActivity {
    */
   // @VisibleForTesting
   public void refreshUserList(boolean isAccountModified) {
-    ArrayList<String> usernames = new ArrayList<String>();
-    mAccountDb.getNames(usernames);
+    ArrayList<Integer> ids = new ArrayList<Integer>();
+    mAccountDb.getIds(ids);
 
-    int userCount = usernames.size();
+    int userCount = ids.size();
 
     if (userCount > 0) {
       boolean newListRequired = isAccountModified || mUsers.length != userCount;
@@ -402,9 +402,9 @@ public class AuthenticatorActivity extends TestableActivity {
       }
 
       for (int i = 0; i < userCount; ++i) {
-        String user = usernames.get(i);
+        Integer id = ids.get(i);
         try {
-          computeAndDisplayPin(user, i, false);
+          computeAndDisplayPin(id, i, false);
         } catch (OtpSourceException ignored) {}
       }
 
@@ -438,11 +438,11 @@ public class AuthenticatorActivity extends TestableActivity {
    * thread so it should not take more than a second or so. If necessary, we can
    * move the computation to a background thread.
    *
-   * @param user the user email to display with the PIN
+   * @param id the user email to display with the PIN
    * @param position the index for the screen of this user and PIN
    * @param computeHotp true if we should increment counter and display new hotp
    */
-  public void computeAndDisplayPin(String user, int position,
+  public void computeAndDisplayPin(Integer id, int position,
       boolean computeHotp) throws OtpSourceException {
 
     PinInfo currentPin;
@@ -450,21 +450,22 @@ public class AuthenticatorActivity extends TestableActivity {
       currentPin = mUsers[position]; // existing PinInfo, so we'll update it
     } else {
       currentPin = new PinInfo();
+      currentPin.id = id;
       currentPin.pin = getString(R.string.empty_pin);
       currentPin.hotpCodeGenerationAllowed = true;
     }
 
-    OtpType type = mAccountDb.getType(user);
+    OtpType type = mAccountDb.getType(id);
     currentPin.isHotp = (type == OtpType.HOTP);
 
-    currentPin.user = user;
+    currentPin.user = mAccountDb.getEmail(id);
 
     if (!currentPin.isHotp || computeHotp) {
       // Always safe to recompute, because this code path is only
       // reached if the account is:
       // - Time-based, in which case getNextCode() does not change state.
       // - Counter-based (HOTP) and computeHotp is true.
-      currentPin.pin = mOtpProvider.getNextCode(user);
+      currentPin.pin = mOtpProvider.getNextCode(id);
       currentPin.hotpCodeGenerationAllowed = true;
     }
 
@@ -542,17 +543,18 @@ public class AuthenticatorActivity extends TestableActivity {
       return;
     }
 
-    if (secret.equals(mAccountDb.getSecret(user)) &&
-        counter == mAccountDb.getCounter(user) &&
-        type == mAccountDb.getType(user)) {
-      return;  // nothing to update.
-    }
+    // TODO: Not sure if this check is needed anymore
+//    if (secret.equals(mAccountDb.getSecret(user)) &&
+//        counter == mAccountDb.getCounter(user) &&
+//        type == mAccountDb.getType(user)) {
+//      return;  // nothing to update.
+//    }
 
     if (confirmBeforeSave) {
-      mSaveKeyDialogParams = new SaveKeyDialogParams(user, secret, type, counter);
+      mSaveKeyDialogParams = new SaveKeyDialogParams(null, user, secret, type, counter);
       showDialog(DIALOG_ID_SAVE_KEY);
     } else {
-      saveSecretAndRefreshUserList(user, secret, null, type, counter);
+      saveSecretAndRefreshUserList(null, user, secret, null, type, counter);
     }
   }
 
@@ -571,15 +573,16 @@ public class AuthenticatorActivity extends TestableActivity {
   /**
    * Saves the secret key to local storage on the phone and updates the displayed account list.
    *
+   * @param id the id
    * @param user the user email address. When editing, the new user email.
    * @param secret the secret key
    * @param originalUser If editing, the original user email, otherwise null.
    * @param type hotp vs totp
    * @param counter only important for the hotp type
    */
-  private void saveSecretAndRefreshUserList(String user, String secret,
+  private void saveSecretAndRefreshUserList(Integer id, String user, String secret,
       String originalUser, OtpType type, Integer counter) {
-    if (saveSecret(this, user, secret, originalUser, type, counter)) {
+    if (saveSecret(this, id, user, secret, originalUser, type, counter)) {
       refreshUserList(true);
     }
   }
@@ -595,14 +598,14 @@ public class AuthenticatorActivity extends TestableActivity {
    *
    * @return {@code true} if the secret was saved, {@code false} otherwise.
    */
-  static boolean saveSecret(Context context, String user, String secret,
+  static boolean saveSecret(Context context, Integer id, String user, String secret,
                          String originalUser, OtpType type, Integer counter) {
     if (originalUser == null) {  // new user account
       originalUser = user;
     }
     if (secret != null) {
       AccountDb accountDb = DependencyInjector.getAccountDb();
-      accountDb.update(user, secret, originalUser, type, counter);
+      accountDb.update(id, user, secret, originalUser, type, counter);
       DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAccountSaved(context, user);
       // TODO: Consider having a display message that activities can call and it
       //       will present a toast with a uniform duration, and perhaps update
@@ -620,17 +623,18 @@ public class AuthenticatorActivity extends TestableActivity {
   }
 
   /** Converts user list ordinal id to user email */
-  private String idToEmail(long id) {
-    return mUsers[(int) id].user;
+  private Integer idToDatabaseId(long id) {
+    return mUsers[(int) id].id;
   }
 
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, v, menuInfo);
     AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-    String user = idToEmail(info.id);
-    OtpType type = mAccountDb.getType(user);
-    menu.setHeaderTitle(user);
+    Integer id = idToDatabaseId(info.id);
+    String email = mAccountDb.getEmail(id);
+    OtpType type = mAccountDb.getType(id);
+    menu.setHeaderTitle(email);
     menu.add(0, COPY_TO_CLIPBOARD_ID, 0, R.string.copy_to_clipboard);
     // Option to display the check-code is only available for HOTP accounts.
     if (type == OtpType.HOTP) {
@@ -640,93 +644,87 @@ public class AuthenticatorActivity extends TestableActivity {
     menu.add(0, REMOVE_ID, 0, R.string.context_menu_remove_account);
   }
 
-  @Override
-  public boolean onContextItemSelected(MenuItem item) {
-    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-    Intent intent;
-    final String user = idToEmail(info.id); // final so listener can see value
-    switch (item.getItemId()) {
-      case COPY_TO_CLIPBOARD_ID:
-        ClipboardManager clipboard =
-          (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        clipboard.setText(mUsers[(int) info.id].pin);
-        return true;
-      case CHECK_KEY_VALUE_ID:
-        intent = new Intent(Intent.ACTION_VIEW);
-        intent.setClass(this, CheckCodeActivity.class);
-        intent.putExtra("user", user);
-        startActivity(intent);
-        return true;
-      case RENAME_ID:
-        final Context context = this; // final so listener can see value
-        final View frame = getLayoutInflater().inflate(R.layout.rename,
-            (ViewGroup) findViewById(R.id.rename_root));
-        final EditText nameEdit = (EditText) frame.findViewById(R.id.rename_edittext);
-        nameEdit.setText(user);
-        new AlertDialog.Builder(this)
-        .setTitle(String.format(getString(R.string.rename_message), user))
-        .setView(frame)
-        .setPositiveButton(R.string.submit,
-            this.getRenameClickListener(context, user, nameEdit))
-        .setNegativeButton(R.string.cancel, null)
-        .show();
-        return true;
-      case REMOVE_ID:
-        // Use a WebView to display the prompt because it contains non-trivial markup, such as list
-        View promptContentView =
-            getLayoutInflater().inflate(R.layout.remove_account_prompt, null, false);
-        WebView webView = (WebView) promptContentView.findViewById(R.id.web_view);
-        webView.setBackgroundColor(Color.TRANSPARENT);
-        // Make the WebView use the same font size as for the mEnterPinPrompt field
-        double pixelsPerDip =
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()) / 10d;
-        webView.getSettings().setDefaultFontSize(
-            (int) (mEnterPinPrompt.getTextSize() / pixelsPerDip));
-        Utilities.setWebViewHtml(
-            webView,
-            "<html><body style=\"background-color: transparent;\" text=\"white\">"
-                + getString(
-                    mAccountDb.isGoogleAccount(user)
-                        ? R.string.remove_google_account_dialog_message
-                        : R.string.remove_account_dialog_message)
-                + "</body></html>");
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        Intent intent;
+        final Integer id = idToDatabaseId(info.id); // final so listener can see
+                                                    // value
+        final String email = mAccountDb.getEmail(id);
+        switch (item.getItemId()) {
+        case COPY_TO_CLIPBOARD_ID:
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            clipboard.setText(mUsers[(int) info.id].pin);
+            return true;
+        case CHECK_KEY_VALUE_ID:
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.setClass(this, CheckCodeActivity.class);
+            intent.putExtra(CheckCodeActivity.EXTRA_ID, id);
+            startActivity(intent);
+            return true;
+        case RENAME_ID:
+            final Context context = this; // final so listener can see value
+            final View frame = getLayoutInflater().inflate(R.layout.rename,
+                    (ViewGroup) findViewById(R.id.rename_root));
+            final EditText nameEdit = (EditText) frame.findViewById(R.id.rename_edittext);
+            nameEdit.setText(email);
+            new AlertDialog.Builder(this)
+                    .setTitle(String.format(getString(R.string.rename_message), email))
+                    .setView(frame)
+                    .setPositiveButton(R.string.submit,
+                            this.getRenameClickListener(context, id, nameEdit))
+                    .setNegativeButton(R.string.cancel, null).show();
+            return true;
+        case REMOVE_ID:
+            // Use a WebView to display the prompt because it contains
+            // non-trivial markup, such as list
+            View promptContentView = getLayoutInflater().inflate(R.layout.remove_account_prompt,
+                    null, false);
+            WebView webView = (WebView) promptContentView.findViewById(R.id.web_view);
+            webView.setBackgroundColor(Color.TRANSPARENT);
+            // Make the WebView use the same font size as for the
+            // mEnterPinPrompt field
+            double pixelsPerDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10,
+                    getResources().getDisplayMetrics()) / 10d;
+            webView.getSettings().setDefaultFontSize(
+                    (int) (mEnterPinPrompt.getTextSize() / pixelsPerDip));
+            Utilities
+                    .setWebViewHtml(
+                            webView,
+                            "<html><body style=\"background-color: transparent;\" text=\"white\">"
+                                    + getString(mAccountDb.isGoogleAccount(id) ? R.string.remove_google_account_dialog_message
+                                            : R.string.remove_account_dialog_message)
+                                    + "</body></html>");
 
-        new AlertDialog.Builder(this)
-          .setTitle(getString(R.string.remove_account_dialog_title, user))
-          .setView(promptContentView)
-          .setIcon(android.R.drawable.ic_dialog_alert)
-          .setPositiveButton(R.string.remove_account_dialog_button_remove,
-              new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                  mAccountDb.delete(user);
-                  refreshUserList(true);
-                }
-              }
-          )
-          .setNegativeButton(R.string.cancel, null)
-          .show();
-        return true;
-      default:
-        return super.onContextItemSelected(item);
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.remove_account_dialog_title, email))
+                    .setView(promptContentView)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.remove_account_dialog_button_remove,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    mAccountDb.delete(id);
+                                    refreshUserList(true);
+                                }
+                            }).setNegativeButton(R.string.cancel, null).show();
+            return true;
+        default:
+            return super.onContextItemSelected(item);
+        }
     }
-  }
 
   private DialogInterface.OnClickListener getRenameClickListener(final Context context,
-      final String user, final EditText nameEdit) {
+      final Integer id, final EditText nameEdit) {
     return new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int whichButton) {
+        String email = mAccountDb.getEmail(id);
         String newName = nameEdit.getText().toString();
-        if (newName != user) {
-          if (mAccountDb.nameExists(newName)) {
-            Toast.makeText(context, R.string.error_exists, Toast.LENGTH_LONG).show();
-          } else {
-            saveSecretAndRefreshUserList(newName,
-                mAccountDb.getSecret(user), user, mAccountDb.getType(user),
-                mAccountDb.getCounter(user));
-          }
+        if (newName != email) {
+            saveSecretAndRefreshUserList(id, newName, email,
+                mAccountDb.getSecret(id), mAccountDb.getType(id),
+                mAccountDb.getCounter(id));
         }
       }
     };
@@ -899,6 +897,7 @@ public class AuthenticatorActivity extends TestableActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int whichButton) {
                   saveSecretAndRefreshUserList(
+                      saveKeyDialogParams.id,
                       saveKeyDialogParams.user,
                       saveKeyDialogParams.secret,
                       null,
@@ -979,6 +978,7 @@ public class AuthenticatorActivity extends TestableActivity {
    * @author adhintz@google.com (Drew Hintz)
    */
   private static class PinInfo {
+    private Integer id;
     private String pin; // calculated OTP, or a placeholder if not calculated
     private String user;
     private boolean isHotp = false; // used to see if button needs to be displayed
@@ -1014,7 +1014,7 @@ public class AuthenticatorActivity extends TestableActivity {
       }
 
       try {
-        computeAndDisplayPin(mAccount.user, position, true);
+        computeAndDisplayPin(mAccount.id, position, true);
       } catch (OtpSourceException e) {
         DependencyInjector.getOptionalFeatures().onAuthenticatorActivityGetNextOtpFailed(
             AuthenticatorActivity.this, mAccount.user, e);
@@ -1138,17 +1138,19 @@ public class AuthenticatorActivity extends TestableActivity {
   /**
    * Parameters to the {@link AuthenticatorActivity#DIALOG_ID_SAVE_KEY} dialog.
    */
-  private static class SaveKeyDialogParams implements Serializable {
-    private final String user;
-    private final String secret;
-    private final OtpType type;
-    private final Integer counter;
+    private static class SaveKeyDialogParams implements Serializable {
+        private final Integer id;
+        private final String user;
+        private final String secret;
+        private final OtpType type;
+        private final Integer counter;
 
-    private SaveKeyDialogParams(String user, String secret, OtpType type, Integer counter) {
-      this.user = user;
-      this.secret = secret;
-      this.type = type;
-      this.counter = counter;
+        private SaveKeyDialogParams(Integer id, String user, String secret, OtpType type, Integer counter) {
+            this.id = id;
+            this.user = user;
+            this.secret = secret;
+            this.type = type;
+            this.counter = counter;
+        }
     }
-  }
 }

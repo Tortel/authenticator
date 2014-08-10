@@ -49,6 +49,7 @@ public class AccountContainer {
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Account{
+        private int id;
         private String email;
         private String secret;
         private int counter;
@@ -103,6 +104,12 @@ public class AccountContainer {
         }
         public void setProvider(int provider) {
             this.provider = provider;
+        }
+        public int getId() {
+            return id;
+        }
+        public void setId(int id) {
+            this.id = id;
         }
     }
 }

@@ -23,7 +23,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Process;
@@ -230,17 +229,8 @@ public class AccountDb {
 		return true;
 	}
 
-	public boolean nameExists(String email) {
-		Cursor cursor = getAccount(email);
-		try {
-			return !cursorIsEmpty(cursor);
-		} finally {
-			tryCloseCursor(cursor);
-		}
-	}
-
-	public String getSecret(String email) {
-		Cursor cursor = getAccount(email);
+	public String getSecret(Integer id) {
+		Cursor cursor = getAccount(id);
 		try {
 			if (!cursorIsEmpty(cursor)) {
 				cursor.moveToFirst();
@@ -251,6 +241,23 @@ public class AccountDb {
 		}
 		return null;
 	}
+	
+    /**
+     * @param id
+     * @return
+     */
+    public String getEmail(Integer id) {
+        Cursor cursor = getAccount(id);
+        try {
+            if (!cursorIsEmpty(cursor)) {
+                cursor.moveToFirst();
+                return cursor.getString(cursor.getColumnIndex(EMAIL_COLUMN));
+            }
+        } finally {
+            tryCloseCursor(cursor);
+        }
+        return null;
+    }
 
 	static Signer getSigningOracle(String secret) {
 		try {
@@ -281,7 +288,7 @@ public class AccountDb {
 		return Base32String.decode(secret);
 	}
 
-	public Integer getCounter(String email) {
+	public Integer getCounter(Integer email) {
 		Cursor cursor = getAccount(email);
 		try {
 			if (!cursorIsEmpty(cursor)) {
@@ -294,16 +301,16 @@ public class AccountDb {
 		return null;
 	}
 
-	void incrementCounter(String email) {
+	void incrementCounter(Integer id) {
 		ContentValues values = new ContentValues();
-		values.put(EMAIL_COLUMN, email);
-		Integer counter = getCounter(email);
+		values.put(EMAIL_COLUMN, id);
+		Integer counter = getCounter(id);
 		values.put(COUNTER_COLUMN, counter + 1);
-		mDatabase.update(TABLE_NAME, values, whereClause(email), null);
+		mDatabase.update(TABLE_NAME, values, whereClause(id), null);
 	}
 
-	public OtpType getType(String email) {
-		Cursor cursor = getAccount(email);
+	public OtpType getType(Integer id) {
+		Cursor cursor = getAccount(id);
 		try {
 			if (!cursorIsEmpty(cursor)) {
 				cursor.moveToFirst();
@@ -317,15 +324,15 @@ public class AccountDb {
 		return null;
 	}
 
-	void setType(String email, OtpType type) {
+	void setType(Integer id, OtpType type) {
 		ContentValues values = new ContentValues();
-		values.put(EMAIL_COLUMN, email);
+		values.put(ID_COLUMN, id);
 		values.put(TYPE_COLUMN, type.value);
-		mDatabase.update(TABLE_NAME, values, whereClause(email), null);
+		mDatabase.update(TABLE_NAME, values, whereClause(id), null);
 	}
 
-	public boolean isGoogleAccount(String email) {
-		Cursor cursor = getAccount(email);
+	public boolean isGoogleAccount(Integer id) {
+		Cursor cursor = getAccount(id);
 		try {
 			if (!cursorIsEmpty(cursor)) {
 				cursor.moveToFirst();
@@ -336,10 +343,11 @@ public class AccountDb {
 				// The account is from an unknown source. Could be a Google
 				// account added by scanning
 				// a QR code or by manually entering a key
-				String emailLowerCase = email.toLowerCase(Locale.US);
+                String emailLowerCase = cursor.getString(cursor.getColumnIndex(EMAIL_COLUMN))
+                        .toLowerCase(Locale.US);
 				return (emailLowerCase.endsWith("@gmail.com"))
 						|| (emailLowerCase.endsWith("@google.com"))
-						|| (email.equals(GOOGLE_CORP_ACCOUNT_NAME));
+						|| (id.equals(GOOGLE_CORP_ACCOUNT_NAME));
 			}
 		} finally {
 			tryCloseCursor(cursor);
@@ -353,17 +361,17 @@ public class AccountDb {
 	 * @return the name of the account if it is present or {@code null} if the
 	 *         account does not exist.
 	 */
+	@Deprecated
 	public String findGoogleCorpAccount() {
-		return nameExists(GOOGLE_CORP_ACCOUNT_NAME) ? GOOGLE_CORP_ACCOUNT_NAME
-				: null;
+		return null;
 	}
 
-	private static String whereClause(String email) {
-		return EMAIL_COLUMN + " = " + DatabaseUtils.sqlEscapeString(email);
+	private static String whereClause(Integer id) {
+		return ID_COLUMN + " = " + id;
 	}
 
-	public void delete(String email) {
-		mDatabase.delete(TABLE_NAME, whereClause(email), null);
+	public void delete(Integer id) {
+		mDatabase.delete(TABLE_NAME, whereClause(id), null);
 	}
 
 	/**
@@ -380,9 +388,9 @@ public class AccountDb {
 	 * @param counter
 	 *            only important for the hotp type
 	 */
-	public void update(String email, String secret, String oldEmail,
+	public void update(Integer id, String email, String secret, String oldEmail,
 			OtpType type, Integer counter) {
-		update(email, secret, oldEmail, type, counter, null);
+		update(id, email, secret, oldEmail, type, counter, null);
 	}
 
 	/**
@@ -403,7 +411,7 @@ public class AccountDb {
 	 *            preserve the previous value (or use a default if adding a
 	 *            key).
 	 */
-	public void update(String email, String secret, String oldEmail,
+	public void update(Integer id, String email, String secret, String oldEmail,
 			OtpType type, Integer counter, Boolean googleAccount) {
 		ContentValues values = new ContentValues();
 		values.put(EMAIL_COLUMN, email);
@@ -416,20 +424,20 @@ public class AccountDb {
 							: PROVIDER_UNKNOWN);
 		}
 		int updated = mDatabase.update(TABLE_NAME, values,
-				whereClause(oldEmail), null);
+				whereClause(id), null);
 		if (updated == 0) {
 			mDatabase.insert(TABLE_NAME, null, values);
 		}
 	}
 
-	private Cursor getNames() {
+	private Cursor getIds() {
 		return mDatabase.query(TABLE_NAME, null, null, null, null, null, null,
 				null);
 	}
 
-	private Cursor getAccount(String email) {
-		return mDatabase.query(TABLE_NAME, null, EMAIL_COLUMN + "= ?",
-				new String[] { email }, null, null, null);
+	private Cursor getAccount(Integer id) {
+		return mDatabase.query(TABLE_NAME, null, ID_COLUMN + "= ?",
+				new String[] { ""+id }, null, null, null);
 	}
 
 	/**
@@ -456,20 +464,20 @@ public class AccountDb {
 	 *            clearing this collection on entry.
 	 * @return Number of accounts added to the output parameter.
 	 */
-	public int getNames(Collection<String> result) {
-		Cursor cursor = getNames();
+	public int getIds(Collection<Integer> result) {
+		Cursor cursor = getIds();
 
 		try {
 			if (cursorIsEmpty(cursor))
 				return 0;
 
 			int nameCount = cursor.getCount();
-			int index = cursor.getColumnIndex(AccountDb.EMAIL_COLUMN);
+			int index = cursor.getColumnIndex(AccountDb.ID_COLUMN);
 
 			for (int i = 0; i < nameCount; ++i) {
 				cursor.moveToPosition(i);
-				String username = cursor.getString(index);
-				result.add(username);
+				Integer id = cursor.getInt(index);
+				result.add(id);
 			}
 
 			return nameCount;

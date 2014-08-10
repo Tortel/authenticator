@@ -105,7 +105,7 @@ public class EnterKeyActivity extends WizardPageActivity<Serializable> implement
                    OtpType.TOTP :
                    OtpType.HOTP;
     if (validateKeyAndUpdateStatus(true)) {
-      AuthenticatorActivity.saveSecret(this,
+      AuthenticatorActivity.saveSecret(this, null,
           mAccountName.getText().toString(),
           getEnteredKey(),
           null,

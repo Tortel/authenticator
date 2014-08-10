@@ -63,15 +63,15 @@ public class FileExportActivity extends Activity {
          */
         @Override
         protected String doInBackground(Void... params) {
-            List<String> emails = new LinkedList<String>();
-            accountDb.getNames(emails);
+            List<Integer> ids = new LinkedList<Integer>();
+            accountDb.getIds(ids);
             
-            for(String email : emails){
+            for(Integer id : ids){
                 AccountContainer.Account account = new AccountContainer.Account();
-                account.setEmail(email);
-                account.setSecret(accountDb.getSecret(email));
-                account.setCounter(accountDb.getCounter(email));
-                account.setType(accountDb.getType(email));
+                account.setId(id);
+                account.setSecret(accountDb.getSecret(id));
+                account.setCounter(accountDb.getCounter(id));
+                account.setType(accountDb.getType(id));
                 
                 container.addAccount(account);
             }

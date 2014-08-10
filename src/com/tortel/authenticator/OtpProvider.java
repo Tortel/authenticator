@@ -35,13 +35,13 @@ public class OtpProvider implements OtpSource {
   private static final int REFLECTIVE_PIN_LENGTH = 9; // ROTP
 
   @Override
-  public int enumerateAccounts(Collection<String> result) {
-    return mAccountDb.getNames(result);
+  public int enumerateAccounts(Collection<Integer> result) {
+    return mAccountDb.getIds(result);
   }
 
   @Override
-  public String getNextCode(String accountName) throws OtpSourceException {
-    return getCurrentCode(accountName, null);
+  public String getNextCode(Integer id) throws OtpSourceException {
+    return getCurrentCode(id, null);
   }
 
   // This variant is used when an additional challenge, such as URL or
@@ -49,13 +49,13 @@ public class OtpProvider implements OtpSource {
   // The additional string is appended to standard HOTP/TOTP state before
   // applying the MAC function.
   @Override
-  public String respondToChallenge(String accountName, String challenge) throws OtpSourceException {
+  public String respondToChallenge(Integer id, String challenge) throws OtpSourceException {
     if (challenge == null) {
-      return getCurrentCode(accountName, null);
+      return getCurrentCode(id, null);
     }
     try {
       byte[] challengeBytes = challenge.getBytes("UTF-8");
-      return getCurrentCode(accountName, challengeBytes);
+      return getCurrentCode(id, challengeBytes);
     } catch (UnsupportedEncodingException e) {
       return "";
     }
@@ -71,14 +71,14 @@ public class OtpProvider implements OtpSource {
     return mTotpClock;
   }
 
-  private String getCurrentCode(String username, byte[] challenge) throws OtpSourceException {
+  private String getCurrentCode(Integer id, byte[] challenge) throws OtpSourceException {
     // Account name is required.
-    if (username == null) {
+    if (id == null) {
       throw new OtpSourceException("No account name");
     }
 
-    OtpType type = mAccountDb.getType(username);
-    String secret = getSecret(username);
+    OtpType type = mAccountDb.getType(id);
+    String secret = getSecret(id);
 
     long otp_state = 0;
 
@@ -88,8 +88,8 @@ public class OtpProvider implements OtpSource {
           mTotpCounter.getValueAtTime(Utilities.millisToSeconds(mTotpClock.currentTimeMillis()));
     } else if (type == OtpType.HOTP){
       // For counter-based OTP, the state is obtained by incrementing stored counter.
-      mAccountDb.incrementCounter(username);
-      Integer counter = mAccountDb.getCounter(username);
+      mAccountDb.incrementCounter(id);
+      Integer counter = mAccountDb.getCounter(id);
       otp_state = counter.longValue();
     }
 
@@ -135,11 +135,11 @@ public class OtpProvider implements OtpSource {
 
   /**
    * Reads the secret key that was saved on the phone.
-   * @param user Account name identifying the user.
+   * @param id Account name identifying the user.
    * @return the secret key as base32 encoded string.
    */
-  String getSecret(String user) {
-    return mAccountDb.getSecret(user);
+  String getSecret(Integer id) {
+    return mAccountDb.getSecret(id);
   }
 
   /** Default passcode timeout period (in seconds) */
