@@ -74,7 +74,7 @@ public class OtpProvider implements OtpSource {
   private String getCurrentCode(Integer id, byte[] challenge) throws OtpSourceException {
     // Account name is required.
     if (id == null) {
-      throw new OtpSourceException("No account name");
+      throw new OtpSourceException("No account id");
     }
 
     OtpType type = mAccountDb.getType(id);

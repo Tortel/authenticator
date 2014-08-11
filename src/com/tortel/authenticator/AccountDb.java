@@ -423,8 +423,14 @@ public class AccountDb {
 					(googleAccount.booleanValue()) ? PROVIDER_GOOGLE
 							: PROVIDER_UNKNOWN);
 		}
-		int updated = mDatabase.update(TABLE_NAME, values,
-				whereClause(id), null);
+		
+		int updated = 0;
+		// Don't bother trying it if no ID was specified
+		if(id != null){
+    		updated = mDatabase.update(TABLE_NAME, values,
+    				whereClause(id), null);
+		}
+		
 		if (updated == 0) {
 			mDatabase.insert(TABLE_NAME, null, values);
 		}

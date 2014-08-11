@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,7 +39,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.content.ClipboardManager;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -75,574 +75,610 @@ import java.util.Locale;
  */
 public class AuthenticatorActivity extends TestableActivity {
 
-  /** The tag for log messages */
-  private static final String LOCAL_TAG = "AuthenticatorActivity";
-  private static final long VIBRATE_DURATION = 200L;
+    /** The tag for log messages */
+    private static final String LOCAL_TAG = "AuthenticatorActivity";
+    private static final long VIBRATE_DURATION = 200L;
 
-  /** Frequency (milliseconds) with which TOTP countdown indicators are updated. */
-  private static final long TOTP_COUNTDOWN_REFRESH_PERIOD = 100;
+    /**
+     * Frequency (milliseconds) with which TOTP countdown indicators are
+     * updated.
+     */
+    private static final long TOTP_COUNTDOWN_REFRESH_PERIOD = 100;
 
-  /**
-   * Minimum amount of time (milliseconds) that has to elapse from the moment a HOTP code is
-   * generated for an account until the moment the next code can be generated for the account.
-   * This is to prevent the user from generating too many HOTP codes in a short period of time.
-   */
-  private static final long HOTP_MIN_TIME_INTERVAL_BETWEEN_CODES = 5000;
+    /**
+     * Minimum amount of time (milliseconds) that has to elapse from the moment
+     * a HOTP code is generated for an account until the moment the next code
+     * can be generated for the account. This is to prevent the user from
+     * generating too many HOTP codes in a short period of time.
+     */
+    private static final long HOTP_MIN_TIME_INTERVAL_BETWEEN_CODES = 5000;
 
-  /**
-   * The maximum amount of time (milliseconds) for which a HOTP code is displayed after it's been
-   * generated.
-   */
-  private static final long HOTP_DISPLAY_TIMEOUT = 2 * 60 * 1000;
+    /**
+     * The maximum amount of time (milliseconds) for which a HOTP code is
+     * displayed after it's been generated.
+     */
+    private static final long HOTP_DISPLAY_TIMEOUT = 2 * 60 * 1000;
 
-  // @VisibleForTesting
-  static final int DIALOG_ID_SAVE_KEY = 13;
+    // @VisibleForTesting
+    static final int DIALOG_ID_SAVE_KEY = 13;
 
-  /**
-   * Intent action to that tells this Activity to initiate the scanning of barcode to add an
-   * account.
-   */
-  // @VisibleForTesting
-  static final String ACTION_SCAN_BARCODE =
-      AuthenticatorActivity.class.getName() + ".ScanBarcode";
+    /**
+     * Intent action to that tells this Activity to initiate the scanning of
+     * barcode to add an account.
+     */
+    // @VisibleForTesting
+    static final String ACTION_SCAN_BARCODE = AuthenticatorActivity.class.getName()
+            + ".ScanBarcode";
 
-  private View mContentNoAccounts;
-  private View mContentAccountsPresent;
-  private TextView mEnterPinPrompt;
-  private ListView mUserList;
-  private PinListAdapter mUserAdapter;
-  private PinInfo[] mUsers = {};
+    private View mContentNoAccounts;
+    private View mContentAccountsPresent;
+    private TextView mEnterPinPrompt;
+    private ListView mUserList;
+    private PinListAdapter mUserAdapter;
+    private PinInfo[] mUsers = {};
 
-  /** Counter used for generating TOTP verification codes. */
-  private TotpCounter mTotpCounter;
+    /** Counter used for generating TOTP verification codes. */
+    private TotpCounter mTotpCounter;
 
-  /** Clock used for generating TOTP verification codes. */
-  private TotpClock mTotpClock;
+    /** Clock used for generating TOTP verification codes. */
+    private TotpClock mTotpClock;
 
-  /**
-   * Task that periodically notifies this activity about the amount of time remaining until
-   * the TOTP codes refresh. The task also notifies this activity when TOTP codes refresh.
-   */
-  private TotpCountdownTask mTotpCountdownTask;
+    /**
+     * Task that periodically notifies this activity about the amount of time
+     * remaining until the TOTP codes refresh. The task also notifies this
+     * activity when TOTP codes refresh.
+     */
+    private TotpCountdownTask mTotpCountdownTask;
 
-  /**
-   * Phase of TOTP countdown indicators. The phase is in {@code [0, 1]} with {@code 1} meaning
-   * full time step remaining until the code refreshes, and {@code 0} meaning the code is refreshing
-   * right now.
-   */
-  private double mTotpCountdownPhase;
-  private AccountDb mAccountDb;
-  private OtpSource mOtpProvider;
+    /**
+     * Phase of TOTP countdown indicators. The phase is in {@code [0, 1]} with
+     * {@code 1} meaning full time step remaining until the code refreshes, and
+     * {@code 0} meaning the code is refreshing right now.
+     */
+    private double mTotpCountdownPhase;
+    private AccountDb mAccountDb;
+    private OtpSource mOtpProvider;
 
-  /**
-   * Key under which the {@link #mSaveKeyDialogParams} is stored in the instance state
-   * {@link Bundle}.
-   */
-  private static final String KEY_SAVE_KEY_DIALOG_PARAMS = "saveKeyDialogParams";
+    /**
+     * Key under which the {@link #mSaveKeyDialogParams} is stored in the
+     * instance state {@link Bundle}.
+     */
+    private static final String KEY_SAVE_KEY_DIALOG_PARAMS = "saveKeyDialogParams";
 
-  /**
-   * Parameters to the save key dialog (DIALOG_ID_SAVE_KEY).
-   *
-   * <p>
-   * Note: this field is persisted in the instance state {@link Bundle}. We need to resolve to this
-   * error-prone mechanism because showDialog on Eclair doesn't take parameters. Once Froyo is
-   * the minimum targetted SDK, this contrived code can be removed.
-   */
-  private SaveKeyDialogParams mSaveKeyDialogParams;
+    /**
+     * Parameters to the save key dialog (DIALOG_ID_SAVE_KEY).
+     *
+     * <p>
+     * Note: this field is persisted in the instance state {@link Bundle}. We
+     * need to resolve to this error-prone mechanism because showDialog on
+     * Eclair doesn't take parameters. Once Froyo is the minimum targetted SDK,
+     * this contrived code can be removed.
+     */
+    private SaveKeyDialogParams mSaveKeyDialogParams;
 
-  /**
-   * Whether this activity is currently displaying a confirmation prompt in response to the
-   * "save key" Intent.
-   */
-  private boolean mSaveKeyIntentConfirmationInProgress;
+    /**
+     * Whether this activity is currently displaying a confirmation prompt in
+     * response to the "save key" Intent.
+     */
+    private boolean mSaveKeyIntentConfirmationInProgress;
 
-  private static final String OTP_SCHEME = "otpauth";
-  private static final String TOTP = "totp"; // time-based
-  private static final String HOTP = "hotp"; // counter-based
-  private static final String SECRET_PARAM = "secret";
-  private static final String COUNTER_PARAM = "counter";
-  // @VisibleForTesting
-  public static final int CHECK_KEY_VALUE_ID = 0;
-  // @VisibleForTesting
-  public static final int RENAME_ID = 1;
-  // @VisibleForTesting
-  public static final int REMOVE_ID = 2;
-  // @VisibleForTesting
-  static final int COPY_TO_CLIPBOARD_ID = 3;
-  // @VisibleForTesting
-  static final int SCAN_REQUEST = 31337;
+    private static final String OTP_SCHEME = "otpauth";
+    private static final String TOTP = "totp"; // time-based
+    private static final String HOTP = "hotp"; // counter-based
+    private static final String SECRET_PARAM = "secret";
+    private static final String COUNTER_PARAM = "counter";
+    // @VisibleForTesting
+    public static final int CHECK_KEY_VALUE_ID = 0;
+    // @VisibleForTesting
+    public static final int RENAME_ID = 1;
+    // @VisibleForTesting
+    public static final int REMOVE_ID = 2;
+    // @VisibleForTesting
+    static final int COPY_TO_CLIPBOARD_ID = 3;
+    // @VisibleForTesting
+    static final int SCAN_REQUEST = 31337;
 
-  /** Called when the activity is first created. */
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    mAccountDb = DependencyInjector.getAccountDb();
-    mOtpProvider = DependencyInjector.getOtpProvider();
+        mAccountDb = DependencyInjector.getAccountDb();
+        mOtpProvider = DependencyInjector.getOtpProvider();
 
-    // Use a different (longer) title from the one that's declared in the manifest (and the one that
-    // the Android launcher displays).
-    setTitle(R.string.app_name);
+        // Use a different (longer) title from the one that's declared in the
+        // manifest (and the one that
+        // the Android launcher displays).
+        setTitle(R.string.app_name);
 
-    mTotpCounter = mOtpProvider.getTotpCounter();
-    mTotpClock = mOtpProvider.getTotpClock();
+        mTotpCounter = mOtpProvider.getTotpCounter();
+        mTotpClock = mOtpProvider.getTotpClock();
 
-    setContentView(R.layout.main);
+        setContentView(R.layout.main);
 
-    // restore state on screen rotation
-    Object savedState = getLastNonConfigurationInstance();
-    if (savedState != null) {
-      mUsers = (PinInfo[]) savedState;
-      // Re-enable the Get Code buttons on all HOTP accounts, otherwise they'll stay disabled.
-      for (PinInfo account : mUsers) {
-        if (account.isHotp) {
-          account.hotpCodeGenerationAllowed = true;
-        }
-      }
-    }
-
-    if (savedInstanceState != null) {
-      mSaveKeyDialogParams =
-          (SaveKeyDialogParams) savedInstanceState.getSerializable(KEY_SAVE_KEY_DIALOG_PARAMS);
-    }
-
-    mUserList = (ListView) findViewById(R.id.user_list);
-    mContentNoAccounts = findViewById(R.id.content_no_accounts);
-    mContentAccountsPresent = findViewById(R.id.content_accounts_present);
-    mContentNoAccounts.setVisibility((mUsers.length > 0) ? View.GONE : View.VISIBLE);
-    mContentAccountsPresent.setVisibility((mUsers.length > 0) ? View.VISIBLE : View.GONE);
-    TextView noAccountsPromptDetails = (TextView) findViewById(R.id.details);
-    noAccountsPromptDetails.setText(
-        Html.fromHtml(getString(R.string.welcome_page_details)));
-
-    findViewById(R.id.how_it_works_button).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        displayHowItWorksInstructions();
-      }
-    });
-    findViewById(R.id.add_account_button).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        addAccount();
-      }
-    });
-    mEnterPinPrompt = (TextView) findViewById(R.id.enter_pin_prompt);
-
-    mUserAdapter = new PinListAdapter(this, R.layout.user_row, mUsers);
-
-    mUserList.setVisibility(View.GONE);
-    mUserList.setAdapter(mUserAdapter);
-    mUserList.setOnItemClickListener(new OnItemClickListener(){
-        @Override
-        public void onItemClick(AdapterView<?> unusedParent, View row,
-                                int unusedPosition, long unusedId) {
-            NextOtpButtonListener clickListener = (NextOtpButtonListener) row.getTag();
-            View nextOtp = row.findViewById(R.id.next_otp);
-            if ((clickListener != null) && nextOtp.isEnabled()){
-                clickListener.onClick(row);
+        // restore state on screen rotation
+        Object savedState = getLastNonConfigurationInstance();
+        if (savedState != null) {
+            mUsers = (PinInfo[]) savedState;
+            // Re-enable the Get Code buttons on all HOTP accounts, otherwise
+            // they'll stay disabled.
+            for (PinInfo account : mUsers) {
+                if (account.isHotp) {
+                    account.hotpCodeGenerationAllowed = true;
+                }
             }
-            mUserList.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED);
         }
-    });
 
-    if (savedInstanceState == null) {
-      // This is the first time this Activity is starting (i.e., not restoring previous state which
-      // was saved, for example, due to orientation change)
-      DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreated(this);
-      handleIntent(getIntent());
-    }
-  }
-
-  /**
-   * Reacts to the {@link Intent} that started this activity or arrived to this activity without
-   * restarting it (i.e., arrived via {@link #onNewIntent(Intent)}). Does nothing if the provided
-   * intent is {@code null}.
-   */
-  private void handleIntent(Intent intent) {
-    if (intent == null) {
-      return;
-    }
-
-    String action = intent.getAction();
-    if (action == null) {
-      return;
-    }
-
-    if (ACTION_SCAN_BARCODE.equals(action)) {
-      scanBarcode();
-    } else if (intent.getData() != null) {
-      interpretScanResult(intent.getData(), true);
-    }
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-
-    outState.putSerializable(KEY_SAVE_KEY_DIALOG_PARAMS, mSaveKeyDialogParams);
-  }
-
-  @Override
-  public Object onRetainNonConfigurationInstance() {
-    return mUsers;  // save state of users and currently displayed PINs
-  }
-
-  // Because this activity is marked as singleTop, new launch intents will be
-  // delivered via this API instead of onResume().
-  // Override here to catch otpauth:// URL being opened from QR code reader.
-  @Override
-  protected void onNewIntent(Intent intent) {
-    Log.i(getString(R.string.app_name), LOCAL_TAG + ": onNewIntent");
-    handleIntent(intent);
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
-
-    updateCodesAndStartTotpCountdownTask();
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    Log.i(getString(R.string.app_name), LOCAL_TAG + ": onResume");
-  }
-
-  @Override
-  protected void onStop() {
-    stopTotpCountdownTask();
-
-    super.onStop();
-  }
-
-  private void updateCodesAndStartTotpCountdownTask() {
-    stopTotpCountdownTask();
-
-    mTotpCountdownTask =
-        new TotpCountdownTask(mTotpCounter, mTotpClock, TOTP_COUNTDOWN_REFRESH_PERIOD);
-    mTotpCountdownTask.setListener(new TotpCountdownTask.Listener() {
-      @Override
-      public void onTotpCountdown(long millisRemaining) {
-        if (isFinishing()) {
-          // No need to reach to this even because the Activity is finishing anyway
-          return;
+        if (savedInstanceState != null) {
+            mSaveKeyDialogParams = (SaveKeyDialogParams) savedInstanceState
+                    .getSerializable(KEY_SAVE_KEY_DIALOG_PARAMS);
         }
-        setTotpCountdownPhaseFromTimeTillNextValue(millisRemaining);
-      }
 
-      @Override
-      public void onTotpCounterValueChanged() {
-        if (isFinishing()) {
-          // No need to reach to this even because the Activity is finishing anyway
-          return;
-        }
-        refreshVerificationCodes();
-      }
-    });
+        mUserList = (ListView) findViewById(R.id.user_list);
+        mContentNoAccounts = findViewById(R.id.content_no_accounts);
+        mContentAccountsPresent = findViewById(R.id.content_accounts_present);
+        mContentNoAccounts.setVisibility((mUsers.length > 0) ? View.GONE : View.VISIBLE);
+        mContentAccountsPresent.setVisibility((mUsers.length > 0) ? View.VISIBLE : View.GONE);
+        TextView noAccountsPromptDetails = (TextView) findViewById(R.id.details);
+        noAccountsPromptDetails.setText(Html.fromHtml(getString(R.string.welcome_page_details)));
 
-    mTotpCountdownTask.startAndNotifyListener();
-  }
+        findViewById(R.id.how_it_works_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayHowItWorksInstructions();
+            }
+        });
+        findViewById(R.id.add_account_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addAccount();
+            }
+        });
+        mEnterPinPrompt = (TextView) findViewById(R.id.enter_pin_prompt);
 
-  private void stopTotpCountdownTask() {
-    if (mTotpCountdownTask != null) {
-      mTotpCountdownTask.stop();
-      mTotpCountdownTask = null;
-    }
-  }
-
-  /** Display list of user emails and updated pin codes. */
-  protected void refreshUserList() {
-    refreshUserList(false);
-  }
-
-  private void setTotpCountdownPhase(double phase) {
-    mTotpCountdownPhase = phase;
-    updateCountdownIndicators();
-  }
-
-  private void setTotpCountdownPhaseFromTimeTillNextValue(long millisRemaining) {
-    setTotpCountdownPhase(
-        ((double) millisRemaining) / Utilities.secondsToMillis(mTotpCounter.getTimeStep()));
-  }
-
-  private void refreshVerificationCodes() {
-    refreshUserList();
-    setTotpCountdownPhase(1.0);
-  }
-
-  private void updateCountdownIndicators() {
-    for (int i = 0, len = mUserList.getChildCount(); i < len; i++) {
-      View listEntry = mUserList.getChildAt(i);
-      CountdownIndicator indicator =
-          (CountdownIndicator) listEntry.findViewById(R.id.countdown_icon);
-      if (indicator != null) {
-        indicator.setPhase(mTotpCountdownPhase);
-      }
-    }
-  }
-
-  /**
-   * Display list of user emails and updated pin codes.
-   *
-   * @param isAccountModified if true, force full refresh
-   */
-  // @VisibleForTesting
-  public void refreshUserList(boolean isAccountModified) {
-    ArrayList<Integer> ids = new ArrayList<Integer>();
-    mAccountDb.getIds(ids);
-
-    int userCount = ids.size();
-
-    if (userCount > 0) {
-      boolean newListRequired = isAccountModified || mUsers.length != userCount;
-      if (newListRequired) {
-        mUsers = new PinInfo[userCount];
-      }
-
-      for (int i = 0; i < userCount; ++i) {
-        Integer id = ids.get(i);
-        try {
-          computeAndDisplayPin(id, i, false);
-        } catch (OtpSourceException ignored) {}
-      }
-
-      if (newListRequired) {
-        // Make the list display the data from the newly created array of accounts
-        // This forces the list to scroll to top.
         mUserAdapter = new PinListAdapter(this, R.layout.user_row, mUsers);
+
+        mUserList.setVisibility(View.GONE);
         mUserList.setAdapter(mUserAdapter);
-      }
+        mUserList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> unusedParent, View row, int unusedPosition,
+                    long unusedId) {
+                NextOtpButtonListener clickListener = (NextOtpButtonListener) row.getTag();
+                View nextOtp = row.findViewById(R.id.next_otp);
+                if ((clickListener != null) && nextOtp.isEnabled()) {
+                    clickListener.onClick(row);
+                }
+                mUserList.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED);
+            }
+        });
 
-      mUserAdapter.notifyDataSetChanged();
-
-      if (mUserList.getVisibility() != View.VISIBLE) {
-        mUserList.setVisibility(View.VISIBLE);
-        registerForContextMenu(mUserList);
-      }
-    } else {
-      mUsers = new PinInfo[0]; // clear any existing user PIN state
-      mUserList.setVisibility(View.GONE);
-    }
-
-    // Display the list of accounts if there are accounts, otherwise display a
-    // different layout explaining the user how this app works and providing the user with an easy
-    // way to add an account.
-    mContentNoAccounts.setVisibility((mUsers.length > 0) ? View.GONE : View.VISIBLE);
-    mContentAccountsPresent.setVisibility((mUsers.length > 0) ? View.VISIBLE : View.GONE);
-  }
-
-  /**
-   * Computes the PIN and saves it in mUsers. This currently runs in the UI
-   * thread so it should not take more than a second or so. If necessary, we can
-   * move the computation to a background thread.
-   *
-   * @param id the user email to display with the PIN
-   * @param position the index for the screen of this user and PIN
-   * @param computeHotp true if we should increment counter and display new hotp
-   */
-  public void computeAndDisplayPin(Integer id, int position,
-      boolean computeHotp) throws OtpSourceException {
-
-    PinInfo currentPin;
-    if (mUsers[position] != null) {
-      currentPin = mUsers[position]; // existing PinInfo, so we'll update it
-    } else {
-      currentPin = new PinInfo();
-      currentPin.id = id;
-      currentPin.pin = getString(R.string.empty_pin);
-      currentPin.hotpCodeGenerationAllowed = true;
-    }
-
-    OtpType type = mAccountDb.getType(id);
-    currentPin.isHotp = (type == OtpType.HOTP);
-
-    currentPin.user = mAccountDb.getEmail(id);
-
-    if (!currentPin.isHotp || computeHotp) {
-      // Always safe to recompute, because this code path is only
-      // reached if the account is:
-      // - Time-based, in which case getNextCode() does not change state.
-      // - Counter-based (HOTP) and computeHotp is true.
-      currentPin.pin = mOtpProvider.getNextCode(id);
-      currentPin.hotpCodeGenerationAllowed = true;
-    }
-
-    mUsers[position] = currentPin;
-  }
-
-  /**
-   * Parses a secret value from a URI. The format will be:
-   *
-   * otpauth://totp/user@example.com?secret=FFF...
-   * otpauth://hotp/user@example.com?secret=FFF...&counter=123
-   *
-   * @param uri The URI containing the secret key
-   * @param confirmBeforeSave a boolean to indicate if the user should be
-   *                          prompted for confirmation before updating the otp
-   *                          account information.
-   */
-  private void parseSecret(Uri uri, boolean confirmBeforeSave) {
-    final String scheme = uri.getScheme().toLowerCase(Locale.ENGLISH);
-    final String path = uri.getPath();
-    final String authority = uri.getAuthority();
-    final String user;
-    final String secret;
-    final OtpType type;
-    final Integer counter;
-
-    if (!OTP_SCHEME.equals(scheme)) {
-      Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid or missing scheme in uri");
-      showDialog(Utilities.INVALID_QR_CODE);
-      return;
-    }
-
-    if (TOTP.equals(authority)) {
-      type = OtpType.TOTP;
-      counter = AccountDb.DEFAULT_HOTP_COUNTER; // only interesting for HOTP
-    } else if (HOTP.equals(authority)) {
-      type = OtpType.HOTP;
-      String counterParameter = uri.getQueryParameter(COUNTER_PARAM);
-      if (counterParameter != null) {
-        try {
-          counter = Integer.parseInt(counterParameter);
-        } catch (NumberFormatException e) {
-          Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid counter in uri");
-          showDialog(Utilities.INVALID_QR_CODE);
-          return;
+        if (savedInstanceState == null) {
+            // This is the first time this Activity is starting (i.e., not
+            // restoring previous state which
+            // was saved, for example, due to orientation change)
+            DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreated(this);
+            handleIntent(getIntent());
         }
-      } else {
-        counter = AccountDb.DEFAULT_HOTP_COUNTER;
-      }
-    } else {
-      Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid or missing authority in uri");
-      showDialog(Utilities.INVALID_QR_CODE);
-      return;
     }
 
-    user = validateAndGetUserInPath(path);
-    if (user == null) {
-      Log.e(getString(R.string.app_name), LOCAL_TAG + ": Missing user id in uri");
-      showDialog(Utilities.INVALID_QR_CODE);
-      return;
+    /**
+     * Reacts to the {@link Intent} that started this activity or arrived to
+     * this activity without restarting it (i.e., arrived via
+     * {@link #onNewIntent(Intent)}). Does nothing if the provided intent is
+     * {@code null}.
+     */
+    private void handleIntent(Intent intent) {
+        if (intent == null) {
+            return;
+        }
+
+        String action = intent.getAction();
+        if (action == null) {
+            return;
+        }
+
+        if (ACTION_SCAN_BARCODE.equals(action)) {
+            scanBarcode();
+        } else if (intent.getData() != null) {
+            interpretScanResult(intent.getData(), true);
+        }
     }
 
-    secret = uri.getQueryParameter(SECRET_PARAM);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-    if (secret == null || secret.length() == 0) {
-      Log.e(getString(R.string.app_name), LOCAL_TAG +
-          ": Secret key not found in URI");
-      showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
-      return;
+        outState.putSerializable(KEY_SAVE_KEY_DIALOG_PARAMS, mSaveKeyDialogParams);
     }
 
-    if (AccountDb.getSigningOracle(secret) == null) {
-      Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid secret key");
-      showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
-      return;
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return mUsers; // save state of users and currently displayed PINs
     }
 
-    // TODO: Not sure if this check is needed anymore
-//    if (secret.equals(mAccountDb.getSecret(user)) &&
-//        counter == mAccountDb.getCounter(user) &&
-//        type == mAccountDb.getType(user)) {
-//      return;  // nothing to update.
-//    }
+    // Because this activity is marked as singleTop, new launch intents will be
+    // delivered via this API instead of onResume().
+    // Override here to catch otpauth:// URL being opened from QR code reader.
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.i(getString(R.string.app_name), LOCAL_TAG + ": onNewIntent");
+        handleIntent(intent);
+    }
 
-    if (confirmBeforeSave) {
-      mSaveKeyDialogParams = new SaveKeyDialogParams(null, user, secret, type, counter);
-      showDialog(DIALOG_ID_SAVE_KEY);
-    } else {
-      saveSecretAndRefreshUserList(null, user, secret, null, type, counter);
-    }
-  }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-  private static String validateAndGetUserInPath(String path) {
-    if (path == null || !path.startsWith("/")) {
-      return null;
+        updateCodesAndStartTotpCountdownTask();
     }
-    // path is "/user", so remove leading "/", and trailing white spaces
-    String user = path.substring(1).trim();
-    if (user.length() == 0) {
-      return null; // only white spaces.
-    }
-    return user;
-  }
 
-  /**
-   * Saves the secret key to local storage on the phone and updates the displayed account list.
-   *
-   * @param id the id
-   * @param user the user email address. When editing, the new user email.
-   * @param secret the secret key
-   * @param originalUser If editing, the original user email, otherwise null.
-   * @param type hotp vs totp
-   * @param counter only important for the hotp type
-   */
-  private void saveSecretAndRefreshUserList(Integer id, String user, String secret,
-      String originalUser, OtpType type, Integer counter) {
-    if (saveSecret(this, id, user, secret, originalUser, type, counter)) {
-      refreshUserList(true);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(getString(R.string.app_name), LOCAL_TAG + ": onResume");
     }
-  }
 
-  /**
-   * Saves the secret key to local storage on the phone.
-   *
-   * @param user the user email address. When editing, the new user email.
-   * @param secret the secret key
-   * @param originalUser If editing, the original user email, otherwise null.
-   * @param type hotp vs totp
-   * @param counter only important for the hotp type
-   *
-   * @return {@code true} if the secret was saved, {@code false} otherwise.
-   */
-  static boolean saveSecret(Context context, Integer id, String user, String secret,
-                         String originalUser, OtpType type, Integer counter) {
-    if (originalUser == null) {  // new user account
-      originalUser = user;
-    }
-    if (secret != null) {
-      AccountDb accountDb = DependencyInjector.getAccountDb();
-      accountDb.update(id, user, secret, originalUser, type, counter);
-      DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAccountSaved(context, user);
-      // TODO: Consider having a display message that activities can call and it
-      //       will present a toast with a uniform duration, and perhaps update
-      //       status messages (presuming we have a way to remove them after they
-      //       are stale).
-      Toast.makeText(context, R.string.secret_saved, Toast.LENGTH_LONG).show();
-      ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE))
-        .vibrate(VIBRATE_DURATION);
-      return true;
-    } else {
-      Log.e(LOCAL_TAG, "Trying to save an empty secret key");
-      Toast.makeText(context, R.string.error_empty_secret, Toast.LENGTH_LONG).show();
-      return false;
-    }
-  }
+    @Override
+    protected void onStop() {
+        stopTotpCountdownTask();
 
-  /** Converts user list ordinal id to user email */
-  private Integer idToDatabaseId(long id) {
-    return mUsers[(int) id].id;
-  }
-
-  @Override
-  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-    super.onCreateContextMenu(menu, v, menuInfo);
-    AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-    Integer id = idToDatabaseId(info.id);
-    String email = mAccountDb.getEmail(id);
-    OtpType type = mAccountDb.getType(id);
-    menu.setHeaderTitle(email);
-    menu.add(0, COPY_TO_CLIPBOARD_ID, 0, R.string.copy_to_clipboard);
-    // Option to display the check-code is only available for HOTP accounts.
-    if (type == OtpType.HOTP) {
-      menu.add(0, CHECK_KEY_VALUE_ID, 0, R.string.check_code_menu_item);
+        super.onStop();
     }
-    menu.add(0, RENAME_ID, 0, R.string.rename);
-    menu.add(0, REMOVE_ID, 0, R.string.context_menu_remove_account);
-  }
+
+    private void updateCodesAndStartTotpCountdownTask() {
+        stopTotpCountdownTask();
+
+        mTotpCountdownTask = new TotpCountdownTask(mTotpCounter, mTotpClock,
+                TOTP_COUNTDOWN_REFRESH_PERIOD);
+        mTotpCountdownTask.setListener(new TotpCountdownTask.Listener() {
+            @Override
+            public void onTotpCountdown(long millisRemaining) {
+                if (isFinishing()) {
+                    // No need to reach to this even because the Activity is
+                    // finishing anyway
+                    return;
+                }
+                setTotpCountdownPhaseFromTimeTillNextValue(millisRemaining);
+            }
+
+            @Override
+            public void onTotpCounterValueChanged() {
+                if (isFinishing()) {
+                    // No need to reach to this even because the Activity is
+                    // finishing anyway
+                    return;
+                }
+                refreshVerificationCodes();
+            }
+        });
+
+        mTotpCountdownTask.startAndNotifyListener();
+    }
+
+    private void stopTotpCountdownTask() {
+        if (mTotpCountdownTask != null) {
+            mTotpCountdownTask.stop();
+            mTotpCountdownTask = null;
+        }
+    }
+
+    /** Display list of user emails and updated pin codes. */
+    protected void refreshUserList() {
+        refreshUserList(false);
+    }
+
+    private void setTotpCountdownPhase(double phase) {
+        mTotpCountdownPhase = phase;
+        updateCountdownIndicators();
+    }
+
+    private void setTotpCountdownPhaseFromTimeTillNextValue(long millisRemaining) {
+        setTotpCountdownPhase(((double) millisRemaining)
+                / Utilities.secondsToMillis(mTotpCounter.getTimeStep()));
+    }
+
+    private void refreshVerificationCodes() {
+        refreshUserList();
+        setTotpCountdownPhase(1.0);
+    }
+
+    private void updateCountdownIndicators() {
+        for (int i = 0, len = mUserList.getChildCount(); i < len; i++) {
+            View listEntry = mUserList.getChildAt(i);
+            CountdownIndicator indicator = (CountdownIndicator) listEntry
+                    .findViewById(R.id.countdown_icon);
+            if (indicator != null) {
+                indicator.setPhase(mTotpCountdownPhase);
+            }
+        }
+    }
+
+    /**
+     * Display list of user emails and updated pin codes.
+     *
+     * @param isAccountModified
+     *            if true, force full refresh
+     */
+    // @VisibleForTesting
+    public void refreshUserList(boolean isAccountModified) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        mAccountDb.getIds(ids);
+
+        int userCount = ids.size();
+
+        if (userCount > 0) {
+            boolean newListRequired = isAccountModified || mUsers.length != userCount;
+            if (newListRequired) {
+                mUsers = new PinInfo[userCount];
+            }
+
+            for (int i = 0; i < userCount; ++i) {
+                Integer id = ids.get(i);
+                try {
+                    computeAndDisplayPin(id, i, false);
+                } catch (OtpSourceException ignored) {
+                }
+            }
+
+            if (newListRequired) {
+                // Make the list display the data from the newly created array
+                // of accounts
+                // This forces the list to scroll to top.
+                mUserAdapter = new PinListAdapter(this, R.layout.user_row, mUsers);
+                mUserList.setAdapter(mUserAdapter);
+            }
+
+            mUserAdapter.notifyDataSetChanged();
+
+            if (mUserList.getVisibility() != View.VISIBLE) {
+                mUserList.setVisibility(View.VISIBLE);
+                registerForContextMenu(mUserList);
+            }
+        } else {
+            mUsers = new PinInfo[0]; // clear any existing user PIN state
+            mUserList.setVisibility(View.GONE);
+        }
+
+        // Display the list of accounts if there are accounts, otherwise display
+        // a
+        // different layout explaining the user how this app works and providing
+        // the user with an easy
+        // way to add an account.
+        mContentNoAccounts.setVisibility((mUsers.length > 0) ? View.GONE : View.VISIBLE);
+        mContentAccountsPresent.setVisibility((mUsers.length > 0) ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Computes the PIN and saves it in mUsers. This currently runs in the UI
+     * thread so it should not take more than a second or so. If necessary, we
+     * can move the computation to a background thread.
+     *
+     * @param id
+     *            the user email to display with the PIN
+     * @param position
+     *            the index for the screen of this user and PIN
+     * @param computeHotp
+     *            true if we should increment counter and display new hotp
+     */
+    public void computeAndDisplayPin(Integer id, int position, boolean computeHotp)
+            throws OtpSourceException {
+
+        PinInfo currentPin;
+        if (mUsers[position] != null) {
+            currentPin = mUsers[position]; // existing PinInfo, so we'll update
+                                           // it
+        } else {
+            currentPin = new PinInfo();
+            currentPin.id = id;
+            currentPin.pin = getString(R.string.empty_pin);
+            currentPin.hotpCodeGenerationAllowed = true;
+        }
+
+        OtpType type = mAccountDb.getType(id);
+        currentPin.isHotp = (type == OtpType.HOTP);
+
+        currentPin.user = mAccountDb.getEmail(id);
+
+        if (!currentPin.isHotp || computeHotp) {
+            // Always safe to recompute, because this code path is only
+            // reached if the account is:
+            // - Time-based, in which case getNextCode() does not change state.
+            // - Counter-based (HOTP) and computeHotp is true.
+            currentPin.pin = mOtpProvider.getNextCode(id);
+            currentPin.hotpCodeGenerationAllowed = true;
+        }
+
+        mUsers[position] = currentPin;
+    }
+
+    /**
+     * Parses a secret value from a URI. The format will be:
+     *
+     * otpauth://totp/user@example.com?secret=FFF...
+     * otpauth://hotp/user@example.com?secret=FFF...&counter=123
+     *
+     * @param uri
+     *            The URI containing the secret key
+     * @param confirmBeforeSave
+     *            a boolean to indicate if the user should be prompted for
+     *            confirmation before updating the otp account information.
+     */
+    private void parseSecret(Uri uri, boolean confirmBeforeSave) {
+        final String scheme = uri.getScheme().toLowerCase(Locale.ENGLISH);
+        final String path = uri.getPath();
+        final String authority = uri.getAuthority();
+        final String user;
+        final String secret;
+        final OtpType type;
+        final Integer counter;
+
+        if (!OTP_SCHEME.equals(scheme)) {
+            Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid or missing scheme in uri");
+            showDialog(Utilities.INVALID_QR_CODE);
+            return;
+        }
+
+        if (TOTP.equals(authority)) {
+            type = OtpType.TOTP;
+            counter = AccountDb.DEFAULT_HOTP_COUNTER; // only interesting for
+                                                      // HOTP
+        } else if (HOTP.equals(authority)) {
+            type = OtpType.HOTP;
+            String counterParameter = uri.getQueryParameter(COUNTER_PARAM);
+            if (counterParameter != null) {
+                try {
+                    counter = Integer.parseInt(counterParameter);
+                } catch (NumberFormatException e) {
+                    Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid counter in uri");
+                    showDialog(Utilities.INVALID_QR_CODE);
+                    return;
+                }
+            } else {
+                counter = AccountDb.DEFAULT_HOTP_COUNTER;
+            }
+        } else {
+            Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid or missing authority in uri");
+            showDialog(Utilities.INVALID_QR_CODE);
+            return;
+        }
+
+        user = validateAndGetUserInPath(path);
+        if (user == null) {
+            Log.e(getString(R.string.app_name), LOCAL_TAG + ": Missing user id in uri");
+            showDialog(Utilities.INVALID_QR_CODE);
+            return;
+        }
+
+        secret = uri.getQueryParameter(SECRET_PARAM);
+
+        if (secret == null || secret.length() == 0) {
+            Log.e(getString(R.string.app_name), LOCAL_TAG + ": Secret key not found in URI");
+            showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
+            return;
+        }
+
+        if (AccountDb.getSigningOracle(secret) == null) {
+            Log.e(getString(R.string.app_name), LOCAL_TAG + ": Invalid secret key");
+            showDialog(Utilities.INVALID_SECRET_IN_QR_CODE);
+            return;
+        }
+
+        // TODO: Not sure if this check is needed anymore
+        // if (secret.equals(mAccountDb.getSecret(user)) &&
+        // counter == mAccountDb.getCounter(user) &&
+        // type == mAccountDb.getType(user)) {
+        // return; // nothing to update.
+        // }
+
+        if (confirmBeforeSave) {
+            mSaveKeyDialogParams = new SaveKeyDialogParams(null, user, secret, type, counter);
+            showDialog(DIALOG_ID_SAVE_KEY);
+        } else {
+            saveSecretAndRefreshUserList(null, user, secret, null, type, counter);
+        }
+    }
+
+    private static String validateAndGetUserInPath(String path) {
+        if (path == null || !path.startsWith("/")) {
+            return null;
+        }
+        // path is "/user", so remove leading "/", and trailing white spaces
+        String user = path.substring(1).trim();
+        if (user.length() == 0) {
+            return null; // only white spaces.
+        }
+        return user;
+    }
+
+    /**
+     * Saves the secret key to local storage on the phone and updates the
+     * displayed account list.
+     *
+     * @param id
+     *            the id
+     * @param user
+     *            the user email address. When editing, the new user email.
+     * @param secret
+     *            the secret key
+     * @param originalUser
+     *            If editing, the original user email, otherwise null.
+     * @param type
+     *            hotp vs totp
+     * @param counter
+     *            only important for the hotp type
+     */
+    private void saveSecretAndRefreshUserList(Integer id, String user, String secret,
+            String originalUser, OtpType type, Integer counter) {
+        if (saveSecret(this, id, user, secret, originalUser, type, counter)) {
+            refreshUserList(true);
+        }
+    }
+
+    /**
+     * Saves the secret key to local storage on the phone.
+     *
+     * @param user
+     *            the user email address. When editing, the new user email.
+     * @param secret
+     *            the secret key
+     * @param originalUser
+     *            If editing, the original user email, otherwise null.
+     * @param type
+     *            hotp vs totp
+     * @param counter
+     *            only important for the hotp type
+     *
+     * @return {@code true} if the secret was saved, {@code false} otherwise.
+     */
+    static boolean saveSecret(Context context, Integer id, String user, String secret,
+            String originalUser, OtpType type, Integer counter) {
+        if (originalUser == null) { // new user account
+            originalUser = user;
+        }
+        if (secret != null) {
+            AccountDb accountDb = DependencyInjector.getAccountDb();
+            accountDb.update(id, user, secret, originalUser, type, counter);
+            DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAccountSaved(context,
+                    user);
+            // TODO: Consider having a display message that activities can call
+            // and it
+            // will present a toast with a uniform duration, and perhaps update
+            // status messages (presuming we have a way to remove them after
+            // they
+            // are stale).
+            Toast.makeText(context, R.string.secret_saved, Toast.LENGTH_LONG).show();
+            ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE))
+                    .vibrate(VIBRATE_DURATION);
+            return true;
+        } else {
+            Log.e(LOCAL_TAG, "Trying to save an empty secret key");
+            Toast.makeText(context, R.string.error_empty_secret, Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
+    /** Converts user list ordinal id to user email */
+    private Integer idToDatabaseId(long id) {
+        return mUsers[(int) id].id;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+        Integer id = idToDatabaseId(info.id);
+        String email = mAccountDb.getEmail(id);
+        OtpType type = mAccountDb.getType(id);
+        menu.setHeaderTitle(email);
+        menu.add(0, COPY_TO_CLIPBOARD_ID, 0, R.string.copy_to_clipboard);
+        // Option to display the check-code is only available for HOTP accounts.
+        if (type == OtpType.HOTP) {
+            menu.add(0, CHECK_KEY_VALUE_ID, 0, R.string.check_code_menu_item);
+        }
+        menu.add(0, RENAME_ID, 0, R.string.rename);
+        menu.add(0, REMOVE_ID, 0, R.string.context_menu_remove_account);
+    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -714,438 +750,447 @@ public class AuthenticatorActivity extends TestableActivity {
         }
     }
 
-  private DialogInterface.OnClickListener getRenameClickListener(final Context context,
-      final Integer id, final EditText nameEdit) {
-    return new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int whichButton) {
-        String email = mAccountDb.getEmail(id);
-        String newName = nameEdit.getText().toString();
-        if (newName != email) {
-            saveSecretAndRefreshUserList(id, newName, email,
-                mAccountDb.getSecret(id), mAccountDb.getType(id),
-                mAccountDb.getCounter(id));
-        }
-      }
-    };
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.main, menu);
-    return true;
-  }
-
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		Intent intent;
-		
-		switch (item.getItemId()) {
-		case R.id.add_account:
-			addAccount();
-			return true;
-		case R.id.how_it_works:
-			displayHowItWorksInstructions();
-			return true;
-		case R.id.settings:
-			showSettings();
-			return true;
-		case R.id.export_file:
-			intent = new Intent(this, FileExportActivity.class);
-			startActivity(intent);
-			return true;
-		case R.id.import_file:
-			intent = new Intent(this, FileImportActivity.class);
-			startActivity(intent);
-			return true;
-		}
-
-		return super.onMenuItemSelected(featureId, item);
-	}
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-    Log.i(getString(R.string.app_name), LOCAL_TAG + ": onActivityResult");
-    if (requestCode == SCAN_REQUEST && resultCode == Activity.RESULT_OK) {
-      // Grab the scan results and convert it into a URI
-      String scanResult = (intent != null) ? intent.getStringExtra("SCAN_RESULT") : null;
-      Uri uri = (scanResult != null) ? Uri.parse(scanResult) : null;
-      interpretScanResult(uri, false);
-    }
-  }
-
-  private void displayHowItWorksInstructions() {
-    startActivity(new Intent(this, IntroEnterPasswordActivity.class));
-  }
-
-  private void addAccount() {
-    DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAddAccount(this);
-  }
-
-  private void scanBarcode() {
-    Intent intentScan = new Intent("com.google.zxing.client.android.SCAN");
-    intentScan.putExtra("SCAN_MODE", "QR_CODE_MODE");
-    intentScan.putExtra("SAVE_HISTORY", false);
-    try {
-      startActivityForResult(intentScan, SCAN_REQUEST);
-    } catch (ActivityNotFoundException error) {
-      showDialog(Utilities.DOWNLOAD_DIALOG);
-    }
-  }
-
-  public static Intent getLaunchIntentActionScanBarcode(Context context) {
-    return new Intent(AuthenticatorActivity.ACTION_SCAN_BARCODE)
-        .setComponent(new ComponentName(context, AuthenticatorActivity.class));
-  }
-
-  private void showSettings() {
-    Intent intent = new Intent();
-    intent.setClass(this, SettingsActivity.class);
-    startActivity(intent);
-  }
-
-  /**
-   * Interprets the QR code that was scanned by the user.  Decides whether to
-   * launch the key provisioning sequence or the OTP seed setting sequence.
-   *
-   * @param scanResult a URI holding the contents of the QR scan result
-   * @param confirmBeforeSave a boolean to indicate if the user should be
-   *                          prompted for confirmation before updating the otp
-   *                          account information.
-   */
-  private void interpretScanResult(Uri scanResult, boolean confirmBeforeSave) {
-    if (DependencyInjector.getOptionalFeatures().interpretScanResult(this, scanResult)) {
-      // Scan result consumed by an optional component
-      return;
-    }
-    // The scan result is expected to be a URL that adds an account.
-
-    // If confirmBeforeSave is true, the user has to confirm/reject the action.
-    // We need to ensure that new results are accepted only if the previous ones have been
-    // confirmed/rejected by the user. This is to prevent the attacker from sending multiple results
-    // in sequence to confuse/DoS the user.
-    if (confirmBeforeSave) {
-      if (mSaveKeyIntentConfirmationInProgress) {
-        Log.w(LOCAL_TAG, "Ignoring save key Intent: previous Intent not yet confirmed by user");
-        return;
-      }
-      // No matter what happens below, we'll show a prompt which, once dismissed, will reset the
-      // flag below.
-      mSaveKeyIntentConfirmationInProgress = true;
-    }
-
-    // Sanity check
-    if (scanResult == null) {
-      showDialog(Utilities.INVALID_QR_CODE);
-      return;
-    }
-
-    // See if the URL is an account setup URL containing a shared secret
-    if (OTP_SCHEME.equals(scanResult.getScheme()) && scanResult.getAuthority() != null) {
-      parseSecret(scanResult, confirmBeforeSave);
-    } else {
-      showDialog(Utilities.INVALID_QR_CODE);
-    }
-  }
-
-  /**
-   * This method is deprecated in SDK level 8, but we have to use it because the
-   * new method, which replaces this one, does not exist before SDK level 8
-   */
-  @Override
-  protected Dialog onCreateDialog(final int id) {
-    Dialog dialog = null;
-    switch(id) {
-      /**
-       * Prompt to download ZXing from Market. If Market app is not installed,
-       * such as on a development phone, open the HTTPS URI for the ZXing apk.
-       */
-      case Utilities.DOWNLOAD_DIALOG:
-        AlertDialog.Builder dlBuilder = new AlertDialog.Builder(this);
-        dlBuilder.setTitle(R.string.install_dialog_title);
-        dlBuilder.setMessage(R.string.install_dialog_message);
-        dlBuilder.setIcon(android.R.drawable.ic_dialog_alert);
-        dlBuilder.setPositiveButton(R.string.install_button,
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int whichButton) {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                                           Uri.parse(Utilities.ZXING_MARKET));
-                try {
-                  startActivity(intent);
+    private DialogInterface.OnClickListener getRenameClickListener(final Context context,
+            final Integer id, final EditText nameEdit) {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String email = mAccountDb.getEmail(id);
+                String newName = nameEdit.getText().toString();
+                if (newName != email) {
+                    saveSecretAndRefreshUserList(id, newName, mAccountDb.getSecret(id), email, 
+                            mAccountDb.getType(id), mAccountDb.getCounter(id));
                 }
-                catch (ActivityNotFoundException e) { // if no Market app
-                  intent = new Intent(Intent.ACTION_VIEW,
-                                      Uri.parse(Utilities.ZXING_DIRECT));
-                  startActivity(intent);
-                }
-              }
             }
-        );
-        dlBuilder.setNegativeButton(R.string.cancel, null);
-        dialog = dlBuilder.create();
-        break;
-
-      case DIALOG_ID_SAVE_KEY:
-        final SaveKeyDialogParams saveKeyDialogParams = mSaveKeyDialogParams;
-        dialog = new AlertDialog.Builder(this)
-            .setTitle(R.string.save_key_message)
-            .setMessage(saveKeyDialogParams.user)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setPositiveButton(R.string.ok,
-                new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                  saveSecretAndRefreshUserList(
-                      saveKeyDialogParams.id,
-                      saveKeyDialogParams.user,
-                      saveKeyDialogParams.secret,
-                      null,
-                      saveKeyDialogParams.type,
-                      saveKeyDialogParams.counter);
-                }
-              })
-            .setNegativeButton(R.string.cancel, null)
-            .create();
-        // Ensure that whenever this dialog is to be displayed via showDialog, it displays the
-        // correct (latest) user/account name. If this dialog is not explicitly removed after it's
-        // been dismissed, then next time showDialog is invoked, onCreateDialog will not be invoked
-        // and the dialog will display the previous user/account name instead of the current one.
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-          @Override
-          public void onDismiss(DialogInterface dialog) {
-            removeDialog(id);
-            onSaveKeyIntentConfirmationPromptDismissed();
-          }
-        });
-        break;
-
-      case Utilities.INVALID_QR_CODE:
-        dialog = createOkAlertDialog(R.string.error_title, R.string.error_qr,
-            android.R.drawable.ic_dialog_alert);
-        markDialogAsResultOfSaveKeyIntent(dialog);
-        break;
-
-      case Utilities.INVALID_SECRET_IN_QR_CODE:
-        dialog = createOkAlertDialog(
-            R.string.error_title, R.string.error_uri, android.R.drawable.ic_dialog_alert);
-        markDialogAsResultOfSaveKeyIntent(dialog);
-        break;
-
-      default:
-        dialog =
-            DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreateDialog(this, id);
-        if (dialog == null) {
-          dialog = super.onCreateDialog(id);
-        }
-        break;
-    }
-    return dialog;
-  }
-
-  private void markDialogAsResultOfSaveKeyIntent(Dialog dialog) {
-    dialog.setOnDismissListener(new OnDismissListener() {
-      @Override
-      public void onDismiss(DialogInterface dialog) {
-        onSaveKeyIntentConfirmationPromptDismissed();
-      }
-    });
-  }
-
-  /**
-   * Invoked when a user-visible confirmation prompt for the Intent to add a new account has been
-   * dimissed.
-   */
-  private void onSaveKeyIntentConfirmationPromptDismissed() {
-    mSaveKeyIntentConfirmationInProgress = false;
-  }
-
-  /**
-   * Create dialog with supplied ids; icon is not set if iconId is 0.
-   */
-  private Dialog createOkAlertDialog(int titleId, int messageId, int iconId) {
-    return new AlertDialog.Builder(this)
-        .setTitle(titleId)
-        .setMessage(messageId)
-        .setIcon(iconId)
-        .setPositiveButton(R.string.ok, null)
-        .create();
-  }
-
-  /**
-   * A tuple of user, OTP value, and type, that represents a particular user.
-   *
-   * @author adhintz@google.com (Drew Hintz)
-   */
-  private static class PinInfo {
-    private Integer id;
-    private String pin; // calculated OTP, or a placeholder if not calculated
-    private String user;
-    private boolean isHotp = false; // used to see if button needs to be displayed
-
-    /** HOTP only: Whether code generation is allowed for this account. */
-    private boolean hotpCodeGenerationAllowed;
-  }
-
-
-  /** Scale to use for the text displaying the PIN numbers. */
-  private static final float PIN_TEXT_SCALEX_NORMAL = 1.0f;
-  /** Underscores are shown slightly smaller. */
-  private static final float PIN_TEXT_SCALEX_UNDERSCORE = 0.87f;
-
-  /**
-   * Listener for the Button that generates the next OTP value.
-   *
-   * @author adhintz@google.com (Drew Hintz)
-   */
-  private class NextOtpButtonListener implements OnClickListener {
-    private final Handler mHandler = new Handler();
-    private final PinInfo mAccount;
-
-    private NextOtpButtonListener(PinInfo account) {
-      mAccount = account;
+        };
     }
 
     @Override
-    public void onClick(View v) {
-      int position = findAccountPositionInList();
-      if (position == -1) {
-        throw new RuntimeException("Account not in list: " + mAccount);
-      }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-      try {
-        computeAndDisplayPin(mAccount.id, position, true);
-      } catch (OtpSourceException e) {
-        DependencyInjector.getOptionalFeatures().onAuthenticatorActivityGetNextOtpFailed(
-            AuthenticatorActivity.this, mAccount.user, e);
-        return;
-      }
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        Intent intent;
 
-      final String pin = mAccount.pin;
+        switch (item.getItemId()) {
+        case R.id.add_account:
+            addAccount();
+            return true;
+        case R.id.how_it_works:
+            displayHowItWorksInstructions();
+            return true;
+        case R.id.settings:
+            showSettings();
+            return true;
+        case R.id.export_file:
+            intent = new Intent(this, FileExportActivity.class);
+            startActivity(intent);
+            return true;
+        case R.id.import_file:
+            intent = new Intent(this, FileImportActivity.class);
+            startActivity(intent);
+            return true;
+        }
 
-      // Temporarily disable code generation for this account
-      mAccount.hotpCodeGenerationAllowed = false;
-      mUserAdapter.notifyDataSetChanged();
-      // The delayed operation below will be invoked once code generation is yet again allowed for
-      // this account. The delay is in wall clock time (monotonically increasing) and is thus not
-      // susceptible to system time jumps.
-      mHandler.postDelayed(
-          new Runnable() {
-            @Override
-            public void run() {
-              mAccount.hotpCodeGenerationAllowed = true;
-              mUserAdapter.notifyDataSetChanged();
-            }
-          },
-          HOTP_MIN_TIME_INTERVAL_BETWEEN_CODES);
-      // The delayed operation below will hide this OTP to prevent the user from seeing this OTP
-      // long after it's been generated (and thus hopefully used).
-      mHandler.postDelayed(
-          new Runnable() {
-            @Override
-            public void run() {
-              if (!pin.equals(mAccount.pin)) {
-                return;
-              }
-              mAccount.pin = getString(R.string.empty_pin);
-              mUserAdapter.notifyDataSetChanged();
-            }
-          },
-          HOTP_DISPLAY_TIMEOUT);
+        return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.i(getString(R.string.app_name), LOCAL_TAG + ": onActivityResult");
+        if (requestCode == SCAN_REQUEST && resultCode == Activity.RESULT_OK) {
+            // Grab the scan results and convert it into a URI
+            String scanResult = (intent != null) ? intent.getStringExtra("SCAN_RESULT") : null;
+            Uri uri = (scanResult != null) ? Uri.parse(scanResult) : null;
+            interpretScanResult(uri, false);
+        }
+    }
+
+    private void displayHowItWorksInstructions() {
+        startActivity(new Intent(this, IntroEnterPasswordActivity.class));
+    }
+
+    private void addAccount() {
+        DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAddAccount(this);
+    }
+
+    private void scanBarcode() {
+        Intent intentScan = new Intent("com.google.zxing.client.android.SCAN");
+        intentScan.putExtra("SCAN_MODE", "QR_CODE_MODE");
+        intentScan.putExtra("SAVE_HISTORY", false);
+        try {
+            startActivityForResult(intentScan, SCAN_REQUEST);
+        } catch (ActivityNotFoundException error) {
+            showDialog(Utilities.DOWNLOAD_DIALOG);
+        }
+    }
+
+    public static Intent getLaunchIntentActionScanBarcode(Context context) {
+        return new Intent(AuthenticatorActivity.ACTION_SCAN_BARCODE)
+                .setComponent(new ComponentName(context, AuthenticatorActivity.class));
+    }
+
+    private void showSettings() {
+        Intent intent = new Intent();
+        intent.setClass(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     /**
-     * Gets the position in the account list of the account this listener is associated with.
+     * Interprets the QR code that was scanned by the user. Decides whether to
+     * launch the key provisioning sequence or the OTP seed setting sequence.
      *
-     * @return {@code 0}-based position or {@code -1} if the account is not in the list.
+     * @param scanResult
+     *            a URI holding the contents of the QR scan result
+     * @param confirmBeforeSave
+     *            a boolean to indicate if the user should be prompted for
+     *            confirmation before updating the otp account information.
      */
-    private int findAccountPositionInList() {
-      for (int i = 0, len = mUsers.length; i < len; i++) {
-        if (mUsers[i] == mAccount) {
-          return i;
+    private void interpretScanResult(Uri scanResult, boolean confirmBeforeSave) {
+        if (DependencyInjector.getOptionalFeatures().interpretScanResult(this, scanResult)) {
+            // Scan result consumed by an optional component
+            return;
         }
-      }
+        // The scan result is expected to be a URL that adds an account.
 
-      return -1;
-    }
-  }
+        // If confirmBeforeSave is true, the user has to confirm/reject the
+        // action.
+        // We need to ensure that new results are accepted only if the previous
+        // ones have been
+        // confirmed/rejected by the user. This is to prevent the attacker from
+        // sending multiple results
+        // in sequence to confuse/DoS the user.
+        if (confirmBeforeSave) {
+            if (mSaveKeyIntentConfirmationInProgress) {
+                Log.w(LOCAL_TAG,
+                        "Ignoring save key Intent: previous Intent not yet confirmed by user");
+                return;
+            }
+            // No matter what happens below, we'll show a prompt which, once
+            // dismissed, will reset the
+            // flag below.
+            mSaveKeyIntentConfirmationInProgress = true;
+        }
 
-  /**
-   * Displays the list of users and the current OTP values.
-   *
-   * @author adhintz@google.com (Drew Hintz)
-   */
-  private class PinListAdapter extends ArrayAdapter<PinInfo>  {
+        // Sanity check
+        if (scanResult == null) {
+            showDialog(Utilities.INVALID_QR_CODE);
+            return;
+        }
 
-    public PinListAdapter(Context context, int userRowId, PinInfo[] items) {
-      super(context, userRowId, items);
+        // See if the URL is an account setup URL containing a shared secret
+        if (OTP_SCHEME.equals(scanResult.getScheme()) && scanResult.getAuthority() != null) {
+            parseSecret(scanResult, confirmBeforeSave);
+        } else {
+            showDialog(Utilities.INVALID_QR_CODE);
+        }
     }
 
     /**
-     * Displays the user and OTP for the specified position. For HOTP, displays
-     * the button for generating the next OTP value; for TOTP, displays the countdown indicator.
+     * This method is deprecated in SDK level 8, but we have to use it because
+     * the new method, which replaces this one, does not exist before SDK level
+     * 8
      */
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-     LayoutInflater inflater = getLayoutInflater();
-     PinInfo currentPin = getItem(position);
+    protected Dialog onCreateDialog(final int id) {
+        Dialog dialog = null;
+        switch (id) {
+        /**
+         * Prompt to download ZXing from Market. If Market app is not installed,
+         * such as on a development phone, open the HTTPS URI for the ZXing apk.
+         */
+        case Utilities.DOWNLOAD_DIALOG:
+            AlertDialog.Builder dlBuilder = new AlertDialog.Builder(this);
+            dlBuilder.setTitle(R.string.install_dialog_title);
+            dlBuilder.setMessage(R.string.install_dialog_message);
+            dlBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+            dlBuilder.setPositiveButton(R.string.install_button,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri
+                                    .parse(Utilities.ZXING_MARKET));
+                            try {
+                                startActivity(intent);
+                            } catch (ActivityNotFoundException e) { // if no
+                                                                    // Market
+                                                                    // app
+                                intent = new Intent(Intent.ACTION_VIEW, Uri
+                                        .parse(Utilities.ZXING_DIRECT));
+                                startActivity(intent);
+                            }
+                        }
+                    });
+            dlBuilder.setNegativeButton(R.string.cancel, null);
+            dialog = dlBuilder.create();
+            break;
 
-     View row;
-     if (convertView != null) {
-       // Reuse an existing view
-       row = convertView;
-     } else {
-       // Create a new view
-       row = inflater.inflate(R.layout.user_row, null);
-     }
-     TextView pinView = (TextView) row.findViewById(R.id.pin_value);
-     TextView userView = (TextView) row.findViewById(R.id.current_user);
-     View buttonView = row.findViewById(R.id.next_otp);
-     CountdownIndicator countdownIndicator =
-         (CountdownIndicator) row.findViewById(R.id.countdown_icon);
+        case DIALOG_ID_SAVE_KEY:
+            final SaveKeyDialogParams saveKeyDialogParams = mSaveKeyDialogParams;
+            dialog = new AlertDialog.Builder(this).setTitle(R.string.save_key_message)
+                    .setMessage(saveKeyDialogParams.user)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            saveSecretAndRefreshUserList(saveKeyDialogParams.id,
+                                    saveKeyDialogParams.user, saveKeyDialogParams.secret, null,
+                                    saveKeyDialogParams.type, saveKeyDialogParams.counter);
+                        }
+                    }).setNegativeButton(R.string.cancel, null).create();
+            // Ensure that whenever this dialog is to be displayed via
+            // showDialog, it displays the
+            // correct (latest) user/account name. If this dialog is not
+            // explicitly removed after it's
+            // been dismissed, then next time showDialog is invoked,
+            // onCreateDialog will not be invoked
+            // and the dialog will display the previous user/account name
+            // instead of the current one.
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    removeDialog(id);
+                    onSaveKeyIntentConfirmationPromptDismissed();
+                }
+            });
+            break;
 
-     if (currentPin.isHotp) {
-       buttonView.setVisibility(View.VISIBLE);
-       buttonView.setEnabled(currentPin.hotpCodeGenerationAllowed);
-       ((ViewGroup) row).setDescendantFocusability(
-           ViewGroup.FOCUS_BLOCK_DESCENDANTS); // makes long press work
-       NextOtpButtonListener clickListener = new NextOtpButtonListener(currentPin);
-       buttonView.setOnClickListener(clickListener);
-       row.setTag(clickListener);
+        case Utilities.INVALID_QR_CODE:
+            dialog = createOkAlertDialog(R.string.error_title, R.string.error_qr,
+                    android.R.drawable.ic_dialog_alert);
+            markDialogAsResultOfSaveKeyIntent(dialog);
+            break;
 
-       countdownIndicator.setVisibility(View.GONE);
-     } else { // TOTP, so no button needed
-       buttonView.setVisibility(View.GONE);
-       buttonView.setOnClickListener(null);
-       row.setTag(null);
+        case Utilities.INVALID_SECRET_IN_QR_CODE:
+            dialog = createOkAlertDialog(R.string.error_title, R.string.error_uri,
+                    android.R.drawable.ic_dialog_alert);
+            markDialogAsResultOfSaveKeyIntent(dialog);
+            break;
 
-       countdownIndicator.setVisibility(View.VISIBLE);
-       countdownIndicator.setPhase(mTotpCountdownPhase);
-     }
-
-     if (getString(R.string.empty_pin).equals(currentPin.pin)) {
-       pinView.setTextScaleX(PIN_TEXT_SCALEX_UNDERSCORE); // smaller gap between underscores
-     } else {
-       pinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
-     }
-     pinView.setText(currentPin.pin);
-     userView.setText(currentPin.user);
-
-     return row;
+        default:
+            dialog = DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreateDialog(
+                    this, id);
+            if (dialog == null) {
+                dialog = super.onCreateDialog(id);
+            }
+            break;
+        }
+        return dialog;
     }
-  }
 
-  /**
-   * Parameters to the {@link AuthenticatorActivity#DIALOG_ID_SAVE_KEY} dialog.
-   */
+    private void markDialogAsResultOfSaveKeyIntent(Dialog dialog) {
+        dialog.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                onSaveKeyIntentConfirmationPromptDismissed();
+            }
+        });
+    }
+
+    /**
+     * Invoked when a user-visible confirmation prompt for the Intent to add a
+     * new account has been dimissed.
+     */
+    private void onSaveKeyIntentConfirmationPromptDismissed() {
+        mSaveKeyIntentConfirmationInProgress = false;
+    }
+
+    /**
+     * Create dialog with supplied ids; icon is not set if iconId is 0.
+     */
+    private Dialog createOkAlertDialog(int titleId, int messageId, int iconId) {
+        return new AlertDialog.Builder(this).setTitle(titleId).setMessage(messageId)
+                .setIcon(iconId).setPositiveButton(R.string.ok, null).create();
+    }
+
+    /**
+     * A tuple of user, OTP value, and type, that represents a particular user.
+     *
+     * @author adhintz@google.com (Drew Hintz)
+     */
+    private static class PinInfo {
+        private Integer id;
+        private String pin; // calculated OTP, or a placeholder if not
+                            // calculated
+        private String user;
+        private boolean isHotp = false; // used to see if button needs to be
+                                        // displayed
+
+        /** HOTP only: Whether code generation is allowed for this account. */
+        private boolean hotpCodeGenerationAllowed;
+    }
+
+    /** Scale to use for the text displaying the PIN numbers. */
+    private static final float PIN_TEXT_SCALEX_NORMAL = 1.0f;
+    /** Underscores are shown slightly smaller. */
+    private static final float PIN_TEXT_SCALEX_UNDERSCORE = 0.87f;
+
+    /**
+     * Listener for the Button that generates the next OTP value.
+     *
+     * @author adhintz@google.com (Drew Hintz)
+     */
+    private class NextOtpButtonListener implements OnClickListener {
+        private final Handler mHandler = new Handler();
+        private final PinInfo mAccount;
+
+        private NextOtpButtonListener(PinInfo account) {
+            mAccount = account;
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = findAccountPositionInList();
+            if (position == -1) {
+                throw new RuntimeException("Account not in list: " + mAccount);
+            }
+
+            try {
+                computeAndDisplayPin(mAccount.id, position, true);
+            } catch (OtpSourceException e) {
+                DependencyInjector.getOptionalFeatures().onAuthenticatorActivityGetNextOtpFailed(
+                        AuthenticatorActivity.this, mAccount.user, e);
+                return;
+            }
+
+            final String pin = mAccount.pin;
+
+            // Temporarily disable code generation for this account
+            mAccount.hotpCodeGenerationAllowed = false;
+            mUserAdapter.notifyDataSetChanged();
+            // The delayed operation below will be invoked once code generation
+            // is yet again allowed for
+            // this account. The delay is in wall clock time (monotonically
+            // increasing) and is thus not
+            // susceptible to system time jumps.
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mAccount.hotpCodeGenerationAllowed = true;
+                    mUserAdapter.notifyDataSetChanged();
+                }
+            }, HOTP_MIN_TIME_INTERVAL_BETWEEN_CODES);
+            // The delayed operation below will hide this OTP to prevent the
+            // user from seeing this OTP
+            // long after it's been generated (and thus hopefully used).
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!pin.equals(mAccount.pin)) {
+                        return;
+                    }
+                    mAccount.pin = getString(R.string.empty_pin);
+                    mUserAdapter.notifyDataSetChanged();
+                }
+            }, HOTP_DISPLAY_TIMEOUT);
+        }
+
+        /**
+         * Gets the position in the account list of the account this listener is
+         * associated with.
+         *
+         * @return {@code 0}-based position or {@code -1} if the account is not
+         *         in the list.
+         */
+        private int findAccountPositionInList() {
+            for (int i = 0, len = mUsers.length; i < len; i++) {
+                if (mUsers[i] == mAccount) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+    }
+
+    /**
+     * Displays the list of users and the current OTP values.
+     *
+     * @author adhintz@google.com (Drew Hintz)
+     */
+    private class PinListAdapter extends ArrayAdapter<PinInfo> {
+
+        public PinListAdapter(Context context, int userRowId, PinInfo[] items) {
+            super(context, userRowId, items);
+        }
+
+        /**
+         * Displays the user and OTP for the specified position. For HOTP,
+         * displays the button for generating the next OTP value; for TOTP,
+         * displays the countdown indicator.
+         */
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = getLayoutInflater();
+            PinInfo currentPin = getItem(position);
+
+            View row;
+            if (convertView != null) {
+                // Reuse an existing view
+                row = convertView;
+            } else {
+                // Create a new view
+                row = inflater.inflate(R.layout.user_row, null);
+            }
+            TextView pinView = (TextView) row.findViewById(R.id.pin_value);
+            TextView userView = (TextView) row.findViewById(R.id.current_user);
+            View buttonView = row.findViewById(R.id.next_otp);
+            CountdownIndicator countdownIndicator = (CountdownIndicator) row
+                    .findViewById(R.id.countdown_icon);
+
+            if (currentPin.isHotp) {
+                buttonView.setVisibility(View.VISIBLE);
+                buttonView.setEnabled(currentPin.hotpCodeGenerationAllowed);
+                ((ViewGroup) row).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS); // makes
+                                                                                                // long
+                                                                                                // press
+                                                                                                // work
+                NextOtpButtonListener clickListener = new NextOtpButtonListener(currentPin);
+                buttonView.setOnClickListener(clickListener);
+                row.setTag(clickListener);
+
+                countdownIndicator.setVisibility(View.GONE);
+            } else { // TOTP, so no button needed
+                buttonView.setVisibility(View.GONE);
+                buttonView.setOnClickListener(null);
+                row.setTag(null);
+
+                countdownIndicator.setVisibility(View.VISIBLE);
+                countdownIndicator.setPhase(mTotpCountdownPhase);
+            }
+
+            if (getString(R.string.empty_pin).equals(currentPin.pin)) {
+                pinView.setTextScaleX(PIN_TEXT_SCALEX_UNDERSCORE); // smaller
+                                                                   // gap
+                                                                   // between
+                                                                   // underscores
+            } else {
+                pinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
+            }
+            pinView.setText(currentPin.pin);
+            userView.setText(currentPin.user);
+
+            return row;
+        }
+    }
+
+    /**
+     * Parameters to the {@link AuthenticatorActivity#DIALOG_ID_SAVE_KEY}
+     * dialog.
+     */
     private static class SaveKeyDialogParams implements Serializable {
+        private static final long serialVersionUID = -6059139391171206441L;
         private final Integer id;
         private final String user;
         private final String secret;
         private final OtpType type;
         private final Integer counter;
 
-        private SaveKeyDialogParams(Integer id, String user, String secret, OtpType type, Integer counter) {
+        private SaveKeyDialogParams(Integer id, String user, String secret, OtpType type,
+                Integer counter) {
             this.id = id;
             this.user = user;
             this.secret = secret;
