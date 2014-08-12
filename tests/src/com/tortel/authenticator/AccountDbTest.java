@@ -70,7 +70,7 @@ public class AccountDbTest extends  AndroidTestCase {
   }
 
   public void testNoRecords() throws Exception {
-    assertEquals(0, accountDb.getNames(result));
+    assertEquals(0, accountDb.getIds(result));
     assertEquals(0, result.size());
     assertEquals(false, accountDb.nameExists("johndoe@gmail.com"));
     assertEquals(null, accountDb.getSecret("johndoe@gmail.com"));
@@ -78,7 +78,7 @@ public class AccountDbTest extends  AndroidTestCase {
 
   public void testGetNames() throws Exception {
     addSomeRecords();
-    accountDb.getNames(result);
+    accountDb.getIds(result);
     MoreAsserts.assertContentsInAnyOrder(result,
         "johndoe@gmail.com", "amywinehouse@aol.com", "maryweiss@yahoo.com");
 
@@ -136,7 +136,7 @@ public class AccountDbTest extends  AndroidTestCase {
   public void testDelete() throws Exception {
     addSomeRecords();
     accountDb.delete("johndoe@gmail.com");
-    assertEquals(2, accountDb.getNames(result));
+    assertEquals(2, accountDb.getIds(result));
     assertFalse(accountDb.nameExists("johndoe@gmail.com"));
     // re-add johndoe.
     accountDb.update("johndoe@gmail.com", SECRET, "johndoe@gmail.com", OtpType.TOTP, null);
@@ -147,19 +147,19 @@ public class AccountDbTest extends  AndroidTestCase {
     addSomeRecords();
     // check updates with existing records - that it doesn't increase the records.
     accountDb.update("johndoe@gmail.com", SECRET, "johndoe@gmail.com", OtpType.TOTP, null);
-    accountDb.getNames(result);
+    accountDb.getIds(result);
     MoreAsserts.assertContentsInAnyOrder(result,
         "johndoe@gmail.com", "amywinehouse@aol.com", "maryweiss@yahoo.com");
     // add new record.
     accountDb.update("johndoenew@gmail.com", SECRET, "johndoe@gmail.com", OtpType.TOTP, null);
     result.clear();
-    accountDb.getNames(result);
+    accountDb.getIds(result);
     MoreAsserts.assertContentsInAnyOrder(result,
         "johndoenew@gmail.com", "amywinehouse@aol.com", "maryweiss@yahoo.com");
     // re-update with the original name
     accountDb.update("johndoe@gmail.com", SECRET, "johndoenew@gmail.com", OtpType.TOTP, null);
     result.clear();
-    accountDb.getNames(result);
+    accountDb.getIds(result);
     MoreAsserts.assertContentsInAnyOrder(result,
         "johndoe@gmail.com", "amywinehouse@aol.com", "maryweiss@yahoo.com");
   }

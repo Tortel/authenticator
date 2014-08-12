@@ -119,7 +119,7 @@ public class EnterKeyActivityTest extends ActivityInstrumentationTestCase2<Enter
     // save
     TestUtilities.clickView(mInstr, mSubmitButton);
     // check activity's resulting update of database.
-    assertEquals(1, mAccountDb.getNames(result));
+    assertEquals(1, mAccountDb.getIds(result));
     MoreAsserts.assertContentsInOrder(result, "johndoe@gmail.com");
     assertEquals(type, mAccountDb.getType("johndoe@gmail.com"));
     assertEquals(0, mAccountDb.getCounter("johndoe@gmail.com").intValue());
@@ -161,7 +161,7 @@ public class EnterKeyActivityTest extends ActivityInstrumentationTestCase2<Enter
     // submit short key, and verify no updates to database and check status msg.
     TestUtilities.clickView(getInstrumentation(), mSubmitButton);
     assertFalse(mActivity.isFinishing());
-    assertEquals(0, mAccountDb.getNames(result));
+    assertEquals(0, mAccountDb.getIds(result));
     assertEquals(mActivity.getString(R.string.enter_key_too_short), mKeyEntryField.getError());
     // check key field is unchanged.
     assertEquals("77777", mKeyEntryField.getText().toString());
@@ -171,7 +171,7 @@ public class EnterKeyActivityTest extends ActivityInstrumentationTestCase2<Enter
         TestUtilities.setText(mInstr, mKeyEntryField, ""));
     TestUtilities.clickView(getInstrumentation(), mSubmitButton);
     assertFalse(mActivity.isFinishing());
-    assertEquals(0, mAccountDb.getNames(result));
+    assertEquals(0, mAccountDb.getIds(result));
     assertEquals(mActivity.getString(R.string.enter_key_too_short), mKeyEntryField.getError());
   }
 
@@ -187,7 +187,7 @@ public class EnterKeyActivityTest extends ActivityInstrumentationTestCase2<Enter
     assertEquals("",
         TestUtilities.setText(mInstr, mAccountName, ""));
     TestUtilities.clickView(mInstr, mSubmitButton);
-    assertEquals(1, mAccountDb.getNames(result));
+    assertEquals(1, mAccountDb.getIds(result));
     assertEquals("7777777777777777", mAccountDb.getSecret(""));
   }
 
@@ -203,7 +203,7 @@ public class EnterKeyActivityTest extends ActivityInstrumentationTestCase2<Enter
     assertEquals(",,",
         TestUtilities.setText(mInstr, mAccountName, ",,"));
     TestUtilities.clickView(getInstrumentation(), mSubmitButton);
-    assertEquals(1, mAccountDb.getNames(result));
+    assertEquals(1, mAccountDb.getIds(result));
     assertEquals("7777777777777777", mAccountDb.getSecret(",,"));
   }
 }

@@ -227,7 +227,7 @@ public class AuthenticatorActivityTest extends
     // check main  screen gets focus back;
     TestUtilities.waitForWindowFocus(listEntry0);
     // check that account is deleted in database.
-    assertEquals(0, mAccountDb.getNames(new ArrayList<String>()));
+    assertEquals(0, mAccountDb.getIds(new ArrayList<String>()));
   }
 
   public void testContextMenuRename() throws Exception {
@@ -251,7 +251,7 @@ public class AuthenticatorActivityTest extends
     TestUtilities.waitForWindowFocus(listEntry0);
     // check update to database.
     List<String> accountNames = new ArrayList<String>();
-    assertEquals(1, mAccountDb.getNames(accountNames));
+    assertEquals(1, mAccountDb.getIds(accountNames));
     assertEquals("newname@gmail.com", accountNames.get(0));
   }
 
