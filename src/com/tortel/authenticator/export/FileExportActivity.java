@@ -42,7 +42,7 @@ public class FileExportActivity extends Activity {
         }
     }
     
-    private class ExportTask extends AsyncTask<Void, Integer, String>{
+    private class ExportTask extends AsyncTask<Void, Integer, Integer>{
         private AccountDb accountDb;
         private AccountContainer container;
         private String key;
@@ -51,15 +51,13 @@ public class FileExportActivity extends Activity {
             this.key = key;
         }
         
+        @Override
         protected void onPreExecute(){
             accountDb = DependencyInjector.getAccountDb();
         }
 
-        /* (non-Javadoc)
-         * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
-         */
         @Override
-        protected String doInBackground(Void... params) {
+        protected Integer doInBackground(Void... params) {
             container = AccountContainer.prepareExport(accountDb);
             
             try {
@@ -72,26 +70,26 @@ public class FileExportActivity extends Activity {
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return e.getMessage();
+				return R.string.error_processing;
 			} catch (InvalidKeyException e) {
-				// TODO: Umm, its writing the data, why would the key be wrong?
 				e.printStackTrace();
-				return e.getMessage();
+				return R.string.error_unknown;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return e.getMessage();
+				return R.string.error_unknown;
 			}
             
             return null;
         }
         
-        protected void onPostExecute(String result){
+        @Override
+        protected void onPostExecute(Integer result){
         	if(result != null){
         		Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         	} else {
-        		Toast.makeText(getBaseContext(), "Done!", Toast.LENGTH_SHORT).show();
-        		FileExportActivity.this.finish();
+        		Toast.makeText(getBaseContext(), R.string.file_export_done, Toast.LENGTH_SHORT).show();
+        		finish();
         	}
         }
     }

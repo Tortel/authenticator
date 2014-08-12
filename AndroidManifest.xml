@@ -69,7 +69,7 @@
               android:label="@string/file_export_title" />
     
     <activity android:name="com.tortel.authenticator.export.FileImportActivity"
-              android:label="@string/file_export_title" />
+              android:label="@string/file_import_title" />
 
     <activity android:name="com.tortel.authenticator.howitworks.IntroEnterPasswordActivity"
               android:theme="@style/AuthenticatorTheme.NoTitleBar"

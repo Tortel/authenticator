@@ -28,6 +28,8 @@ import android.widget.Toast;
  * Class for handling importing the accounts from a file
  */
 public class FileImportActivity extends Activity {
+    private static final String DIALOG_TAG = "dialog";
+    
     private EditText passPhraseInput;
     private AccountContainer container;
     
@@ -36,7 +38,7 @@ public class FileImportActivity extends Activity {
     
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.file_export);
+        setContentView(R.layout.file_import);
         
        passPhraseInput = (EditText) findViewById(R.id.file_export_pass);
     }
@@ -62,16 +64,23 @@ public class FileImportActivity extends Activity {
         selectedItems = new ArrayList<Account>(accounts);
         
         ImportDialogFragment dialog = new ImportDialogFragment();
-        dialog.show(getFragmentManager(), "dialog");
+        dialog.show(getFragmentManager(), DIALOG_TAG);
     }
     
     private void doImport(){
         AccountDb db = DependencyInjector.getAccountDb();
-        for(Account account : selectedItems){
-            //TODO: Check for possible duplicates
-            Log.v("Tortel", "Importing "+account.getEmail());
-            db.update(null, account.getEmail(), account.getSecret(), account.getType(), account.getCounter());
+        if(selectedItems.size() > 0){
+            for(Account account : selectedItems){
+                //TODO: Check for possible duplicates
+                Log.v("Tortel", "Importing "+account.getEmail());
+                db.update(null, account.getEmail(), account.getSecret(), account.getType(), account.getCounter());
+            }
+            
+            Toast.makeText(this, R.string.import_successful, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.import_no_accounts, Toast.LENGTH_SHORT).show();
         }
+        finish();
     }
     
     public class ImportDialogFragment extends DialogFragment{
@@ -89,7 +98,7 @@ public class FileImportActivity extends Activity {
             
             
             AlertDialog.Builder builder = new AlertDialog.Builder(FileImportActivity.this);
-            builder.setTitle("Import Accounts")
+            builder.setTitle(R.string.import_accounts)
                 .setMultiChoiceItems(accountNames, checked, 
                         new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
@@ -101,13 +110,13 @@ public class FileImportActivity extends Activity {
                                 }
                             }
                         })
-                        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.import_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 doImport();
                             }
                         })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // Do nothing?
@@ -118,7 +127,7 @@ public class FileImportActivity extends Activity {
         }
     }
     
-    private class ExportTask extends AsyncTask<Void, Integer, String>{
+    private class ExportTask extends AsyncTask<Void, Integer, Integer>{
         private String key;
         
         public ExportTask(String key){
@@ -133,7 +142,7 @@ public class FileImportActivity extends Activity {
          * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
          */
         @Override
-        protected String doInBackground(Void... params) {
+        protected Integer doInBackground(Void... params) {
             try {
             	ObjectMapper mapper = new ObjectMapper();
             	
@@ -145,24 +154,24 @@ public class FileImportActivity extends Activity {
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return e.getMessage();
+				return R.string.error_json_parsing;
 			} catch (InvalidKeyException e) {
 				e.printStackTrace();
-				return "Incorrect passphrase";
+				return R.string.error_wrong_pass;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return e.getMessage();
+				return R.string.error_unknown;
 			}
             
             return null;
         }
         
-        protected void onPostExecute(String result){
+        protected void onPostExecute(Integer result){
         	if(result != null){
         		Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         	} else {
-        		Toast.makeText(getBaseContext(), "Loaded backup", Toast.LENGTH_SHORT).show();
+        		Toast.makeText(getBaseContext(), R.string.import_loaded, Toast.LENGTH_SHORT).show();
         		showImportSelection();
         	}
         }

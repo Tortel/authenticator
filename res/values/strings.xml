@@ -298,8 +298,27 @@
   
   <!-- File export strings -->
   <string name="file_export_title">Export to File</string>
-  
   <string name="file_export_info">Blah blah summary</string>
-
+  <string name="file_export_done">Backup finished</string>
+  <string name="export">Export</string>
+  
+  <!-- File import strings -->
   <string name="file_import_title">Import from File</string>
+  <string name="import_file_summary">Import summary. Blah</string>
+  <string name="import_accounts">Import Accounts</string>
+  <string name="import_button">Import</string>
+  <string name="import_loaded">Loaded Backup</string>
+  <string name="import_successful">Import Successful</string>
+  <string name="import_no_accounts">No accounts to import</string>
+  
+  <!-- Both import/export strings -->
+  <string name="passphrase">Passphrase</string>
+  
+  <!-- Import/Export errors -->
+  <string name="error_json_parsing">Error: Malformed backup file</string>
+  <string name="error_wrong_pass">Error: Incorrect passphrase</string>
+  <string name="error_processing">Error processing export</string>
+  <string name="error_unknown">Unknown error occurred</string>
+  
+  
 </resources>
