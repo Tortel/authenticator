@@ -1,8 +1,6 @@
 package com.tortel.authenticator.export;
 
 import java.security.InvalidKeyException;
-import java.util.LinkedList;
-import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +48,6 @@ public class FileExportActivity extends Activity {
         private String key;
         
         public ExportTask(String key){
-            container = new AccountContainer();
             this.key = key;
         }
         
@@ -63,18 +60,7 @@ public class FileExportActivity extends Activity {
          */
         @Override
         protected String doInBackground(Void... params) {
-            List<Integer> ids = new LinkedList<Integer>();
-            accountDb.getIds(ids);
-            
-            for(Integer id : ids){
-                AccountContainer.Account account = new AccountContainer.Account();
-                account.setId(id);
-                account.setSecret(accountDb.getSecret(id));
-                account.setCounter(accountDb.getCounter(id));
-                account.setType(accountDb.getType(id));
-                
-                container.addAccount(account);
-            }
+            container = AccountContainer.prepareExport(accountDb);
             
             try {
             	ObjectMapper mapper = new ObjectMapper();
@@ -105,6 +91,7 @@ public class FileExportActivity extends Activity {
         		Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         	} else {
         		Toast.makeText(getBaseContext(), "Done!", Toast.LENGTH_SHORT).show();
+        		FileExportActivity.this.finish();
         	}
         }
     }

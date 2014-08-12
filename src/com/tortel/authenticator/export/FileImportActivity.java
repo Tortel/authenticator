@@ -1,20 +1,24 @@
 package com.tortel.authenticator.export;
 
 import java.security.InvalidKeyException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
+import com.tortel.authenticator.export.AccountContainer.Account;
 import com.tortel.authenticator.testability.DependencyInjector;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +28,10 @@ import android.widget.Toast;
  */
 public class FileImportActivity extends Activity {
     private EditText passPhraseInput;
+    private AccountContainer container;
+    
+    private List<Account> accounts;
+    private List<Account> selectedItems;
     
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -45,18 +53,76 @@ public class FileImportActivity extends Activity {
         }
     }
     
+    private void showImportSelection(){
+        if(container == null){
+            return;
+        }
+        accounts = container.getAccounts();
+        selectedItems = new ArrayList<Account>(accounts.size());
+        
+        ImportDialogFragment dialog = new ImportDialogFragment();
+        dialog.show(getFragmentManager(), "dialog");
+    }
+    
+    private void doImport(){
+        for(Account account : selectedItems){
+            //TODO: Actually import here
+        }
+    }
+    
+    public class ImportDialogFragment extends DialogFragment{
+        
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState){
+            String[] accountNames = new String[accounts.size()];
+            boolean[] checked = new boolean[accounts.size()];
+            
+            for(int i = 0; i < accounts.size(); i++){
+                Account account = accounts.get(i);
+                accountNames[i] = account.getEmail();
+                checked[i] = true;
+            }
+            
+            
+            AlertDialog.Builder builder = new AlertDialog.Builder(FileImportActivity.this);
+            builder.setTitle("Import Accounts")
+                .setMultiChoiceItems(accountNames, checked, 
+                        new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                if(isChecked){
+                                    selectedItems.add(accounts.get(which));
+                                } else {
+                                    selectedItems.remove(accounts.get(which));
+                                }
+                            }
+                        })
+                        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                doImport();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Do nothing?
+                            }
+                        });
+            return builder.create();
+            
+        }
+    }
+    
     private class ExportTask extends AsyncTask<Void, Integer, String>{
-        private AccountDb accountDb;
-        private AccountContainer container;
         private String key;
         
         public ExportTask(String key){
-            container = new AccountContainer();
             this.key = key;
         }
         
         protected void onPreExecute(){
-            accountDb = DependencyInjector.getAccountDb();
+            // Might not need
         }
 
         /* (non-Javadoc)
@@ -70,19 +136,15 @@ public class FileImportActivity extends Activity {
             	String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/authenticator.bk";
             	String json = EncryptionUtils.readFile(fileName, key);
             	
-            	Log.v("Tortel", json);
-            	
             	container = mapper.readValue(json, AccountContainer.class);
-            	
             	
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return e.getMessage();
 			} catch (InvalidKeyException e) {
-				// TODO: Umm, its writing the data, why would the key be wrong?
 				e.printStackTrace();
-				return e.getMessage();
+				return "Incorrect passphrase";
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -96,7 +158,8 @@ public class FileImportActivity extends Activity {
         	if(result != null){
         		Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
         	} else {
-        		Toast.makeText(getBaseContext(), "Done!", Toast.LENGTH_SHORT).show();
+        		Toast.makeText(getBaseContext(), "Loaded backup", Toast.LENGTH_SHORT).show();
+        		showImportSelection();
         	}
         }
     }

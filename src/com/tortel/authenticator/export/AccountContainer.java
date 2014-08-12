@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.AccountDb.OtpType;
 
 /**
@@ -41,6 +42,30 @@ public class AccountContainer {
 
     public void setVersion(int version) {
         this.version = version;
+    } 
+    
+    /**
+     * Returns a populated container object
+     * @param accountDb
+     * @return
+     */
+    public static AccountContainer prepareExport(AccountDb accountDb){
+        AccountContainer container = new AccountContainer();
+        List<Integer> ids = new LinkedList<Integer>();
+        accountDb.getIds(ids);
+        
+        for(Integer id : ids){
+            AccountContainer.Account account = new AccountContainer.Account();
+            account.setId(id);
+            account.setEmail(accountDb.getEmail(id));
+            account.setSecret(accountDb.getSecret(id));
+            account.setCounter(accountDb.getCounter(id));
+            account.setType(accountDb.getType(id));
+            
+            container.addAccount(account);
+        }
+        
+        return container;
     }
 
     /**
