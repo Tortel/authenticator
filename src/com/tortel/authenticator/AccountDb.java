@@ -381,16 +381,14 @@ public class AccountDb {
 	 *            the user email address. When editing, the new user email.
 	 * @param secret
 	 *            the secret key.
-	 * @param oldEmail
-	 *            If editing, the original user email, otherwise null.
 	 * @param type
 	 *            hotp vs totp
 	 * @param counter
 	 *            only important for the hotp type
 	 */
-	public void update(Integer id, String email, String secret, String oldEmail,
+	public void update(Integer id, String email, String secret,
 			OtpType type, Integer counter) {
-		update(id, email, secret, oldEmail, type, counter, null);
+		update(id, email, secret, type, counter, null);
 	}
 
 	/**
@@ -400,8 +398,6 @@ public class AccountDb {
 	 *            the user email address. When editing, the new user email.
 	 * @param secret
 	 *            the secret key.
-	 * @param oldEmail
-	 *            If editing, the original user email, otherwise null.
 	 * @param type
 	 *            hotp vs totp
 	 * @param counter
@@ -411,7 +407,7 @@ public class AccountDb {
 	 *            preserve the previous value (or use a default if adding a
 	 *            key).
 	 */
-	public void update(Integer id, String email, String secret, String oldEmail,
+	public void update(Integer id, String email, String secret,
 			OtpType type, Integer counter, Boolean googleAccount) {
 		ContentValues values = new ContentValues();
 		values.put(EMAIL_COLUMN, email);

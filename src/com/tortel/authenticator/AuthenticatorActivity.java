@@ -575,7 +575,7 @@ public class AuthenticatorActivity extends TestableActivity {
             mSaveKeyDialogParams = new SaveKeyDialogParams(null, user, secret, type, counter);
             showDialog(DIALOG_ID_SAVE_KEY);
         } else {
-            saveSecretAndRefreshUserList(null, user, secret, null, type, counter);
+            saveSecretAndRefreshUserList(null, user, secret, type, counter);
         }
     }
 
@@ -601,16 +601,14 @@ public class AuthenticatorActivity extends TestableActivity {
      *            the user email address. When editing, the new user email.
      * @param secret
      *            the secret key
-     * @param originalUser
-     *            If editing, the original user email, otherwise null.
      * @param type
      *            hotp vs totp
      * @param counter
      *            only important for the hotp type
      */
     private void saveSecretAndRefreshUserList(Integer id, String user, String secret,
-            String originalUser, OtpType type, Integer counter) {
-        if (saveSecret(this, id, user, secret, originalUser, type, counter)) {
+            OtpType type, Integer counter) {
+        if (saveSecret(this, id, user, secret, type, counter)) {
             refreshUserList(true);
         }
     }
@@ -622,8 +620,6 @@ public class AuthenticatorActivity extends TestableActivity {
      *            the user email address. When editing, the new user email.
      * @param secret
      *            the secret key
-     * @param originalUser
-     *            If editing, the original user email, otherwise null.
      * @param type
      *            hotp vs totp
      * @param counter
@@ -632,13 +628,10 @@ public class AuthenticatorActivity extends TestableActivity {
      * @return {@code true} if the secret was saved, {@code false} otherwise.
      */
     static boolean saveSecret(Context context, Integer id, String user, String secret,
-            String originalUser, OtpType type, Integer counter) {
-        if (originalUser == null) { // new user account
-            originalUser = user;
-        }
+            OtpType type, Integer counter) {
         if (secret != null) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
-            accountDb.update(id, user, secret, originalUser, type, counter);
+            accountDb.update(id, user, secret, type, counter);
             DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAccountSaved(context,
                     user);
             // TODO: Consider having a display message that activities can call
@@ -755,12 +748,9 @@ public class AuthenticatorActivity extends TestableActivity {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
-                String email = mAccountDb.getEmail(id);
                 String newName = nameEdit.getText().toString();
-                if (newName != email) {
-                    saveSecretAndRefreshUserList(id, newName, mAccountDb.getSecret(id), email, 
-                            mAccountDb.getType(id), mAccountDb.getCounter(id));
-                }
+                saveSecretAndRefreshUserList(id, newName, mAccountDb.getSecret(id), 
+                        mAccountDb.getType(id), mAccountDb.getCounter(id));
             }
         };
     }
@@ -937,7 +927,7 @@ public class AuthenticatorActivity extends TestableActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
                             saveSecretAndRefreshUserList(saveKeyDialogParams.id,
-                                    saveKeyDialogParams.user, saveKeyDialogParams.secret, null,
+                                    saveKeyDialogParams.user, saveKeyDialogParams.secret,
                                     saveKeyDialogParams.type, saveKeyDialogParams.counter);
                         }
                     }).setNegativeButton(R.string.cancel, null).create();

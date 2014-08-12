@@ -19,6 +19,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -58,15 +59,18 @@ public class FileImportActivity extends Activity {
             return;
         }
         accounts = container.getAccounts();
-        selectedItems = new ArrayList<Account>(accounts.size());
+        selectedItems = new ArrayList<Account>(accounts);
         
         ImportDialogFragment dialog = new ImportDialogFragment();
         dialog.show(getFragmentManager(), "dialog");
     }
     
     private void doImport(){
+        AccountDb db = DependencyInjector.getAccountDb();
         for(Account account : selectedItems){
-            //TODO: Actually import here
+            //TODO: Check for possible duplicates
+            Log.v("Tortel", "Importing "+account.getEmail());
+            db.update(null, account.getEmail(), account.getSecret(), account.getType(), account.getCounter());
         }
     }
     

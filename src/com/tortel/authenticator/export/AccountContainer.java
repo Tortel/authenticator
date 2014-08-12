@@ -77,9 +77,9 @@ public class AccountContainer {
         private int id;
         private String email;
         private String secret;
-        private int counter;
+        private Integer counter;
         private OtpType type;
-        private int provider;
+        private Integer provider;
         
         @JsonIgnore
         public OtpType getType() {
@@ -118,16 +118,16 @@ public class AccountContainer {
         public void setSecret(String secret) {
             this.secret = secret;
         }
-        public int getCounter() {
+        public Integer getCounter() {
             return counter;
         }
-        public void setCounter(int counter) {
+        public void setCounter(Integer counter) {
             this.counter = counter;
         }
-        public int getProvider() {
+        public Integer getProvider() {
             return provider;
         }
-        public void setProvider(int provider) {
+        public void setProvider(Integer provider) {
             this.provider = provider;
         }
         public int getId() {

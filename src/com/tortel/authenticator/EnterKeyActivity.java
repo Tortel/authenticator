@@ -107,9 +107,7 @@ public class EnterKeyActivity extends WizardPageActivity<Serializable> implement
     if (validateKeyAndUpdateStatus(true)) {
       AuthenticatorActivity.saveSecret(this, null,
           mAccountName.getText().toString(),
-          getEnteredKey(),
-          null,
-          mode,
+          getEnteredKey(), mode,
           AccountDb.DEFAULT_HOTP_COUNTER);
       exitWizard();
     }
