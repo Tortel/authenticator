@@ -298,13 +298,14 @@
   
   <!-- File export strings -->
   <string name="file_export_title">Export to File</string>
-  <string name="file_export_info">Blah blah summary</string>
   <string name="file_export_done">Backup finished</string>
+  <string name="file_export_filename">Enter a name for the backup file. An .abk extension will automatically be applied</string>
+  <string name="file_name">File Name</string>
   <string name="export">Export</string>
   
   <!-- File import strings -->
   <string name="file_import_title">Import from File</string>
-  <string name="import_file_summary">Import summary. Blah</string>
+  <string name="import_passphrase">Enter the passphrase used to encrypt the backup. This is case sensitive.</string>
   <string name="import_accounts">Import Accounts</string>
   <string name="import_button">Import</string>
   <string name="import_loaded">Loaded Backup</string>
@@ -313,6 +314,9 @@
   
   <!-- Both import/export strings -->
   <string name="passphrase">Passphrase</string>
+  <string name="passphrase_info">Create a passphrase to use to encrypt your backup.
+      It must be at least 5 characters and is case sensitive, but the longer it is the more secure it is.\n
+      Try using a passphrase instead of just a password - try combining a few easy to remember words.</string>
   
   <!-- Import/Export errors -->
   <string name="error_json_parsing">Error: Malformed backup file</string>

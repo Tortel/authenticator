@@ -23,16 +23,32 @@
         android:clipToPadding="true"
         android:orientation="vertical" >
 
+        <!-- Passphrase stuff -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/file_export_info" />
+            android:padding="5dip"
+            android:text="@string/passphrase_info" />
 
         <EditText
             android:id="@+id/file_export_pass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/passphrase"
+            android:inputType="textPassword" />
+        
+        <!-- File name stuff -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip"
+            android:text="@string/file_export_filename" />
+        
+        <EditText
+            android:id="@+id/file_export_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/file_name"
             android:inputType="textPassword" />
 
         <Button
