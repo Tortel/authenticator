@@ -15,7 +15,7 @@
 -->
 <resources>
 
-  <style name="AuthenticatorTheme" parent="android:Theme.Holo" >
+  <style name="AuthenticatorTheme" parent="android:Theme.Holo.Light" >
     <item name="accountListWithVerificationCodes">@style/AccountListWithVerificationCodes</item>
     <item name="accountListWithVerificationCodesRowAccountName">@style/AccountListWithVerificationCodesRowAccountName</item>
     <item name="accountListWithVerificationCodesRowVerificationCode">@style/AccountListWithVerificationCodesRowVerificationCode</item>
