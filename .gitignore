@@ -8,3 +8,6 @@ gen/
 *~
 .gradle/
 build/
+.idea/
+authenticator.iml
+
