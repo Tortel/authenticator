@@ -6,3 +6,5 @@ tests/libs/
 gen/
 *.class
 *~
+.gradle/
+build/
