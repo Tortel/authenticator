@@ -15,10 +15,10 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.tortel.authenticator"
-          android:versionCode="1" android:versionName="1.0">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.tortel.authenticator" >
 
-  <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19" />
+  <uses-sdk tools:node="replace" />
 
   <uses-permission android:name="android.permission.VIBRATE" />
   <uses-permission android:name="android.permission.INTERNET" />
