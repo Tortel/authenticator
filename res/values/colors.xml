@@ -16,4 +16,5 @@
 
 <resources>
   <color name="countdown_indicator">@android:color/holo_blue_light</color>
+  <color name="card_bg">#ccc</color>
 </resources>
