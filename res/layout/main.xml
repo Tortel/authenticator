@@ -18,6 +18,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_height="fill_parent" android:layout_width="fill_parent"
+    android:background="@color/snowColor"
     android:clipToPadding="true">
   <ScrollView
     android:layout_width="fill_parent"

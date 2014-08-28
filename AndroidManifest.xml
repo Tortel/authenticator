@@ -33,11 +33,13 @@
                android:icon="@drawable/ic_launcher_authenticator"
                android:theme="@style/AuthenticatorTheme"
                android:name="com.tortel.authenticator.AuthenticatorApplication"
-               android:allowBackup="false">
+               android:allowBackup="false"
+               tools:replace="android:allowBackup">
 
     <activity android:name="com.tortel.authenticator.AuthenticatorActivity"
               android:label="@string/app_name_short"
-              android:launchMode="singleTask">
+              android:launchMode="singleTask"
+              android:theme="@style/AuthenticatorTheme.ColoredActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

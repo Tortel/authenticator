@@ -31,6 +31,16 @@
     <item name="android:windowNoTitle">true</item>
   </style>
 
+    <style name="AuthenticatorTheme.ColoredActionBar" parent="AuthenticatorTheme">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+        parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
+        <item name="android:background">@color/skyBlueColor</item>
+    </style>
+
   <style name="AccountListWithVerificationCodes">
     <item name="android:dividerHeight">1dip</item>
   </style>
