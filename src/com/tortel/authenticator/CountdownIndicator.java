@@ -34,85 +34,97 @@ import android.view.View;
  * @author klyubin@google.com (Alex Klyubin)
  */
 public class CountdownIndicator extends View {
-  private final Paint mRemainingSectorPaint;
-  private final Paint mBorderPaint;
-  private static final int DEFAULT_COLOR = 0xff3060c0;
+    private static final int DEFAULT_BG_COLOR = 0xffffff;
+    private final Paint mBackgroundPaint;
+    private final Paint mRemainingSectorPaint;
+    // private final Paint mBorderPaint;
+    private static final int DEFAULT_COLOR = 0xff3060c0;
 
-  /**
-   * Countdown phase starting with {@code 1} when a full cycle is remaining and shrinking to
-   * {@code 0} the closer the countdown is to zero.
-   */
-  private double mPhase;
+    /**
+     * Countdown phase starting with {@code 1} when a full cycle is remaining and shrinking to
+     * {@code 0} the closer the countdown is to zero.
+     */
+    private double mPhase;
 
-  public CountdownIndicator(Context context) {
-    this(context, null);
-  }
+    public CountdownIndicator(Context context) {
+        this(context, null);
+    }
 
-  public CountdownIndicator(Context context, AttributeSet attrs) {
-    super(context, attrs);
+    public CountdownIndicator(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
-    int color = DEFAULT_COLOR;
-    Resources.Theme theme = context.getTheme();
-    TypedArray appearance = theme.obtainStyledAttributes(
-        attrs, R.styleable.CountdownIndicator, 0, 0);
-    if (appearance != null) {
-      int n = appearance.getIndexCount();
-      for (int i = 0; i < n; i++) {
-        int attr = appearance.getIndex(i);
+        int color = DEFAULT_COLOR;
+        int bgColor = DEFAULT_BG_COLOR;
+        Resources.Theme theme = context.getTheme();
+        TypedArray appearance = theme.obtainStyledAttributes(
+                attrs, R.styleable.CountdownIndicator, 0, 0);
+        if (appearance != null) {
+            int n = appearance.getIndexCount();
+            for (int i = 0; i < n; i++) {
+                int attr = appearance.getIndex(i);
 
-        switch (attr) {
-        case R.styleable.CountdownIndicator_color:
-          color = appearance.getColor(attr, DEFAULT_COLOR);
-          break;
+                switch (attr) {
+                    case R.styleable.CountdownIndicator_color:
+                        color = appearance.getColor(attr, DEFAULT_COLOR);
+                        break;
+                    case R.styleable.CountdownIndicator_bgcolor:
+                        bgColor = appearance.getColor(attr, DEFAULT_COLOR);
+                        break;
+                }
+            }
         }
-      }
+
+        // mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        // mBorderPaint.setStrokeWidth(0); // hairline
+        // mBorderPaint.setStyle(Style.STROKE);
+        // mBorderPaint.setColor(color);
+        mRemainingSectorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mRemainingSectorPaint.setColor(color);
+        mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBackgroundPaint.setColor(bgColor);
     }
 
-    mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    mBorderPaint.setStrokeWidth(0); // hairline
-    mBorderPaint.setStyle(Style.STROKE);
-    mBorderPaint.setColor(color);
-    mRemainingSectorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    mRemainingSectorPaint.setColor(mBorderPaint.getColor());
-  }
+    @Override
+    protected void onDraw(Canvas canvas) {
+        float remainingSectorSweepAngle = (float) (mPhase * 360);
+        float remainingSectorStartAngle = 270 - remainingSectorSweepAngle;
 
-  @Override
-  protected void onDraw(Canvas canvas) {
-    float remainingSectorSweepAngle = (float) (mPhase * 360);
-    float remainingSectorStartAngle = 270 - remainingSectorSweepAngle;
+        // Draw the sector/filled arc
+        // We need to leave the leftmost column and the topmost row out of the drawingRect because
+        // in anti-aliased mode drawArc and drawOval use these areas for some reason.
+        RectF drawingRect = new RectF(1, 1, getWidth() - 1, getHeight() - 1);
 
-    // Draw the sector/filled arc
-    // We need to leave the leftmost column and the topmost row out of the drawingRect because
-    // in anti-aliased mode drawArc and drawOval use these areas for some reason.
-    RectF drawingRect = new RectF(1, 1, getWidth() - 1, getHeight() - 1);
-    if (remainingSectorStartAngle < 360) {
-      canvas.drawArc(
-          drawingRect,
-          remainingSectorStartAngle,
-          remainingSectorSweepAngle,
-          true,
-          mRemainingSectorPaint);
-    } else {
-      // 360 degrees is equivalent to 0 degrees for drawArc, hence the drawOval below.
-      canvas.drawOval(drawingRect, mRemainingSectorPaint);
+        // Draw the background first
+        canvas.drawOval(drawingRect, mBackgroundPaint);
+
+        if (remainingSectorStartAngle < 360) {
+            canvas.drawArc(
+                    drawingRect,
+                    remainingSectorStartAngle,
+                    remainingSectorSweepAngle,
+                    true,
+                    mRemainingSectorPaint);
+        } else {
+            // 360 degrees is equivalent to 0 degrees for drawArc, hence the drawOval below.
+            canvas.drawOval(drawingRect, mRemainingSectorPaint);
+        }
+
+        // Draw the outer border
+        //canvas.drawOval(drawingRect, mBorderPaint);
     }
 
-    // Draw the outer border
-    canvas.drawOval(drawingRect, mBorderPaint);
-  }
+    /**
+     * Sets the phase of this indicator.
+     *
+     * @param phase phase {@code [0, 1]}: {@code 1} when the maximum amount of time is remaining,
+     *              {@code 0} when no time is remaining.
+     */
+    public void setPhase(double phase) {
+        if ((phase < 0) || (phase > 1)) {
+            throw new IllegalArgumentException("phase: " + phase);
+        }
 
-  /**
-   * Sets the phase of this indicator.
-   *
-   * @param phase phase {@code [0, 1]}: {@code 1} when the maximum amount of time is remaining,
-   *        {@code 0} when no time is remaining.
-   */
-  public void setPhase(double phase) {
-    if ((phase < 0) || (phase > 1)) {
-      throw new IllegalArgumentException("phase: " + phase);
+        mPhase = phase;
+        invalidate();
     }
-
-    mPhase = phase;
-    invalidate();
-  }
 }

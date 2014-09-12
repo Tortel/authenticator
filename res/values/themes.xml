@@ -38,7 +38,7 @@
     <!-- ActionBar styles -->
     <style name="MyActionBar"
         parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
-        <item name="android:background">@color/skyBlueColor</item>
+        <item name="android:background">@color/pastelBlueColor</item>
     </style>
 
   <style name="AccountListWithVerificationCodes">
@@ -68,5 +68,6 @@
 
   <style name="AccountListWithVerificationCodesRowCountdownIndicator">
     <item name="com.tortel.authenticator:color">@color/countdown_indicator</item>
+    <item name="com.tortel.authenticator:bgcolor">@color/countdown_indicator_bg</item>
   </style>
 </resources>
