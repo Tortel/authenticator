@@ -93,7 +93,7 @@
         style="?attr/accountListWithVerificationCodes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="1"
+        android:numColumns="2"
         android:horizontalSpacing="5dip"
         android:gravity="center"
         android:stretchMode="columnWidth"

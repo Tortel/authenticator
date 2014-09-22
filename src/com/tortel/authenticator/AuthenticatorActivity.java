@@ -57,6 +57,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -113,7 +114,7 @@ public class AuthenticatorActivity extends TestableActivity {
     private View mContentNoAccounts;
     private View mContentAccountsPresent;
     private TextView mEnterPinPrompt;
-    private ListView mUserList;
+    private GridView mUserList;
     private PinListAdapter mUserAdapter;
     private PinInfo[] mUsers = {};
 
@@ -214,7 +215,7 @@ public class AuthenticatorActivity extends TestableActivity {
                     .getSerializable(KEY_SAVE_KEY_DIALOG_PARAMS);
         }
 
-        mUserList = (ListView) findViewById(R.id.user_list);
+        mUserList = (GridView) findViewById(R.id.user_list);
         mContentNoAccounts = findViewById(R.id.content_no_accounts);
         mContentAccountsPresent = findViewById(R.id.content_accounts_present);
         mContentNoAccounts.setVisibility((mUsers.length > 0) ? View.GONE : View.VISIBLE);
