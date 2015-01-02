@@ -32,18 +32,18 @@ import java.io.Serializable;
  */
 public class IntroVerifyDeviceActivity extends WizardPageActivity<Serializable> {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    setPageContentView(R.layout.howitworks_verify_device);
-    setTextViewHtmlFromResource(R.id.details, R.string.howitworks_page_verify_device_details);
+        setPageContentView(R.layout.howitworks_verify_device);
+        setTextViewHtmlFromResource(R.id.details, R.string.howitworks_page_verify_device_details);
 
-    mRightButton.setText(R.string.button_exit_howitworks_flow);
-  }
+        mRightButton.setText(R.string.button_exit_howitworks_flow);
+    }
 
-  @Override
-  protected void onRightButtonPressed() {
-    exitWizard();
-  }
+    @Override
+    protected void onRightButtonPressed() {
+        exitWizard();
+    }
 }

@@ -25,44 +25,44 @@ import java.util.Collection;
  */
 public interface OtpSource {
 
-  /**
-   * Enumerate list of accounts that this OTP token supports.
-   *
-   * @param result Collection to append usernames. This object is NOT cleared on
-   *               entry; if there are existing items, they will not be removed.
-   * @return Number of accounts added to the collection.
-   */
-  int enumerateAccounts(Collection<Integer> result);
+    /**
+     * Enumerate list of accounts that this OTP token supports.
+     *
+     * @param result Collection to append usernames. This object is NOT cleared on
+     *               entry; if there are existing items, they will not be removed.
+     * @return Number of accounts added to the collection.
+     */
+    int enumerateAccounts(Collection<Integer> result);
 
-  /**
-   * Return the next OTP code for specified username.
-   * Invoking this function may change internal state of the OTP generator,
-   * for example advancing the counter.
-   *
-   * @param id Username, email address or other unique identifier for the account.
-   * @return OTP as string code.
-   */
-  String getNextCode(Integer id) throws OtpSourceException;
+    /**
+     * Return the next OTP code for specified username.
+     * Invoking this function may change internal state of the OTP generator,
+     * for example advancing the counter.
+     *
+     * @param id Username, email address or other unique identifier for the account.
+     * @return OTP as string code.
+     */
+    String getNextCode(Integer id) throws OtpSourceException;
 
-  /**
-   * Generate response to a given challenge based on next OTP code.
-   * Subclasses are not required to implement this method.
-   *
-   * @param id Username, email address or other unique identifier for the account.
-   * @param challenge Server specified challenge as UTF8 string.
-   * @return Response to the challenge.
-   * @throws UnsupportedOperationException if the token does not support
-   *         challenge-response extension for this account.
-   */
-  String respondToChallenge(Integer id, String challenge) throws OtpSourceException;
+    /**
+     * Generate response to a given challenge based on next OTP code.
+     * Subclasses are not required to implement this method.
+     *
+     * @param id        Username, email address or other unique identifier for the account.
+     * @param challenge Server specified challenge as UTF8 string.
+     * @return Response to the challenge.
+     * @throws UnsupportedOperationException if the token does not support
+     *                                       challenge-response extension for this account.
+     */
+    String respondToChallenge(Integer id, String challenge) throws OtpSourceException;
 
-  /**
-   * Gets the counter for generating or verifying TOTP codes.
-   */
-  TotpCounter getTotpCounter();
+    /**
+     * Gets the counter for generating or verifying TOTP codes.
+     */
+    TotpCounter getTotpCounter();
 
-  /**
-   * Gets the clock for generating or verifying TOTP codes.
-   */
-  TotpClock getTotpClock();
+    /**
+     * Gets the clock for generating or verifying TOTP codes.
+     */
+    TotpClock getTotpClock();
 }

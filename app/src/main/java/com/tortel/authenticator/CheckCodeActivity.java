@@ -40,12 +40,14 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class CheckCodeActivity extends ActionBarActivity {
     public static final String EXTRA_ID = "id";
-    
+
     private TextView mCheckCodeTextView;
     private TextView mCodeTextView;
     private TextView mCounterValue;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

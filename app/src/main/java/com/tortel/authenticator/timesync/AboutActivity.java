@@ -30,19 +30,19 @@ import java.io.Serializable;
  */
 public class AboutActivity extends WizardPageActivity<Serializable> {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    setPageContentView(R.layout.timesync_about);
-    setTextViewHtmlFromResource(R.id.details, R.string.timesync_about_feature_screen_details);
+        setPageContentView(R.layout.timesync_about);
+        setTextViewHtmlFromResource(R.id.details, R.string.timesync_about_feature_screen_details);
 
-    setButtonBarModeMiddleButtonOnly();
-    mMiddleButton.setText(R.string.ok);
-  }
+        setButtonBarModeMiddleButtonOnly();
+        mMiddleButton.setText(R.string.ok);
+    }
 
-  @Override
-  protected void onMiddleButtonPressed() {
-    onBackPressed();
-  }
+    @Override
+    protected void onMiddleButtonPressed() {
+        onBackPressed();
+    }
 }

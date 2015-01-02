@@ -31,6 +31,7 @@ import android.view.View;
 /**
  * Circular countdown indicator. The indicator is a filled arc which starts as a full circle ({@code
  * 360} degrees) and shrinks to {@code 0} degrees the less time is remaining.
+ *
  * @author klyubin@google.com (Alex Klyubin)
  */
 public class CountdownIndicator extends View {

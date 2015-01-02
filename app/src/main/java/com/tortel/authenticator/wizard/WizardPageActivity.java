@@ -32,8 +32,8 @@ import java.io.Serializable;
 
 /**
  * Base class for a page of a wizard.
- *
- * <p>
+ * <p/>
+ * <p/>
  * The main features are:
  * <ul>
  * <li>Layout consists of a settable contents page (see {@link #setPageContentView(int)})
@@ -48,256 +48,260 @@ import java.io.Serializable;
  */
 public class WizardPageActivity<WizardState extends Serializable> extends ActionBarActivity {
 
-  // @VisibleForTesting
-  public static final String KEY_WIZARD_STATE = "wizardState";
+    // @VisibleForTesting
+    public static final String KEY_WIZARD_STATE = "wizardState";
 
-  /** Type of the button bar displayed at the bottom of the page. */
-  private enum ButtonBarType {
-    LEFT_RIGHT_BUTTONS,
-    MIDDLE_BUTTON_ONLY,
-    CANCEL_BUTTON_ONLY,
-  }
-
-  private WizardState mWizardState;
-
-  private View mLeftRightButtonBar;
-  private View mMiddleButtonOnlyBar;
-  private View mCancelButtonOnlyBar;
-
-  private View mInlineProgressView;
-
-  private ViewGroup mPageContentView;
-
-  protected Button mLeftButton;
-  protected Button mRightButton;
-  protected Button mMiddleButton;
-  protected View mCancelButton;
-
-  private ButtonBarType mButtonBarType;
-  private ButtonBarType mButtonBarTypeBeforeInlineProgressDisplayed;
-
-  @SuppressWarnings("unchecked")
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    WizardState wizardState;
-    if (savedInstanceState == null) {
-      wizardState = getWizardStateFromIntent(getIntent());
-    } else {
-      wizardState = (WizardState) savedInstanceState.getSerializable(KEY_WIZARD_STATE);
+    /**
+     * Type of the button bar displayed at the bottom of the page.
+     */
+    private enum ButtonBarType {
+        LEFT_RIGHT_BUTTONS,
+        MIDDLE_BUTTON_ONLY,
+        CANCEL_BUTTON_ONLY,
     }
-    checkWizardStateValidity(wizardState);
-    mWizardState = wizardState;
 
-    setContentView(R.layout.wizard_page);
+    private WizardState mWizardState;
 
-    mLeftRightButtonBar = findViewById(R.id.button_bar_left_right_buttons);
-    mMiddleButtonOnlyBar = findViewById(R.id.button_bar_middle_button_only);
-    mPageContentView = (ViewGroup) findViewById(R.id.page_content);
+    private View mLeftRightButtonBar;
+    private View mMiddleButtonOnlyBar;
+    private View mCancelButtonOnlyBar;
 
-    mLeftButton = (Button) mLeftRightButtonBar.findViewById(R.id.button_left);
-    mLeftButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        onLeftButtonPressed();
-      }
-    });
+    private View mInlineProgressView;
 
-    mRightButton = (Button) findViewById(R.id.button_right);
-    mRightButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        onRightButtonPressed();
-      }
-    });
+    private ViewGroup mPageContentView;
 
-    mMiddleButton = (Button) findViewById(R.id.button_middle);
-    mMiddleButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        onMiddleButtonPressed();
-      }
-    });
+    protected Button mLeftButton;
+    protected Button mRightButton;
+    protected Button mMiddleButton;
+    protected View mCancelButton;
 
-    mCancelButtonOnlyBar = findViewById(R.id.button_bar_cancel_only);
-    mInlineProgressView = findViewById(R.id.inline_progress);
-    mCancelButton = findViewById(R.id.button_cancel);
-    setButtonBarType(ButtonBarType.LEFT_RIGHT_BUTTONS);
-  }
+    private ButtonBarType mButtonBarType;
+    private ButtonBarType mButtonBarTypeBeforeInlineProgressDisplayed;
 
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putSerializable(KEY_WIZARD_STATE, mWizardState);
-  }
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-  protected WizardState getWizardState() {
-    return mWizardState;
-  }
+        WizardState wizardState;
+        if (savedInstanceState == null) {
+            wizardState = getWizardStateFromIntent(getIntent());
+        } else {
+            wizardState = (WizardState) savedInstanceState.getSerializable(KEY_WIZARD_STATE);
+        }
+        checkWizardStateValidity(wizardState);
+        mWizardState = wizardState;
 
-  protected void setWizardState(WizardState wizardState) {
-    mWizardState = wizardState;
-  }
+        setContentView(R.layout.wizard_page);
 
-  protected View setPageContentView(int resId) {
-    View view = getLayoutInflater().inflate(resId, null);
-    mPageContentView.removeAllViews();
-    mPageContentView.addView(view);
-    return view;
-  }
+        mLeftRightButtonBar = findViewById(R.id.button_bar_left_right_buttons);
+        mMiddleButtonOnlyBar = findViewById(R.id.button_bar_middle_button_only);
+        mPageContentView = (ViewGroup) findViewById(R.id.page_content);
 
-  protected void setButtonBarModeMiddleButtonOnly() {
-    setButtonBarType(ButtonBarType.MIDDLE_BUTTON_ONLY);
-  }
+        mLeftButton = (Button) mLeftRightButtonBar.findViewById(R.id.button_left);
+        mLeftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLeftButtonPressed();
+            }
+        });
 
-  /**
-   * Invoked when the left button is pressed. The default implementation invokes
-   * {@link #onBackPressed()}.
-   */
-  protected void onLeftButtonPressed() {
-    onBackPressed();
-  }
+        mRightButton = (Button) findViewById(R.id.button_right);
+        mRightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRightButtonPressed();
+            }
+        });
 
-  /**
-   * Invoked when the right button is pressed. The default implementation does nothing.
-   */
-  protected void onRightButtonPressed() {}
+        mMiddleButton = (Button) findViewById(R.id.button_middle);
+        mMiddleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onMiddleButtonPressed();
+            }
+        });
 
-  /**
-   * Invoked when the middle button is pressed. The default implementation does nothing.
-   */
-  protected void onMiddleButtonPressed() {}
-
-  /**
-   * Launches/displays the specified page of the wizard. The page will get a copy of the current
-   * state of the wizard.
-   */
-  protected void startPageActivity(Class<? extends WizardPageActivity<WizardState>> activityClass) {
-    Intent intent = new Intent(this, activityClass);
-    intent.putExtra(KEY_WIZARD_STATE, getWizardState());
-    startActivity(intent);
-  }
-
-  /**
-   * Launches/displays the specified page of the wizard. The page will get a copy of the current
-   * state of the wizard.
-   */
-  protected void startPageActivityForResult(
-      Class<? extends WizardPageActivity<WizardState>> activityClass, int requestCode) {
-    Intent intent = new Intent(this, activityClass);
-    intent.putExtra(KEY_WIZARD_STATE, getWizardState());
-    startActivityForResult(intent, requestCode);
-  }
-
-  /**
-   * Extracts the state of the wizard from the provided Intent.
-   *
-   * @return state or {@code null} if not found.
-   */
-  @SuppressWarnings("unchecked")
-  protected WizardState getWizardStateFromIntent(Intent intent) {
-    return (intent != null)
-        ? (WizardState) intent.getSerializableExtra(KEY_WIZARD_STATE)
-        : null;
-  }
-
-  /**
-   * Sets the contents of the {@code TextView} to the HTML contained in the string resource.
-   */
-  protected void setTextViewHtmlFromResource(int viewId, int resId) {
-    setTextViewHtmlFromResource((TextView) findViewById(viewId), resId);
-  }
-
-  /**
-   * Sets the contents of the {@code TextView} to the HTML contained in the string resource.
-   */
-  protected void setTextViewHtmlFromResource(TextView view, int resId) {
-    view.setText(Html.fromHtml(getString(resId)));
-  }
-
-  /**
-   * Sets the contents of the {@code TextView} to the provided HTML.
-   */
-  protected void setTextViewHtml(int viewId, String html) {
-    setTextViewHtml((TextView) findViewById(viewId), html);
-  }
-
-  /**
-   * Sets the contents of the {@code TextView} to the provided HTML.
-   */
-  protected void setTextViewHtml(TextView view, String html) {
-    view.setText(Html.fromHtml(html));
-  }
-
-  /**
-   * Sets the type of the button bar displayed at the bottom of the page.
-   */
-  private void setButtonBarType(ButtonBarType type) {
-    mButtonBarType = type;
-    switch (type) {
-      case LEFT_RIGHT_BUTTONS:
-        mLeftRightButtonBar.setVisibility(View.VISIBLE);
-        mMiddleButtonOnlyBar.setVisibility(View.GONE);
-        mCancelButtonOnlyBar.setVisibility(View.GONE);
-        break;
-      case MIDDLE_BUTTON_ONLY:
-        mMiddleButtonOnlyBar.setVisibility(View.VISIBLE);
-        mLeftRightButtonBar.setVisibility(View.GONE);
-        mCancelButtonOnlyBar.setVisibility(View.GONE);
-        break;
-      case CANCEL_BUTTON_ONLY:
-        mCancelButtonOnlyBar.setVisibility(View.VISIBLE);
-        mLeftRightButtonBar.setVisibility(View.GONE);
-        mMiddleButtonOnlyBar.setVisibility(View.GONE);
-        break;
-      default:
-        throw new IllegalArgumentException(String.valueOf(type));
+        mCancelButtonOnlyBar = findViewById(R.id.button_bar_cancel_only);
+        mInlineProgressView = findViewById(R.id.inline_progress);
+        mCancelButton = findViewById(R.id.button_cancel);
+        setButtonBarType(ButtonBarType.LEFT_RIGHT_BUTTONS);
     }
-  }
 
-  /**
-   * Changes this page to show an indefinite progress bar with a Cancel button.
-   *
-   * @param cancelListener listener invoked when the Cancel button is pressed.
-   *
-   * @see #dismissInlineProgress()
-   */
-  protected void showInlineProgress(View.OnClickListener cancelListener) {
-    mCancelButton.setOnClickListener(cancelListener);
-    mCancelButton.setEnabled(true);
-
-    mInlineProgressView.setVisibility(View.VISIBLE);
-
-    if (mButtonBarType != ButtonBarType.CANCEL_BUTTON_ONLY) {
-      mButtonBarTypeBeforeInlineProgressDisplayed = mButtonBarType;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_WIZARD_STATE, mWizardState);
     }
-    setButtonBarType(ButtonBarType.CANCEL_BUTTON_ONLY);
-  }
 
-  /**
-   * Changes this page to hide the indefinite progress bar with a Cancel button. The page reverts
-   * to the usual layout with the left and right buttons.
-   *
-   * @see #showInlineProgress(android.view.View.OnClickListener)
-   */
-  protected void dismissInlineProgress() {
-    mCancelButton.setOnClickListener(null);
-    setButtonBarType(mButtonBarTypeBeforeInlineProgressDisplayed);
-  }
+    protected WizardState getWizardState() {
+        return mWizardState;
+    }
 
-  protected void exitWizard() {
-    Intent intent = new Intent(this, AuthenticatorActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    startActivity(intent);
+    protected void setWizardState(WizardState wizardState) {
+        mWizardState = wizardState;
+    }
 
-    finish();
-  }
+    protected View setPageContentView(int resId) {
+        View view = getLayoutInflater().inflate(resId, null);
+        mPageContentView.removeAllViews();
+        mPageContentView.addView(view);
+        return view;
+    }
 
-  /**
-   * Checks the validity of the current state of the wizard.
-   *
-   * @throws IllegalStateException if the state is invalid.
-   */
-  protected void checkWizardStateValidity(WizardState wizardState) {}
+    protected void setButtonBarModeMiddleButtonOnly() {
+        setButtonBarType(ButtonBarType.MIDDLE_BUTTON_ONLY);
+    }
+
+    /**
+     * Invoked when the left button is pressed. The default implementation invokes
+     * {@link #onBackPressed()}.
+     */
+    protected void onLeftButtonPressed() {
+        onBackPressed();
+    }
+
+    /**
+     * Invoked when the right button is pressed. The default implementation does nothing.
+     */
+    protected void onRightButtonPressed() {
+    }
+
+    /**
+     * Invoked when the middle button is pressed. The default implementation does nothing.
+     */
+    protected void onMiddleButtonPressed() {
+    }
+
+    /**
+     * Launches/displays the specified page of the wizard. The page will get a copy of the current
+     * state of the wizard.
+     */
+    protected void startPageActivity(Class<? extends WizardPageActivity<WizardState>> activityClass) {
+        Intent intent = new Intent(this, activityClass);
+        intent.putExtra(KEY_WIZARD_STATE, getWizardState());
+        startActivity(intent);
+    }
+
+    /**
+     * Launches/displays the specified page of the wizard. The page will get a copy of the current
+     * state of the wizard.
+     */
+    protected void startPageActivityForResult(
+            Class<? extends WizardPageActivity<WizardState>> activityClass, int requestCode) {
+        Intent intent = new Intent(this, activityClass);
+        intent.putExtra(KEY_WIZARD_STATE, getWizardState());
+        startActivityForResult(intent, requestCode);
+    }
+
+    /**
+     * Extracts the state of the wizard from the provided Intent.
+     *
+     * @return state or {@code null} if not found.
+     */
+    @SuppressWarnings("unchecked")
+    protected WizardState getWizardStateFromIntent(Intent intent) {
+        return (intent != null)
+                ? (WizardState) intent.getSerializableExtra(KEY_WIZARD_STATE)
+                : null;
+    }
+
+    /**
+     * Sets the contents of the {@code TextView} to the HTML contained in the string resource.
+     */
+    protected void setTextViewHtmlFromResource(int viewId, int resId) {
+        setTextViewHtmlFromResource((TextView) findViewById(viewId), resId);
+    }
+
+    /**
+     * Sets the contents of the {@code TextView} to the HTML contained in the string resource.
+     */
+    protected void setTextViewHtmlFromResource(TextView view, int resId) {
+        view.setText(Html.fromHtml(getString(resId)));
+    }
+
+    /**
+     * Sets the contents of the {@code TextView} to the provided HTML.
+     */
+    protected void setTextViewHtml(int viewId, String html) {
+        setTextViewHtml((TextView) findViewById(viewId), html);
+    }
+
+    /**
+     * Sets the contents of the {@code TextView} to the provided HTML.
+     */
+    protected void setTextViewHtml(TextView view, String html) {
+        view.setText(Html.fromHtml(html));
+    }
+
+    /**
+     * Sets the type of the button bar displayed at the bottom of the page.
+     */
+    private void setButtonBarType(ButtonBarType type) {
+        mButtonBarType = type;
+        switch (type) {
+            case LEFT_RIGHT_BUTTONS:
+                mLeftRightButtonBar.setVisibility(View.VISIBLE);
+                mMiddleButtonOnlyBar.setVisibility(View.GONE);
+                mCancelButtonOnlyBar.setVisibility(View.GONE);
+                break;
+            case MIDDLE_BUTTON_ONLY:
+                mMiddleButtonOnlyBar.setVisibility(View.VISIBLE);
+                mLeftRightButtonBar.setVisibility(View.GONE);
+                mCancelButtonOnlyBar.setVisibility(View.GONE);
+                break;
+            case CANCEL_BUTTON_ONLY:
+                mCancelButtonOnlyBar.setVisibility(View.VISIBLE);
+                mLeftRightButtonBar.setVisibility(View.GONE);
+                mMiddleButtonOnlyBar.setVisibility(View.GONE);
+                break;
+            default:
+                throw new IllegalArgumentException(String.valueOf(type));
+        }
+    }
+
+    /**
+     * Changes this page to show an indefinite progress bar with a Cancel button.
+     *
+     * @param cancelListener listener invoked when the Cancel button is pressed.
+     * @see #dismissInlineProgress()
+     */
+    protected void showInlineProgress(View.OnClickListener cancelListener) {
+        mCancelButton.setOnClickListener(cancelListener);
+        mCancelButton.setEnabled(true);
+
+        mInlineProgressView.setVisibility(View.VISIBLE);
+
+        if (mButtonBarType != ButtonBarType.CANCEL_BUTTON_ONLY) {
+            mButtonBarTypeBeforeInlineProgressDisplayed = mButtonBarType;
+        }
+        setButtonBarType(ButtonBarType.CANCEL_BUTTON_ONLY);
+    }
+
+    /**
+     * Changes this page to hide the indefinite progress bar with a Cancel button. The page reverts
+     * to the usual layout with the left and right buttons.
+     *
+     * @see #showInlineProgress(android.view.View.OnClickListener)
+     */
+    protected void dismissInlineProgress() {
+        mCancelButton.setOnClickListener(null);
+        setButtonBarType(mButtonBarTypeBeforeInlineProgressDisplayed);
+    }
+
+    protected void exitWizard() {
+        Intent intent = new Intent(this, AuthenticatorActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+        finish();
+    }
+
+    /**
+     * Checks the validity of the current state of the wizard.
+     *
+     * @throws IllegalStateException if the state is invalid.
+     */
+    protected void checkWizardStateValidity(WizardState wizardState) {
+    }
 }

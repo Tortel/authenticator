@@ -21,76 +21,76 @@ import android.widget.Toast;
  */
 public class FileExportActivity extends ActionBarActivity {
     private EditText passPhraseInput;
-    
-    public void onCreate(Bundle savedInstanceState){
+
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_export);
-        
-       passPhraseInput = (EditText) findViewById(R.id.file_export_pass);
+
+        passPhraseInput = (EditText) findViewById(R.id.file_export_pass);
     }
-    
-    private void exportData(){
+
+    private void exportData() {
         String passPhrase = passPhraseInput.getText().toString().trim();
         new ExportTask(passPhrase).execute();
     }
-    
-    public void onClick(View view){
-        switch(view.getId()){
-        case R.id.file_export_ok:
-            exportData();
-            return;
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.file_export_ok:
+                exportData();
+                return;
         }
     }
-    
-    private class ExportTask extends AsyncTask<Void, Integer, Integer>{
+
+    private class ExportTask extends AsyncTask<Void, Integer, Integer> {
         private AccountDb accountDb;
         private AccountContainer container;
         private String key;
-        
-        public ExportTask(String key){
+
+        public ExportTask(String key) {
             this.key = key;
         }
-        
+
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             accountDb = DependencyInjector.getAccountDb();
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
             container = AccountContainer.prepareExport(accountDb);
-            
+
             try {
-            	ObjectMapper mapper = new ObjectMapper();
-            	String json = mapper.writeValueAsString(container);
-            	
-            	String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/authenticator.bk";
-            	EncryptionUtils.writeFile(fileName, key, json);
-            	
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return R.string.error_processing;
-			} catch (InvalidKeyException e) {
-				e.printStackTrace();
-				return R.string.error_unknown;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return R.string.error_unknown;
-			}
-            
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(container);
+
+                String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/authenticator.bk";
+                EncryptionUtils.writeFile(fileName, key, json);
+
+            } catch (JsonProcessingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return R.string.error_processing;
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+                return R.string.error_unknown;
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return R.string.error_unknown;
+            }
+
             return null;
         }
-        
+
         @Override
-        protected void onPostExecute(Integer result){
-        	if(result != null){
-        		Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
-        	} else {
-        		Toast.makeText(getBaseContext(), R.string.file_export_done, Toast.LENGTH_SHORT).show();
-        		finish();
-        	}
+        protected void onPostExecute(Integer result) {
+            if (result != null) {
+                Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getBaseContext(), R.string.file_export_done, Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
 }

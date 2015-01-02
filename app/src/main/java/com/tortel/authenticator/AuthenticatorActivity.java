@@ -75,7 +75,9 @@ import java.util.Locale;
  */
 public class AuthenticatorActivity extends ActionBarActivity {
 
-    /** The tag for log messages */
+    /**
+     * The tag for log messages
+     */
     private static final String LOCAL_TAG = "AuthenticatorActivity";
     private static final long VIBRATE_DURATION = 200L;
 
@@ -117,10 +119,14 @@ public class AuthenticatorActivity extends ActionBarActivity {
     private PinListAdapter mUserAdapter;
     private PinInfo[] mUsers = {};
 
-    /** Counter used for generating TOTP verification codes. */
+    /**
+     * Counter used for generating TOTP verification codes.
+     */
     private TotpCounter mTotpCounter;
 
-    /** Clock used for generating TOTP verification codes. */
+    /**
+     * Clock used for generating TOTP verification codes.
+     */
     private TotpClock mTotpClock;
 
     /**
@@ -147,8 +153,8 @@ public class AuthenticatorActivity extends ActionBarActivity {
 
     /**
      * Parameters to the save key dialog (DIALOG_ID_SAVE_KEY).
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Note: this field is persisted in the instance state {@link Bundle}. We
      * need to resolve to this error-prone mechanism because showDialog on
      * Eclair doesn't take parameters. Once Froyo is the minimum targetted SDK,
@@ -178,7 +184,9 @@ public class AuthenticatorActivity extends ActionBarActivity {
     // @VisibleForTesting
     static final int SCAN_REQUEST = 31337;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,7 +251,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
         mUserList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> unusedParent, View row, int unusedPosition,
-                    long unusedId) {
+                                    long unusedId) {
                 NextOtpButtonListener clickListener = (NextOtpButtonListener) row.getTag();
                 View nextOtp = row.findViewById(R.id.next_otp);
                 if ((clickListener != null) && nextOtp.isEnabled()) {
@@ -358,7 +366,9 @@ public class AuthenticatorActivity extends ActionBarActivity {
         }
     }
 
-    /** Display list of user emails and updated pin codes. */
+    /**
+     * Display list of user emails and updated pin codes.
+     */
     protected void refreshUserList() {
         refreshUserList(false);
     }
@@ -392,8 +402,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
     /**
      * Display list of user emails and updated pin codes.
      *
-     * @param isAccountModified
-     *            if true, force full refresh
+     * @param isAccountModified if true, force full refresh
      */
     // @VisibleForTesting
     public void refreshUserList(boolean isAccountModified) {
@@ -449,12 +458,9 @@ public class AuthenticatorActivity extends ActionBarActivity {
      * thread so it should not take more than a second or so. If necessary, we
      * can move the computation to a background thread.
      *
-     * @param id
-     *            the user email to display with the PIN
-     * @param position
-     *            the index for the screen of this user and PIN
-     * @param computeHotp
-     *            true if we should increment counter and display new hotp
+     * @param id          the user email to display with the PIN
+     * @param position    the index for the screen of this user and PIN
+     * @param computeHotp true if we should increment counter and display new hotp
      */
     public void computeAndDisplayPin(Integer id, int position, boolean computeHotp)
             throws OtpSourceException {
@@ -462,7 +468,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
         PinInfo currentPin;
         if (mUsers[position] != null) {
             currentPin = mUsers[position]; // existing PinInfo, so we'll update
-                                           // it
+            // it
         } else {
             currentPin = new PinInfo();
             currentPin.id = id;
@@ -489,15 +495,13 @@ public class AuthenticatorActivity extends ActionBarActivity {
 
     /**
      * Parses a secret value from a URI. The format will be:
-     *
+     * <p/>
      * otpauth://totp/user@example.com?secret=FFF...
      * otpauth://hotp/user@example.com?secret=FFF...&counter=123
      *
-     * @param uri
-     *            The URI containing the secret key
-     * @param confirmBeforeSave
-     *            a boolean to indicate if the user should be prompted for
-     *            confirmation before updating the otp account information.
+     * @param uri               The URI containing the secret key
+     * @param confirmBeforeSave a boolean to indicate if the user should be prompted for
+     *                          confirmation before updating the otp account information.
      */
     private void parseSecret(Uri uri, boolean confirmBeforeSave) {
         final String scheme = uri.getScheme().toLowerCase(Locale.ENGLISH);
@@ -517,7 +521,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
         if (TOTP.equals(authority)) {
             type = OtpType.TOTP;
             counter = AccountDb.DEFAULT_HOTP_COUNTER; // only interesting for
-                                                      // HOTP
+            // HOTP
         } else if (HOTP.equals(authority)) {
             type = OtpType.HOTP;
             String counterParameter = uri.getQueryParameter(COUNTER_PARAM);
@@ -590,19 +594,14 @@ public class AuthenticatorActivity extends ActionBarActivity {
      * Saves the secret key to local storage on the phone and updates the
      * displayed account list.
      *
-     * @param id
-     *            the id
-     * @param user
-     *            the user email address. When editing, the new user email.
-     * @param secret
-     *            the secret key
-     * @param type
-     *            hotp vs totp
-     * @param counter
-     *            only important for the hotp type
+     * @param id      the id
+     * @param user    the user email address. When editing, the new user email.
+     * @param secret  the secret key
+     * @param type    hotp vs totp
+     * @param counter only important for the hotp type
      */
     private void saveSecretAndRefreshUserList(Integer id, String user, String secret,
-            OtpType type, Integer counter) {
+                                              OtpType type, Integer counter) {
         if (saveSecret(this, id, user, secret, type, counter)) {
             refreshUserList(true);
         }
@@ -611,19 +610,14 @@ public class AuthenticatorActivity extends ActionBarActivity {
     /**
      * Saves the secret key to local storage on the phone.
      *
-     * @param user
-     *            the user email address. When editing, the new user email.
-     * @param secret
-     *            the secret key
-     * @param type
-     *            hotp vs totp
-     * @param counter
-     *            only important for the hotp type
-     *
+     * @param user    the user email address. When editing, the new user email.
+     * @param secret  the secret key
+     * @param type    hotp vs totp
+     * @param counter only important for the hotp type
      * @return {@code true} if the secret was saved, {@code false} otherwise.
      */
     static boolean saveSecret(Context context, Integer id, String user, String secret,
-            OtpType type, Integer counter) {
+                              OtpType type, Integer counter) {
         if (secret != null) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
             accountDb.update(id, user, secret, type, counter);
@@ -646,7 +640,9 @@ public class AuthenticatorActivity extends ActionBarActivity {
         }
     }
 
-    /** Converts user list ordinal id to user email */
+    /**
+     * Converts user list ordinal id to user email
+     */
     private Integer idToDatabaseId(long id) {
         return mUsers[(int) id].id;
     }
@@ -673,78 +669,78 @@ public class AuthenticatorActivity extends ActionBarActivity {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         Intent intent;
         final Integer id = idToDatabaseId(info.id); // final so listener can see
-                                                    // value
+        // value
         final String email = mAccountDb.getEmail(id);
         switch (item.getItemId()) {
-        case COPY_TO_CLIPBOARD_ID:
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            clipboard.setText(mUsers[(int) info.id].pin);
-            return true;
-        case CHECK_KEY_VALUE_ID:
-            intent = new Intent(Intent.ACTION_VIEW);
-            intent.setClass(this, CheckCodeActivity.class);
-            intent.putExtra(CheckCodeActivity.EXTRA_ID, id);
-            startActivity(intent);
-            return true;
-        case RENAME_ID:
-            final Context context = this; // final so listener can see value
-            final View frame = getLayoutInflater().inflate(R.layout.rename,
-                    (ViewGroup) findViewById(R.id.rename_root));
-            final EditText nameEdit = (EditText) frame.findViewById(R.id.rename_edittext);
-            nameEdit.setText(email);
-            new AlertDialog.Builder(this)
-                    .setTitle(String.format(getString(R.string.rename_message), email))
-                    .setView(frame)
-                    .setPositiveButton(R.string.submit,
-                            this.getRenameClickListener(context, id, nameEdit))
-                    .setNegativeButton(R.string.cancel, null).show();
-            return true;
-        case REMOVE_ID:
-            // Use a WebView to display the prompt because it contains
-            // non-trivial markup, such as list
-            View promptContentView = getLayoutInflater().inflate(R.layout.remove_account_prompt,
-                    null, false);
-            WebView webView = (WebView) promptContentView.findViewById(R.id.web_view);
-            webView.setBackgroundColor(Color.TRANSPARENT);
-            // Make the WebView use the same font size as for the
-            // mEnterPinPrompt field
-            double pixelsPerDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10,
-                    getResources().getDisplayMetrics()) / 10d;
-            webView.getSettings().setDefaultFontSize(
-                    (int) (mEnterPinPrompt.getTextSize() / pixelsPerDip));
-            Utilities
-                    .setWebViewHtml(
-                            webView,
-                            "<html><body style=\"background-color: transparent;\" text=\"white\">"
-                                    + getString(mAccountDb.isGoogleAccount(id) ? R.string.remove_google_account_dialog_message
-                                            : R.string.remove_account_dialog_message)
-                                    + "</body></html>");
+            case COPY_TO_CLIPBOARD_ID:
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                clipboard.setText(mUsers[(int) info.id].pin);
+                return true;
+            case CHECK_KEY_VALUE_ID:
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setClass(this, CheckCodeActivity.class);
+                intent.putExtra(CheckCodeActivity.EXTRA_ID, id);
+                startActivity(intent);
+                return true;
+            case RENAME_ID:
+                final Context context = this; // final so listener can see value
+                final View frame = getLayoutInflater().inflate(R.layout.rename,
+                        (ViewGroup) findViewById(R.id.rename_root));
+                final EditText nameEdit = (EditText) frame.findViewById(R.id.rename_edittext);
+                nameEdit.setText(email);
+                new AlertDialog.Builder(this)
+                        .setTitle(String.format(getString(R.string.rename_message), email))
+                        .setView(frame)
+                        .setPositiveButton(R.string.submit,
+                                this.getRenameClickListener(context, id, nameEdit))
+                        .setNegativeButton(R.string.cancel, null).show();
+                return true;
+            case REMOVE_ID:
+                // Use a WebView to display the prompt because it contains
+                // non-trivial markup, such as list
+                View promptContentView = getLayoutInflater().inflate(R.layout.remove_account_prompt,
+                        null, false);
+                WebView webView = (WebView) promptContentView.findViewById(R.id.web_view);
+                webView.setBackgroundColor(Color.TRANSPARENT);
+                // Make the WebView use the same font size as for the
+                // mEnterPinPrompt field
+                double pixelsPerDip = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10,
+                        getResources().getDisplayMetrics()) / 10d;
+                webView.getSettings().setDefaultFontSize(
+                        (int) (mEnterPinPrompt.getTextSize() / pixelsPerDip));
+                Utilities
+                        .setWebViewHtml(
+                                webView,
+                                "<html><body style=\"background-color: transparent;\" text=\"white\">"
+                                        + getString(mAccountDb.isGoogleAccount(id) ? R.string.remove_google_account_dialog_message
+                                        : R.string.remove_account_dialog_message)
+                                        + "</body></html>");
 
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.remove_account_dialog_title, email))
-                    .setView(promptContentView)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.remove_account_dialog_button_remove,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    mAccountDb.delete(id);
-                                    refreshUserList(true);
-                                }
-                            }).setNegativeButton(R.string.cancel, null).show();
-            return true;
-        default:
-            return super.onContextItemSelected(item);
+                new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.remove_account_dialog_title, email))
+                        .setView(promptContentView)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.remove_account_dialog_button_remove,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        mAccountDb.delete(id);
+                                        refreshUserList(true);
+                                    }
+                                }).setNegativeButton(R.string.cancel, null).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
         }
     }
 
     private DialogInterface.OnClickListener getRenameClickListener(final Context context,
-            final Integer id, final EditText nameEdit) {
+                                                                   final Integer id, final EditText nameEdit) {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
                 String newName = nameEdit.getText().toString();
-                saveSecretAndRefreshUserList(id, newName, mAccountDb.getSecret(id), 
+                saveSecretAndRefreshUserList(id, newName, mAccountDb.getSecret(id),
                         mAccountDb.getType(id), mAccountDb.getCounter(id));
             }
         };
@@ -827,11 +823,9 @@ public class AuthenticatorActivity extends ActionBarActivity {
      * Interprets the QR code that was scanned by the user. Decides whether to
      * launch the key provisioning sequence or the OTP seed setting sequence.
      *
-     * @param scanResult
-     *            a URI holding the contents of the QR scan result
-     * @param confirmBeforeSave
-     *            a boolean to indicate if the user should be prompted for
-     *            confirmation before updating the otp account information.
+     * @param scanResult        a URI holding the contents of the QR scan result
+     * @param confirmBeforeSave a boolean to indicate if the user should be prompted for
+     *                          confirmation before updating the otp account information.
      */
     private void interpretScanResult(Uri scanResult, boolean confirmBeforeSave) {
         if (DependencyInjector.getOptionalFeatures().interpretScanResult(this, scanResult)) {
@@ -882,85 +876,85 @@ public class AuthenticatorActivity extends ActionBarActivity {
     protected Dialog onCreateDialog(final int id) {
         Dialog dialog = null;
         switch (id) {
-        /**
-         * Prompt to download ZXing from Market. If Market app is not installed,
-         * such as on a development phone, open the HTTPS URI for the ZXing apk.
-         */
-        case Utilities.DOWNLOAD_DIALOG:
-            AlertDialog.Builder dlBuilder = new AlertDialog.Builder(this);
-            dlBuilder.setTitle(R.string.install_dialog_title);
-            dlBuilder.setMessage(R.string.install_dialog_message);
-            dlBuilder.setIcon(android.R.drawable.ic_dialog_alert);
-            dlBuilder.setPositiveButton(R.string.install_button,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri
-                                    .parse(Utilities.ZXING_MARKET));
-                            try {
-                                startActivity(intent);
-                            } catch (ActivityNotFoundException e) { // if no
-                                                                    // Market
-                                                                    // app
-                                intent = new Intent(Intent.ACTION_VIEW, Uri
-                                        .parse(Utilities.ZXING_DIRECT));
-                                startActivity(intent);
+            /**
+             * Prompt to download ZXing from Market. If Market app is not installed,
+             * such as on a development phone, open the HTTPS URI for the ZXing apk.
+             */
+            case Utilities.DOWNLOAD_DIALOG:
+                AlertDialog.Builder dlBuilder = new AlertDialog.Builder(this);
+                dlBuilder.setTitle(R.string.install_dialog_title);
+                dlBuilder.setMessage(R.string.install_dialog_message);
+                dlBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+                dlBuilder.setPositiveButton(R.string.install_button,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri
+                                        .parse(Utilities.ZXING_MARKET));
+                                try {
+                                    startActivity(intent);
+                                } catch (ActivityNotFoundException e) { // if no
+                                    // Market
+                                    // app
+                                    intent = new Intent(Intent.ACTION_VIEW, Uri
+                                            .parse(Utilities.ZXING_DIRECT));
+                                    startActivity(intent);
+                                }
                             }
-                        }
-                    });
-            dlBuilder.setNegativeButton(R.string.cancel, null);
-            dialog = dlBuilder.create();
-            break;
+                        });
+                dlBuilder.setNegativeButton(R.string.cancel, null);
+                dialog = dlBuilder.create();
+                break;
 
-        case DIALOG_ID_SAVE_KEY:
-            final SaveKeyDialogParams saveKeyDialogParams = mSaveKeyDialogParams;
-            dialog = new AlertDialog.Builder(this).setTitle(R.string.save_key_message)
-                    .setMessage(saveKeyDialogParams.user)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            saveSecretAndRefreshUserList(saveKeyDialogParams.id,
-                                    saveKeyDialogParams.user, saveKeyDialogParams.secret,
-                                    saveKeyDialogParams.type, saveKeyDialogParams.counter);
-                        }
-                    }).setNegativeButton(R.string.cancel, null).create();
-            // Ensure that whenever this dialog is to be displayed via
-            // showDialog, it displays the
-            // correct (latest) user/account name. If this dialog is not
-            // explicitly removed after it's
-            // been dismissed, then next time showDialog is invoked,
-            // onCreateDialog will not be invoked
-            // and the dialog will display the previous user/account name
-            // instead of the current one.
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    removeDialog(id);
-                    onSaveKeyIntentConfirmationPromptDismissed();
+            case DIALOG_ID_SAVE_KEY:
+                final SaveKeyDialogParams saveKeyDialogParams = mSaveKeyDialogParams;
+                dialog = new AlertDialog.Builder(this).setTitle(R.string.save_key_message)
+                        .setMessage(saveKeyDialogParams.user)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                saveSecretAndRefreshUserList(saveKeyDialogParams.id,
+                                        saveKeyDialogParams.user, saveKeyDialogParams.secret,
+                                        saveKeyDialogParams.type, saveKeyDialogParams.counter);
+                            }
+                        }).setNegativeButton(R.string.cancel, null).create();
+                // Ensure that whenever this dialog is to be displayed via
+                // showDialog, it displays the
+                // correct (latest) user/account name. If this dialog is not
+                // explicitly removed after it's
+                // been dismissed, then next time showDialog is invoked,
+                // onCreateDialog will not be invoked
+                // and the dialog will display the previous user/account name
+                // instead of the current one.
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        removeDialog(id);
+                        onSaveKeyIntentConfirmationPromptDismissed();
+                    }
+                });
+                break;
+
+            case Utilities.INVALID_QR_CODE:
+                dialog = createOkAlertDialog(R.string.error_title, R.string.error_qr,
+                        android.R.drawable.ic_dialog_alert);
+                markDialogAsResultOfSaveKeyIntent(dialog);
+                break;
+
+            case Utilities.INVALID_SECRET_IN_QR_CODE:
+                dialog = createOkAlertDialog(R.string.error_title, R.string.error_uri,
+                        android.R.drawable.ic_dialog_alert);
+                markDialogAsResultOfSaveKeyIntent(dialog);
+                break;
+
+            default:
+                dialog = DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreateDialog(
+                        this, id);
+                if (dialog == null) {
+                    dialog = super.onCreateDialog(id);
                 }
-            });
-            break;
-
-        case Utilities.INVALID_QR_CODE:
-            dialog = createOkAlertDialog(R.string.error_title, R.string.error_qr,
-                    android.R.drawable.ic_dialog_alert);
-            markDialogAsResultOfSaveKeyIntent(dialog);
-            break;
-
-        case Utilities.INVALID_SECRET_IN_QR_CODE:
-            dialog = createOkAlertDialog(R.string.error_title, R.string.error_uri,
-                    android.R.drawable.ic_dialog_alert);
-            markDialogAsResultOfSaveKeyIntent(dialog);
-            break;
-
-        default:
-            dialog = DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreateDialog(
-                    this, id);
-            if (dialog == null) {
-                dialog = super.onCreateDialog(id);
-            }
-            break;
+                break;
         }
         return dialog;
     }
@@ -998,18 +992,24 @@ public class AuthenticatorActivity extends ActionBarActivity {
     private static class PinInfo {
         private Integer id;
         private String pin; // calculated OTP, or a placeholder if not
-                            // calculated
+        // calculated
         private String user;
         private boolean isHotp = false; // used to see if button needs to be
-                                        // displayed
+        // displayed
 
-        /** HOTP only: Whether code generation is allowed for this account. */
+        /**
+         * HOTP only: Whether code generation is allowed for this account.
+         */
         private boolean hotpCodeGenerationAllowed;
     }
 
-    /** Scale to use for the text displaying the PIN numbers. */
+    /**
+     * Scale to use for the text displaying the PIN numbers.
+     */
     private static final float PIN_TEXT_SCALEX_NORMAL = 1.0f;
-    /** Underscores are shown slightly smaller. */
+    /**
+     * Underscores are shown slightly smaller.
+     */
     private static final float PIN_TEXT_SCALEX_UNDERSCORE = 0.87f;
 
     /**
@@ -1077,7 +1077,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
          * associated with.
          *
          * @return {@code 0}-based position or {@code -1} if the account is not
-         *         in the list.
+         * in the list.
          */
         private int findAccountPositionInList() {
             for (int i = 0, len = mUsers.length; i < len; i++) {
@@ -1129,9 +1129,9 @@ public class AuthenticatorActivity extends ActionBarActivity {
                 buttonView.setVisibility(View.VISIBLE);
                 buttonView.setEnabled(currentPin.hotpCodeGenerationAllowed);
                 ((ViewGroup) row).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS); // makes
-                                                                                                // long
-                                                                                                // press
-                                                                                                // work
+                // long
+                // press
+                // work
                 NextOtpButtonListener clickListener = new NextOtpButtonListener(currentPin);
                 buttonView.setOnClickListener(clickListener);
                 row.setTag(clickListener);
@@ -1148,9 +1148,9 @@ public class AuthenticatorActivity extends ActionBarActivity {
 
             if (getString(R.string.empty_pin).equals(currentPin.pin)) {
                 pinView.setTextScaleX(PIN_TEXT_SCALEX_UNDERSCORE); // smaller
-                                                                   // gap
-                                                                   // between
-                                                                   // underscores
+                // gap
+                // between
+                // underscores
             } else {
                 pinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
             }
@@ -1174,7 +1174,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
         private final Integer counter;
 
         private SaveKeyDialogParams(Integer id, String user, String secret, OtpType type,
-                Integer counter) {
+                                    Integer counter) {
             this.id = id;
             this.user = user;
             this.secret = secret;

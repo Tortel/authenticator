@@ -29,11 +29,11 @@ import android.content.Intent;
  */
 public interface StartActivityListener {
 
-  /**
-   * Invoked when a launch of an {@link android.app.Activity} is requested.
-   *
-   * @return {@code true} to consume/ignore the request, {@code false} to proceed with the launching
-   *         of the {@code Activity}.
-   */
-  boolean onStartActivityInvoked(Context sourceContext, Intent intent);
+    /**
+     * Invoked when a launch of an {@link android.app.Activity} is requested.
+     *
+     * @return {@code true} to consume/ignore the request, {@code false} to proceed with the launching
+     * of the {@code Activity}.
+     */
+    boolean onStartActivityInvoked(Context sourceContext, Intent intent);
 }

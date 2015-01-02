@@ -33,36 +33,36 @@ import java.io.Serializable;
  */
 public class AddOtherAccountActivity extends WizardPageActivity<Serializable> {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    setPageContentView(R.layout.add_other_account);
+        setPageContentView(R.layout.add_other_account);
 
-    findViewById(R.id.scan_barcode).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        scanBarcode();
-      }
-    });
-    findViewById(R.id.manually_add_account).setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        manuallyEnterAccountDetails();
-      }
-    });
+        findViewById(R.id.scan_barcode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scanBarcode();
+            }
+        });
+        findViewById(R.id.manually_add_account).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                manuallyEnterAccountDetails();
+            }
+        });
 
-    mRightButton.setVisibility(View.INVISIBLE);
-  }
+        mRightButton.setVisibility(View.INVISIBLE);
+    }
 
-  private void manuallyEnterAccountDetails() {
-    Intent intent = new Intent(Intent.ACTION_VIEW);
-    intent.setClass(this, EnterKeyActivity.class);
-    startActivity(intent);
-  }
+    private void manuallyEnterAccountDetails() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setClass(this, EnterKeyActivity.class);
+        startActivity(intent);
+    }
 
-  private void scanBarcode() {
-    startActivity(AuthenticatorActivity.getLaunchIntentActionScanBarcode(this));
-    finish();
-  }
+    private void scanBarcode() {
+        startActivity(AuthenticatorActivity.getLaunchIntentActionScanBarcode(this));
+        finish();
+    }
 }

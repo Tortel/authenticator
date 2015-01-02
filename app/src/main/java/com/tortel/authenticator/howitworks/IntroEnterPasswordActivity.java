@@ -32,16 +32,16 @@ import java.io.Serializable;
  */
 public class IntroEnterPasswordActivity extends WizardPageActivity<Serializable> {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    setPageContentView(R.layout.howitworks_enter_password);
-    setTextViewHtmlFromResource(R.id.details, R.string.howitworks_page_enter_password_details);
-  }
+        setPageContentView(R.layout.howitworks_enter_password);
+        setTextViewHtmlFromResource(R.id.details, R.string.howitworks_page_enter_password_details);
+    }
 
-  @Override
-  protected void onRightButtonPressed() {
-    startPageActivity(IntroEnterCodeActivity.class);
-  }
+    @Override
+    protected void onRightButtonPressed() {
+        startPageActivity(IntroEnterCodeActivity.class);
+    }
 }

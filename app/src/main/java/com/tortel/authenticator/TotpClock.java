@@ -28,56 +28,56 @@ import android.preference.PreferenceManager;
  */
 public class TotpClock {
 
-  // @VisibleForTesting
-  static final String PREFERENCE_KEY_OFFSET_MINUTES = "timeCorrectionMinutes";
+    // @VisibleForTesting
+    static final String PREFERENCE_KEY_OFFSET_MINUTES = "timeCorrectionMinutes";
 
-  private final SharedPreferences mPreferences;
+    private final SharedPreferences mPreferences;
 
-  private final Object mLock = new Object();
+    private final Object mLock = new Object();
 
-  /**
-   * Cached value of time correction (in minutes) or {@code null} if not cached. The value is cached
-   * because it's read very frequently (once every 100ms) and is modified very infrequently.
-   *
-   * @GuardedBy {@link #mLock}
-   */
-  private Integer mCachedCorrectionMinutes;
+    /**
+     * Cached value of time correction (in minutes) or {@code null} if not cached. The value is cached
+     * because it's read very frequently (once every 100ms) and is modified very infrequently.
+     *
+     * @GuardedBy {@link #mLock}
+     */
+    private Integer mCachedCorrectionMinutes;
 
-  public TotpClock(Context context) {
-    mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-  }
-
-  /**
-   * Gets the number of milliseconds since epoch.
-   */
-  public long currentTimeMillis() {
-    return System.currentTimeMillis() + getTimeCorrectionMinutes() * Utilities.MINUTE_IN_MILLIS;
-  }
-
-  /**
-   * Gets the currently used time correction value.
-   *
-   * @return number of minutes by which this device is behind the correct time.
-   */
-  public int getTimeCorrectionMinutes() {
-    synchronized (mLock) {
-      if (mCachedCorrectionMinutes == null) {
-        mCachedCorrectionMinutes = mPreferences.getInt(PREFERENCE_KEY_OFFSET_MINUTES, 0);
-      }
-      return mCachedCorrectionMinutes;
+    public TotpClock(Context context) {
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
-  }
 
-  /**
-   * Sets the currently used time correction value.
-   *
-   * @param minutes number of minutes by which this device is behind the correct time.
-   */
-  public void setTimeCorrectionMinutes(int minutes) {
-    synchronized (mLock) {
-      mPreferences.edit().putInt(PREFERENCE_KEY_OFFSET_MINUTES, minutes).commit();
-      // Invalidate the cache to force reading actual settings from time to time
-      mCachedCorrectionMinutes = null;
+    /**
+     * Gets the number of milliseconds since epoch.
+     */
+    public long currentTimeMillis() {
+        return System.currentTimeMillis() + getTimeCorrectionMinutes() * Utilities.MINUTE_IN_MILLIS;
     }
-  }
+
+    /**
+     * Gets the currently used time correction value.
+     *
+     * @return number of minutes by which this device is behind the correct time.
+     */
+    public int getTimeCorrectionMinutes() {
+        synchronized (mLock) {
+            if (mCachedCorrectionMinutes == null) {
+                mCachedCorrectionMinutes = mPreferences.getInt(PREFERENCE_KEY_OFFSET_MINUTES, 0);
+            }
+            return mCachedCorrectionMinutes;
+        }
+    }
+
+    /**
+     * Sets the currently used time correction value.
+     *
+     * @param minutes number of minutes by which this device is behind the correct time.
+     */
+    public void setTimeCorrectionMinutes(int minutes) {
+        synchronized (mLock) {
+            mPreferences.edit().putInt(PREFERENCE_KEY_OFFSET_MINUTES, minutes).commit();
+            // Invalidate the cache to force reading actual settings from time to time
+            mCachedCorrectionMinutes = null;
+        }
+    }
 }

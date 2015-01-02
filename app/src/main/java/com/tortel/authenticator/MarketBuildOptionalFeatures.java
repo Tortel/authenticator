@@ -29,48 +29,51 @@ import android.net.Uri;
  */
 public class MarketBuildOptionalFeatures implements OptionalFeatures {
 
-  @Override
-  public void onAuthenticatorActivityCreated(AuthenticatorActivity activity) {}
+    @Override
+    public void onAuthenticatorActivityCreated(AuthenticatorActivity activity) {
+    }
 
-  @Override
-  public void onAuthenticatorActivityAccountSaved(Context context, String account) {}
+    @Override
+    public void onAuthenticatorActivityAccountSaved(Context context, String account) {
+    }
 
-  @Override
-  public boolean interpretScanResult(Context context, Uri scanResult) {
-    return false;
-  }
+    @Override
+    public boolean interpretScanResult(Context context, Uri scanResult) {
+        return false;
+    }
 
-  @Override
-  public void onDataImportedFromOldApp(Context context) {}
+    @Override
+    public void onDataImportedFromOldApp(Context context) {
+    }
 
-  @Override
-  public SharedPreferences getSharedPreferencesForDataImportFromOldApp(Context context) {
-    return null;
-  }
+    @Override
+    public SharedPreferences getSharedPreferencesForDataImportFromOldApp(Context context) {
+        return null;
+    }
 
-  @Override
-  public String appendDataImportLearnMoreLink(Context context, String text) {
-    return text;
-  }
+    @Override
+    public String appendDataImportLearnMoreLink(Context context, String text) {
+        return text;
+    }
 
-  @Override
-  public OtpSource createOtpSource(AccountDb accountDb, TotpClock totpClock) {
-    return new OtpProvider(accountDb, totpClock);
-  }
+    @Override
+    public OtpSource createOtpSource(AccountDb accountDb, TotpClock totpClock) {
+        return new OtpProvider(accountDb, totpClock);
+    }
 
-  @Override
-  public void onAuthenticatorActivityGetNextOtpFailed(
-      AuthenticatorActivity activity, String accountName, OtpSourceException exception) {
-    throw new RuntimeException("Failed to generate OTP for account", exception);
-  }
+    @Override
+    public void onAuthenticatorActivityGetNextOtpFailed(
+            AuthenticatorActivity activity, String accountName, OtpSourceException exception) {
+        throw new RuntimeException("Failed to generate OTP for account", exception);
+    }
 
-  @Override
-  public Dialog onAuthenticatorActivityCreateDialog(AuthenticatorActivity activity, int id) {
-    return null;
-  }
+    @Override
+    public Dialog onAuthenticatorActivityCreateDialog(AuthenticatorActivity activity, int id) {
+        return null;
+    }
 
-  @Override
-  public void onAuthenticatorActivityAddAccount(AuthenticatorActivity activity) {
-    activity.startActivity(new Intent(activity, AddOtherAccountActivity.class));
-  }
+    @Override
+    public void onAuthenticatorActivityAddAccount(AuthenticatorActivity activity) {
+        activity.startActivity(new Intent(activity, AddOtherAccountActivity.class));
+    }
 }
