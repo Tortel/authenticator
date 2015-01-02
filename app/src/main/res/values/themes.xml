@@ -15,7 +15,7 @@
 -->
 <resources>
 
-  <style name="AuthenticatorTheme" parent="android:Theme.Holo.Light" >
+  <style name="AuthenticatorTheme" parent="Theme.AppCompat.Light.DarkActionBar" >
     <item name="accountListWithVerificationCodes">@style/AccountListWithVerificationCodes</item>
     <item name="accountListWithVerificationCodesRowAccountName">@style/AccountListWithVerificationCodesRowAccountName</item>
     <item name="accountListWithVerificationCodesRowVerificationCode">@style/AccountListWithVerificationCodesRowVerificationCode</item>
@@ -30,16 +30,6 @@
     <item name="android:windowActionBar">false</item>
     <item name="android:windowNoTitle">true</item>
   </style>
-
-    <style name="AuthenticatorTheme.ColoredActionBar" parent="AuthenticatorTheme">
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
-    </style>
-
-    <!-- ActionBar styles -->
-    <style name="MyActionBar"
-        parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
-        <item name="android:background">@color/pastelBlueColor</item>
-    </style>
 
   <style name="AccountListWithVerificationCodes">
     <item name="android:dividerHeight">1dip</item>
@@ -67,7 +57,7 @@
   </style>
 
   <style name="AccountListWithVerificationCodesRowCountdownIndicator">
-    <item name="com.tortel.authenticator:color">@color/countdown_indicator</item>
-    <item name="com.tortel.authenticator:bgcolor">@color/countdown_indicator_bg</item>
+    <item name="com.tortel.authenticator:countdown_color">@color/countdown_indicator</item>
+    <item name="com.tortel.authenticator:countdown_bgcolor">@color/countdown_indicator_bg</item>
   </style>
 </resources>

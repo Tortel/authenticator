@@ -64,10 +64,10 @@ public class CountdownIndicator extends View {
                 int attr = appearance.getIndex(i);
 
                 switch (attr) {
-                    case R.styleable.CountdownIndicator_color:
+                    case R.styleable.CountdownIndicator_countdown_color:
                         color = appearance.getColor(attr, DEFAULT_COLOR);
                         break;
-                    case R.styleable.CountdownIndicator_bgcolor:
+                    case R.styleable.CountdownIndicator_countdown_bgcolor:
                         bgColor = appearance.getColor(attr, DEFAULT_COLOR);
                         break;
                 }

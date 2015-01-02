@@ -35,18 +35,17 @@
 
     <activity android:name="com.tortel.authenticator.AuthenticatorActivity"
               android:label="@string/app_name_short"
-              android:launchMode="singleTask"
-              android:theme="@style/AuthenticatorTheme.ColoredActionBar">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="otpauth" />
-      </intent-filter>
+              android:launchMode="singleTask" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="otpauth" />
+        </intent-filter>
     </activity>
 
     <activity android:name="com.tortel.authenticator.SettingsAboutActivity"

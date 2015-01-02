@@ -15,7 +15,7 @@
 -->
 
 <resources>
-  <color name="countdown_indicator">@color/pastelBlueColor</color>
-  <color name="countdown_indicator_bg">@color/icebergColor</color>
+  <color name="countdown_indicator">#63a1f7</color>
+  <color name="countdown_indicator_bg">#c8d5db</color>
   <color name="card_bg">#ccc</color>
 </resources>
