@@ -18,10 +18,10 @@ package com.tortel.authenticator.wizard;
 
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.AuthenticatorActivity;
-import com.tortel.authenticator.testability.TestableActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +46,7 @@ import java.io.Serializable;
  *
  * @author klyubin@google.com (Alex Klyubin)
  */
-public class WizardPageActivity<WizardState extends Serializable> extends TestableActivity {
+public class WizardPageActivity<WizardState extends Serializable> extends ActionBarActivity {
 
   // @VisibleForTesting
   public static final String KEY_WIZARD_STATE = "wizardState";

@@ -16,18 +16,16 @@
 
 package com.tortel.authenticator;
 
-import com.tortel.authenticator.R;
-import com.tortel.authenticator.testability.TestablePreferenceActivity;
-
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
 /**
  * Activity that displays the "About" preferences.
  *
  * @author klyubin@google.com (Alex Klyubin)
  */
-public class SettingsAboutActivity extends TestablePreferenceActivity {
+public class SettingsAboutActivity extends PreferenceActivity {
 
     @SuppressWarnings("deprecation")
     @Override

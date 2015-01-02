@@ -8,10 +8,10 @@ import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.testability.DependencyInjector;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,7 +19,7 @@ import android.widget.Toast;
 /**
  * Class for handling exporting the accounts to a file
  */
-public class FileExportActivity extends Activity {
+public class FileExportActivity extends ActionBarActivity {
     private EditText passPhraseInput;
     
     public void onCreate(Bundle savedInstanceState){

@@ -16,13 +16,11 @@
 
 package com.tortel.authenticator;
 
-import com.tortel.authenticator.R;
 import com.tortel.authenticator.AccountDb.OtpType;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.howitworks.IntroEnterPasswordActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
-import com.tortel.authenticator.testability.TestableActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -39,6 +37,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -74,7 +73,7 @@ import java.util.Locale;
  * @author cemp@google.com (Cem Paya)
  * @author klyubin@google.com (Alex Klyubin)
  */
-public class AuthenticatorActivity extends TestableActivity {
+public class AuthenticatorActivity extends ActionBarActivity {
 
     /** The tag for log messages */
     private static final String LOCAL_TAG = "AuthenticatorActivity";
@@ -291,11 +290,6 @@ public class AuthenticatorActivity extends TestableActivity {
         super.onSaveInstanceState(outState);
 
         outState.putSerializable(KEY_SAVE_KEY_DIALOG_PARAMS, mSaveKeyDialogParams);
-    }
-
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        return mUsers; // save state of users and currently displayed PINs
     }
 
     // Because this activity is marked as singleTop, new launch intents will be
@@ -763,30 +757,29 @@ public class AuthenticatorActivity extends TestableActivity {
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
 
         switch (item.getItemId()) {
-        case R.id.add_account:
-            addAccount();
-            return true;
-        case R.id.how_it_works:
-            displayHowItWorksInstructions();
-            return true;
-        case R.id.settings:
-            showSettings();
-            return true;
-        case R.id.export_file:
-            intent = new Intent(this, FileExportActivity.class);
-            startActivity(intent);
-            return true;
-        case R.id.import_file:
-            intent = new Intent(this, FileImportActivity.class);
-            startActivity(intent);
-            return true;
+            case R.id.add_account:
+                addAccount();
+                return true;
+            case R.id.how_it_works:
+                displayHowItWorksInstructions();
+                return true;
+            case R.id.settings:
+                showSettings();
+                return true;
+            case R.id.export_file:
+                intent = new Intent(this, FileExportActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.import_file:
+                intent = new Intent(this, FileImportActivity.class);
+                startActivity(intent);
+                return true;
         }
-
-        return super.onMenuItemSelected(featureId, item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

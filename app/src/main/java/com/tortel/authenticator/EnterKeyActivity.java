@@ -16,7 +16,6 @@
 
 package com.tortel.authenticator;
 
-import com.tortel.authenticator.R;
 import com.tortel.authenticator.AccountDb.OtpType;
 import com.tortel.authenticator.Base32String.DecodingException;
 import com.tortel.authenticator.wizard.WizardPageActivity;

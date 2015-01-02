@@ -17,16 +17,16 @@
 package com.tortel.authenticator.timesync;
 
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.testability.TestablePreferenceActivity;
 
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
 /**
  * Activity that displays the "Time correction" preferences.
  *
  * @author klyubin@google.com (Alex Klyubin)
  */
-public class SettingsTimeCorrectionActivity extends TestablePreferenceActivity {
+public class SettingsTimeCorrectionActivity extends PreferenceActivity {
 
   @SuppressWarnings("deprecation")
   @Override

@@ -11,6 +11,7 @@ import com.tortel.authenticator.R;
 import com.tortel.authenticator.export.AccountContainer.Account;
 import com.tortel.authenticator.testability.DependencyInjector;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,6 +20,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -27,7 +29,7 @@ import android.widget.Toast;
 /**
  * Class for handling importing the accounts from a file
  */
-public class FileImportActivity extends Activity {
+public class FileImportActivity extends ActionBarActivity {
     private static final String DIALOG_TAG = "dialog";
     
     private EditText passPhraseInput;
@@ -83,6 +85,7 @@ public class FileImportActivity extends Activity {
         finish();
     }
     
+    @SuppressLint("ValidFragment")
     public class ImportDialogFragment extends DialogFragment{
         
         @Override

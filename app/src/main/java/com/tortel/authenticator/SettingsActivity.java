@@ -16,17 +16,15 @@
 
 package com.tortel.authenticator;
 
-import com.tortel.authenticator.R;
-import com.tortel.authenticator.testability.TestablePreferenceActivity;
-
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
 /**
  * Top-level preferences Activity.
  *
  * @author klyubin@google.com (Alex Klyubin)
  */
-public class SettingsActivity extends TestablePreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 
     @SuppressWarnings("deprecation")
     @Override

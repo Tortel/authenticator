@@ -16,15 +16,14 @@
 
 package com.tortel.authenticator;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tortel.authenticator.R;
 import com.tortel.authenticator.Base32String.DecodingException;
 import com.tortel.authenticator.testability.DependencyInjector;
 
@@ -39,7 +38,7 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author sweis@google.com (Steve Weis)
  */
-public class CheckCodeActivity extends Activity {
+public class CheckCodeActivity extends ActionBarActivity {
     public static final String EXTRA_ID = "id";
     
     private TextView mCheckCodeTextView;
