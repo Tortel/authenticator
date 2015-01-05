@@ -16,11 +16,11 @@
 
 package com.tortel.authenticator.timesync;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.testability.DependencyInjector;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -103,48 +103,48 @@ public class SyncNowActivity extends Activity implements SyncNowController.Prese
 
         switch (result) {
             case TIME_ALREADY_CORRECT:
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle(R.string.timesync_sync_now_time_already_correct_dialog_title)
-                        .setMessage(R.string.timesync_sync_now_time_already_correct_dialog_details)
-                        .setIcon(android.R.drawable.ic_dialog_info)
-                        .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                new MaterialDialog.Builder(this)
+                        .cancelable(false)
+                        .title(R.string.timesync_sync_now_time_already_correct_dialog_title)
+                        .content(R.string.timesync_sync_now_time_already_correct_dialog_details)
+                        .positiveText(R.string.ok)
+                        .callback(new MaterialDialog.ButtonCallback() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onPositive(MaterialDialog dialog) {
                                 finish();
                             }
                         })
-                        .create()
+                        .build()
                         .show();
                 break;
             case TIME_CORRECTED:
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle(R.string.timesync_sync_now_time_corrected_dialog_title)
-                        .setMessage(R.string.timesync_sync_now_time_corrected_dialog_details)
-                        .setIcon(android.R.drawable.ic_dialog_info)
-                        .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                new MaterialDialog.Builder(this)
+                        .cancelable(false)
+                        .title(R.string.timesync_sync_now_time_corrected_dialog_title)
+                        .content(R.string.timesync_sync_now_time_corrected_dialog_details)
+                        .positiveText(R.string.ok)
+                        .callback(new MaterialDialog.ButtonCallback() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onPositive(MaterialDialog dialog) {
                                 finish();
                             }
                         })
-                        .create()
+                        .build()
                         .show();
                 break;
             case ERROR_CONNECTIVITY_ISSUE:
-                new AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setTitle(R.string.timesync_sync_now_connectivity_error_dialog_title)
-                        .setMessage(R.string.timesync_sync_now_connectivity_error_dialog_details)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                new MaterialDialog.Builder(this)
+                        .cancelable(false)
+                        .title(R.string.timesync_sync_now_connectivity_error_dialog_title)
+                        .content(R.string.timesync_sync_now_connectivity_error_dialog_details)
+                        .positiveText(R.string.ok)
+                        .callback(new MaterialDialog.ButtonCallback() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onPositive(MaterialDialog dialog) {
                                 finish();
                             }
                         })
-                        .create()
+                        .build()
                         .show();
                 break;
             case CANCELLED_BY_USER:

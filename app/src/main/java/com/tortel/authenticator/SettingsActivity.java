@@ -23,6 +23,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 
 import com.tortel.authenticator.timesync.AboutDialog;
 
@@ -38,8 +39,20 @@ public class SettingsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Fragment fragment = new MainSettingsFragment();
         getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
