@@ -16,21 +16,42 @@
 
 package com.tortel.authenticator;
 
+import android.app.Fragment;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 
 /**
- * Top-level preferences Activity.
+ * Top-level settings Activity.
  *
- * @author klyubin@google.com (Alex Klyubin)
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends ActionBarActivity {
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.settings_activity);
 
-        addPreferencesFromResource(R.xml.preferences);
+        Fragment fragment = new MainSettingsFragment();
+        getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    public static class MainSettingsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            addPreferencesFromResource(R.xml.preferences);
+
+            String packageVersion = "";
+            try {
+                packageVersion = getActivity().getPackageManager().getPackageInfo(
+                        getActivity().getPackageName(), 0).versionName;
+            } catch (PackageManager.NameNotFoundException e) { }
+
+            findPreference("version").setTitle(
+                    getActivity().getString(R.string.version_preference_title)+ " "+ packageVersion);
+        }
     }
 }

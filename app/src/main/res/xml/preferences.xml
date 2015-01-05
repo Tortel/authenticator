@@ -14,26 +14,48 @@
      limitations under the License.
 -->
 
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  <PreferenceScreen
-    android:key="time_sync"
-    android:title="@string/timesync_preference_screen_title"
-    android:summary="@string/timesync_preference_screen_summary"
-    android:persistent="false">
-    <intent
-      android:targetPackage="com.tortel.authenticator"
-      android:targetClass="com.tortel.authenticator.timesync.SettingsTimeCorrectionActivity">
-    </intent>
-  </PreferenceScreen>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/timesync_preference_screen_title"
+        android:key="time_sync">
 
-  <PreferenceScreen
-    android:key="about"
-    android:title="@string/about_preference_title"
-    android:persistent="false">
-    <intent
-      android:targetPackage="com.tortel.authenticator"
-      android:targetClass="com.tortel.authenticator.SettingsAboutActivity">
-    </intent>
-  </PreferenceScreen>
+        <PreferenceScreen
+            android:key="sync_now"
+            android:persistent="false"
+            android:title="@string/timesync_sync_now_preference_title">
+            <intent
+                android:targetClass="com.tortel.authenticator.timesync.SyncNowActivity"
+                android:targetPackage="com.tortel.authenticator" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:key="about"
+            android:persistent="false"
+            android:title="@string/timesync_about_feature_preference_title">
+            <intent
+                android:targetClass="com.tortel.authenticator.timesync.AboutActivity"
+                android:targetPackage="com.tortel.authenticator" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/about_preference_title"
+        android:key="about">
+
+        <Preference
+            android:enabled="false"
+            android:key="version"
+            android:persistent="false"
+            android:shouldDisableView="false"
+            android:title="@string/version_preference_title" />
+
+        <PreferenceScreen
+            android:key="opensource"
+            android:title="@string/opensource_preference_title">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/opensource_page_url" />
+        </PreferenceScreen>
+
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -47,9 +47,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SettingsAboutActivity"
-                  android:label="@string/about_preference_screen_title" />
-
         <activity android:name=".AddOtherAccountActivity"
                   android:label="@string/add_account_menu_item" />
 
@@ -79,9 +76,6 @@
         <activity android:name=".howitworks.IntroVerifyDeviceActivity"
                   android:theme="@style/AuthenticatorTheme.NoTitleBar"
                   android:label="@string/howitworks_page_verify_device_title" />
-
-        <activity android:name=".timesync.SettingsTimeCorrectionActivity"
-                  android:label="@string/timesync_preference_screen_title" />
 
         <activity android:name=".timesync.AboutActivity"
                   android:theme="@style/AuthenticatorTheme.NoTitleBar"

@@ -129,7 +129,7 @@
   <string name="version_preference_title">Version</string>
 
   <!-- Preference title, used to get more information about the open-source project for this app -->
-  <string name="opensource_preference_title">Open-source project</string>
+  <string name="opensource_preference_title">View source</string>
 
   <!-- DO NOT TRANSLATE. URL of the Open-Source project's page. -->
   <string name="opensource_page_url">https://github.com/Tortel/authenticator</string>

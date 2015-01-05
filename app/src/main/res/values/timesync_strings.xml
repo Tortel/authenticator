@@ -26,10 +26,10 @@
   </string>
 
   <!-- Title of the preference to sync the app's internal time with Google. -->
-  <string name="timesync_sync_now_preference_title">Sync now</string>
+  <string name="timesync_sync_now_preference_title">Sync internal clock</string>
 
   <!-- Title of the preference to display more information about the Time Correction feature. -->
-  <string name="timesync_about_feature_preference_title">About this feature</string>
+  <string name="timesync_about_feature_preference_title">About internal clock sync</string>
 
   <!-- Title of the screen descirbing the Time correction/sync feature in detail. -->
   <string name="timesync_about_feature_screen_title">About this feature</string>
@@ -63,7 +63,7 @@
 
   <!-- Title of the progress dialog displayed when contacting Google servers to correct the app's
        internal time. -->
-  <string name="timesync_sync_now_progress_dialog_title">Sync now</string>
+  <string name="timesync_sync_now_progress_dialog_title">Sync time now</string>
 
   <!-- Details of the progress dialog displayed when contacting Google servers to correct the app's
        internal time. -->
