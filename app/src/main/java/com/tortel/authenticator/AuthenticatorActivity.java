@@ -19,7 +19,7 @@ package com.tortel.authenticator;
 import com.tortel.authenticator.AccountDb.OtpType;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
-import com.tortel.authenticator.howitworks.IntroEnterPasswordActivity;
+import com.tortel.authenticator.howitworks.HowItWorksActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
 
 import android.app.Activity;
@@ -57,7 +57,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -790,7 +789,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
     }
 
     private void displayHowItWorksInstructions() {
-        startActivity(new Intent(this, IntroEnterPasswordActivity.class));
+        startActivity(new Intent(this, HowItWorksActivity.class));
     }
 
     private void addAccount() {

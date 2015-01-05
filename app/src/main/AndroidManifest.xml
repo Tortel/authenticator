@@ -47,6 +47,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".howitworks.HowItWorksActivity"
+            android:label="@string/how_it_works_menu_item" />
+
         <activity android:name=".AddOtherAccountActivity"
                   android:label="@string/add_account_menu_item" />
 
@@ -64,18 +67,6 @@
 
         <activity android:name=".export.FileImportActivity"
                   android:label="@string/file_import_title" />
-
-        <activity android:name=".howitworks.IntroEnterPasswordActivity"
-                  android:theme="@style/AuthenticatorTheme.NoTitleBar"
-                  android:label="@string/howitworks_page_enter_password_title" />
-
-        <activity android:name=".howitworks.IntroEnterCodeActivity"
-                  android:theme="@style/AuthenticatorTheme.NoTitleBar"
-                  android:label="@string/howitworks_page_enter_code_title" />
-
-        <activity android:name=".howitworks.IntroVerifyDeviceActivity"
-                  android:theme="@style/AuthenticatorTheme.NoTitleBar"
-                  android:label="@string/howitworks_page_verify_device_title" />
 
         <activity android:name=".timesync.SyncNowActivity"
                   android:theme="@style/Theme.AppCompat.Dialog"
