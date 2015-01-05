@@ -28,14 +28,11 @@
                 android:targetPackage="com.tortel.authenticator" />
         </PreferenceScreen>
 
-        <PreferenceScreen
-            android:key="about"
+        <Preference
+            android:key="about_time"
             android:persistent="false"
-            android:title="@string/timesync_about_feature_preference_title">
-            <intent
-                android:targetClass="com.tortel.authenticator.timesync.AboutActivity"
-                android:targetPackage="com.tortel.authenticator" />
-        </PreferenceScreen>
+            android:title="@string/timesync_about_feature_preference_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

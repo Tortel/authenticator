@@ -19,14 +19,19 @@ package com.tortel.authenticator;
 import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.support.v7.app.ActionBarActivity;
+
+import com.tortel.authenticator.timesync.AboutDialog;
 
 /**
  * Top-level settings Activity.
  *
  */
 public class SettingsActivity extends ActionBarActivity {
+    private static final String KEY_ABOUT = "about_time";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,9 @@ public class SettingsActivity extends ActionBarActivity {
         getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
 
+    /**
+     * Fragment that actually shows the settings
+     */
     public static class MainSettingsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +59,18 @@ public class SettingsActivity extends ActionBarActivity {
             } catch (PackageManager.NameNotFoundException e) { }
 
             findPreference("version").setTitle(
-                    getActivity().getString(R.string.version_preference_title)+ " "+ packageVersion);
+                    getActivity().getString(R.string.version_preference_title) + " " + packageVersion);
+        }
+
+        @Override
+        public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+            if(KEY_ABOUT.equals(preference.getKey())){
+                ActionBarActivity activity = (ActionBarActivity) getActivity();
+                AboutDialog dialog = new AboutDialog();
+                dialog.show(activity.getSupportFragmentManager(), "about");
+                return true;
+            }
+            return super.onPreferenceTreeClick(preferenceScreen, preference);
         }
     }
 }

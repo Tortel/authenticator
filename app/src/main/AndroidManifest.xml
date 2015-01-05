@@ -77,10 +77,6 @@
                   android:theme="@style/AuthenticatorTheme.NoTitleBar"
                   android:label="@string/howitworks_page_verify_device_title" />
 
-        <activity android:name=".timesync.AboutActivity"
-                  android:theme="@style/AuthenticatorTheme.NoTitleBar"
-                  android:label="@string/timesync_about_feature_screen_title" />
-
         <activity android:name=".timesync.SyncNowActivity"
                   android:theme="@style/Theme.AppCompat.Dialog"
                   android:label="@string/timesync_sync_now_screen_title" />
