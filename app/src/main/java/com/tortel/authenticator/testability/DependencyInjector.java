@@ -37,15 +37,10 @@ import org.apache.http.conn.ClientConnectionManager;
  * creators/constructors and enables the injection of these objects for testing purposes.
  * <p/>
  * <p>The injector is singleton. It needs to be configured for production or test use using
- * {@link #configureForProductionIfNotConfigured(Context)} or
- * {@link #resetForIntegrationTesting(Context)}.
+ * {@link #configureForProductionIfNotConfigured(Context)}
  * After that its clients can access the various objects such as {@link AccountDb} using the
  * respective getters (e.g., {@link #getAccountDb()}.
  * <p/>
- * <p>When testing, this class provides the means to inject different implementations of the
- * injectable objects (e.g., {@link #setAccountDb(AccountDb) setAccountDb}). To avoid inter-test
- * state-leakage, each test should invoke {@link #resetForIntegrationTesting(Context)}.
- *
  * @author klyubin@google.com (Alex Klyubin)
  */
 public final class DependencyInjector {
@@ -56,7 +51,6 @@ public final class DependencyInjector {
     private static OtpSource sOtpProvider;
     private static TotpClock sTotpClock;
     private static PackageManager sPackageManager;
-    private static StartActivityListener sStartActivityListener;
     private static HttpClient sHttpClient;
     private static OptionalFeatures sOptionalFeatures;
 
@@ -147,19 +141,6 @@ public final class DependencyInjector {
     }
 
     /**
-     * Sets the {@link StartActivityListener} instance returned by this injector.
-     */
-    public static synchronized void setStartActivityListener(StartActivityListener listener) {
-        sStartActivityListener = listener;
-    }
-
-    public static synchronized StartActivityListener getStartActivityListener() {
-        // Don't create an instance on demand -- the default behavior when the listener is null is to
-        // proceed with launching activities.
-        return sStartActivityListener;
-    }
-
-    /**
      * Sets the {@link HttpClient} instance returned by this injector. This will prevent the
      * injector from creating its own instance.
      */
@@ -210,27 +191,7 @@ public final class DependencyInjector {
     }
 
     /**
-     * Clears any state and configures this injector to provide objects that are suitable for
-     * integration testing.
-     */
-    // @VisibleForTesting
-    public static synchronized void resetForIntegrationTesting(Context context) {
-        if (context == null) {
-            throw new NullPointerException("context == null");
-        }
-
-        close();
-
-        sMode = Mode.INTEGRATION_TEST;
-        RenamingDelegatingContext renamingContext = new RenamingDelegatingContext(context, "test_");
-        renamingContext.makeExistingFilesAndDbsAccessible();
-        sContext = new SharedPreferencesRenamingDelegatingContext(renamingContext, "test_");
-        PreferenceManager.getDefaultSharedPreferences(sContext).edit().clear().commit();
-    }
-
-    /**
-     * Closes any resources and objects held by this injector. To use the injector again, invoke
-     * {@link #resetForIntegrationTesting(Context)}.
+     * Closes any resources and objects held by this injector.
      */
     public static synchronized void close() {
         if (sAccountDb != null) {
@@ -249,7 +210,6 @@ public final class DependencyInjector {
         sOtpProvider = null;
         sTotpClock = null;
         sPackageManager = null;
-        sStartActivityListener = null;
         sHttpClient = null;
         sOptionalFeatures = null;
     }

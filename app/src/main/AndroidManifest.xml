@@ -47,14 +47,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".howitworks.HowItWorksActivity"
+        <activity android:name=".activity.HowItWorksActivity"
             android:label="@string/how_it_works_menu_item" />
 
-        <activity android:name=".AddOtherAccountActivity"
+        <activity android:name=".activity.AddAccountActivity"
                   android:label="@string/add_account_menu_item" />
-
-        <activity android:name=".EnterKeyActivity"
-                  android:label="@string/enter_key_title" />
 
         <activity android:name=".CheckCodeActivity"
                   android:label="@string/check_code_title" />

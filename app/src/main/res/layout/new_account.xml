@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/button_scan_barcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_add_account_scan_barcode" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/create_account_manually" />
+
+        <EditText
+            android:id="@+id/create_account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:hint="@string/enter_account_label" />
+
+        <EditText
+            android:id="@+id/create_account_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="textNoSuggestions"
+            android:hint="@string/enter_key_hint" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/create_account_time_base"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/time_based" />
+
+            <RadioButton
+                android:id="@+id/create_account_counter_base"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/counter_based" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/button_add_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Account"/>
+
+    </LinearLayout>
+</ScrollView>

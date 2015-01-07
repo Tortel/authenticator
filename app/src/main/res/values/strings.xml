@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2009 Google Inc. All Rights Reserved.
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright 2009 Google Inc. All Rights Reserved.
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -17,158 +16,158 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-  <!-- Name of the application -->
-  <string name="app_name">Authenticator+</string>
+    <!-- Name of the application -->
+    <string name="app_name">Authenticator+</string>
 
-  <!-- Shortened version of the application name, without Google branding -->
-  <string name="app_name_short">Authenticator+</string>
+    <!-- Shortened version of the application name, without Google branding -->
+    <string name="app_name_short">Authenticator+</string>
 
-  <!-- Title displayed at the top when adding new OTP account manually -->
-  <string name="enter_key_title">Manual account entry</string>
+    <!-- Title displayed at the top when adding new OTP account manually -->
+    <string name="enter_key_title">Manual account entry</string>
 
-  <!-- Button on the Manual Account Entry page to add the account the details of which the user
-       is entering on the page. -->
-  <string name="enter_key_page_add_button">Add</string>
+    <!-- Button on the Manual Account Entry page to add the account the details of which the user
+         is entering on the page. -->
+    <string name="enter_key_page_add_button">Add</string>
 
-  <!-- Label for a button on the main screen: add a new OTP account -->
-  <string name="button_add_account">Add an account</string>
+    <!-- Label for a button on the main screen: add a new OTP account -->
+    <string name="button_add_account">Add an account</string>
 
-  <!-- Label for a button on the main screen: display an set of help pages explaining how 2-step
-       verification works. -->
-  <string name="button_how_it_works">See how it works</string>
+    <!-- Label for a button on the main screen: display an set of help pages explaining how 2-step
+         verification works. -->
+    <string name="button_how_it_works">See how it works</string>
 
-  <!-- Label for menu option: add a new OTP account -->
-  <string name="add_account_menu_item">Add account</string>
+    <!-- Label for menu option: add a new OTP account -->
+    <string name="add_account_menu_item">Add account</string>
 
-  <!-- Label for menu option: display an set of help pages explaining how 2-step verification
-       works. -->
-  <string name="how_it_works_menu_item">How it works</string>
+    <!-- Label for menu option: display an set of help pages explaining how 2-step verification
+         works. -->
+    <string name="how_it_works_menu_item">How it works</string>
 
-  <!-- Title of the main (top-level) preference/settings screen. -->
-  <string name="main_preference_screen_title">Settings</string>
+    <!-- Title of the main (top-level) preference/settings screen. -->
+    <string name="main_preference_screen_title">Settings</string>
 
-  <!-- Title of the preference in the main preference screen that displays the About settings screen. -->
-  <string name="about_preference_title">About</string>
+    <!-- Title of the preference in the main preference screen that displays the About settings screen. -->
+    <string name="about_preference_title">About</string>
 
-  <!-- Application settings menu item in the main screen's menu. -->
-  <string name="settings_menu_item">Settings</string>
+    <!-- Application settings menu item in the main screen's menu. -->
+    <string name="settings_menu_item">Settings</string>
 
-  <!-- Button on the Add Other Account screen that lets the user add an account by manually entering
-       account details. -->
-  <string name="button_add_account_manual_entry">Manually add account</string>
+    <!-- Button on the Add Other Account screen that lets the user add an account by manually entering
+         account details. -->
+    <string name="button_add_account_manual_entry">Manually add account</string>
 
-  <!-- Button on the Add Other Account screen that lets the user add an account by scanning a QR
-       code. -->
-  <string name="button_add_account_scan_barcode">Scan barcode</string>
+    <!-- Button on the Add Other Account screen that lets the user add an account by scanning a QR
+         code. -->
+    <string name="button_add_account_scan_barcode">Scan barcode</string>
 
-  <!-- Text of the button to advance to the Next page of a wizard.
-       [CHAR LIMIT=12] -->
-  <string name="button_next">Next</string>
+    <!-- Text of the button to advance to the Next page of a wizard.
+         [CHAR LIMIT=12] -->
+    <string name="button_next">Next</string>
 
-  <!-- Text of the button to return to the previous page of a wizard [CHAR LIMIT=12] -->
-  <string name="button_back">Back</string>
+    <!-- Text of the button to return to the previous page of a wizard [CHAR LIMIT=12] -->
+    <string name="button_back">Back</string>
 
-  <!-- Form field to enter account name (part of the form used for manually adding account) -->
-  <string name="enter_account_label">Enter account name</string>
+    <!-- Form field to enter account name (part of the form used for manually adding account) -->
+    <string name="enter_account_label">Enter account name</string>
 
-  <!-- Example displayed in the secret key field before user starts typing there -->
-  <string name="enter_key_hint">Enter your key</string>
+    <!-- Example displayed in the secret key field before user starts typing there -->
+    <string name="enter_key_hint">Enter your key</string>
 
-  <!-- Error message displayed if user enters a key that is shorter than allowed minimum -->
-  <string name="enter_key_too_short">Key value is too short</string>
+    <!-- Error message displayed if user enters a key that is shorter than allowed minimum -->
+    <string name="enter_key_too_short">Key value is too short</string>
 
-  <!-- Error message displayed if user enters a key with an illegal character -->
-  <string name="enter_key_illegal_char">Key value has illegal character</string>
+    <!-- Error message displayed if user enters a key with an illegal character -->
+    <string name="enter_key_illegal_char">Key value has illegal character</string>
 
-  <!-- Title for the error message dialog displayed after scanning invalid QR code -->
-  <string name="error_title">Error</string>
+    <!-- Title for the error message dialog displayed after scanning invalid QR code -->
+    <string name="error_title">Error</string>
 
-  <!-- Error message displayed when scanned QR code is not recognized as valid format -->
-  <string name="error_uri">Key not recognized.</string>
+    <!-- Error message displayed when scanned QR code is not recognized as valid format -->
+    <string name="error_uri">Key not recognized.</string>
 
-  <!-- Alternative message displayed when scanned QR code is not recognized as valid key -->
-  <string name="error_qr">Cannot interpret QR code.</string>
+    <!-- Alternative message displayed when scanned QR code is not recognized as valid key -->
+    <string name="error_qr">Cannot interpret QR code.</string>
 
-  <!-- Confirmation message displayed in a toast after adding new account -->
-  <string name="secret_saved">Secret saved</string>
+    <!-- Confirmation message displayed in a toast after adding new account -->
+    <string name="secret_saved">Secret saved</string>
 
-  <!-- Question asking user to confirm adding a new account, the details of which were obtained
-       by scanning a QR code or provided by the web browser. -->
-  <string name="save_key_message">Save key for</string>
+    <!-- Question asking user to confirm adding a new account, the details of which were obtained
+         by scanning a QR code or provided by the web browser. -->
+    <string name="save_key_message">Save key for</string>
 
-  <!-- Error message displayed if the scanned QR code contains an empty key -->
-  <string name="error_empty_secret">Cannot save empty secret</string>
+    <!-- Error message displayed if the scanned QR code contains an empty key -->
+    <string name="error_empty_secret">Cannot save empty secret</string>
 
-  <!-- Instruction message displayed on the main screen -->
-  <string name="enter_pin">
+    <!-- Instruction message displayed on the main screen -->
+    <string name="enter_pin">
     Enter this verification code if prompted during account sign-in:
-  </string>
+    </string>
 
-  <!-- Label displayed before the integrity check, used to verify key was entered correctly -->
-  <string name="check_code_title">Integrity check value</string>
+    <!-- Label displayed before the integrity check, used to verify key was entered correctly -->
+    <string name="check_code_title">Integrity check value</string>
 
-  <!-- Menu item user selects to view the key integrity check for a particular account -->
-  <string name="check_code_menu_item">Check key value</string>
+    <!-- Menu item user selects to view the key integrity check for a particular account -->
+    <string name="check_code_menu_item">Check key value</string>
 
-  <!-- Title for error message dialog when user attempts to scan a barcode but does not
-       have the barcode scanner application installed. -->
-  <string name="install_dialog_title">Install barcode scanner?</string>
+    <!-- Title for error message dialog when user attempts to scan a barcode but does not
+         have the barcode scanner application installed. -->
+    <string name="install_dialog_title">Install barcode scanner?</string>
 
-  <!-- Error message displayed when user attempts to scan a barcode without a scanner app. -->
-  <string name="install_dialog_message">
+    <!-- Error message displayed when user attempts to scan a barcode without a scanner app. -->
+    <string name="install_dialog_message">
     To scan barcodes containing keys, you must install the ZXing barcode scanner.
-   </string>
+    </string>
 
-  <!-- Text on button user clicks to start installation of barcode scanning app -->
-  <string name="install_button">Install</string>
+    <!-- Text on button user clicks to start installation of barcode scanning app -->
+    <string name="install_button">Install</string>
 
-  <!-- Preference screen title that displays information about the application. -->
-  <string name="about_preference_screen_title">About</string>
+    <!-- Preference screen title that displays information about the application. -->
+    <string name="about_preference_screen_title">About</string>
 
-  <!-- Preference title for displaying the version of this app -->
-  <string name="version_preference_title">Version</string>
+    <!-- Preference title for displaying the version of this app -->
+    <string name="version_preference_title">Version</string>
 
-  <!-- Preference title, used to get more information about the open-source project for this app -->
-  <string name="opensource_preference_title">View source</string>
+    <!-- Preference title, used to get more information about the open-source project for this app -->
+    <string name="opensource_preference_title">View source</string>
 
-  <!-- DO NOT TRANSLATE. URL of the Open-Source project's page. -->
-  <string name="opensource_page_url">https://github.com/Tortel/authenticator</string>
+    <!-- DO NOT TRANSLATE. URL of the Open-Source project's page. -->
+    <string name="opensource_page_url">https://github.com/Tortel/authenticator</string>
 
-  <!-- Information displayed on the check-key screen, explaining use of the integrity check -->
-  <string name="check_code">
-  To check that you have the correct key value for <xliff:g id="account" example="mallory@gmail.com">%1$s</xliff:g>
-  verify that the value here matches the integrity check value provided
-  by the server:&lt;br/>
-  </string>
+    <!-- Information displayed on the check-key screen, explaining use of the integrity check -->
+    <string name="check_code">
+    To check that you have the correct key value for <xliff:g example="mallory@gmail.com" id="account">%1$s</xliff:g>
+    verify that the value here matches the integrity check value provided
+    by the server:&lt;br/>
+    </string>
 
-  <!-- Error message displayed on check-integrity code page,
-       if there is an error computing the integrity code for the key. -->
-  <string name="general_security_exception">General security exception</string>
+    <!-- Error message displayed on check-integrity code page,
+         if there is an error computing the integrity code for the key. -->
+    <string name="general_security_exception">General security exception</string>
 
-  <!-- Error message displayed on check-integrity code page, if key is corrupted. -->
-  <string name="decoding_exception">Decoding exception</string>
+    <!-- Error message displayed on check-integrity code page, if key is corrupted. -->
+    <string name="decoding_exception">Decoding exception</string>
 
-  <!-- Button on manual account entry page, adds the account -->
-  <string name="submit">Save</string>
+    <!-- Button on manual account entry page, adds the account -->
+    <string name="submit">Save</string>
 
-  <!-- Button on manual account entry page, cancels adding account, returns to main page -->
-  <string name="cancel">Cancel</string>
+    <!-- Button on manual account entry page, cancels adding account, returns to main page -->
+    <string name="cancel">Cancel</string>
 
-  <!-- Menu item when long-pressing on account, used to remove the account -->
-  <string name="context_menu_remove_account">Remove</string>
+    <!-- Menu item when long-pressing on account, used to remove the account -->
+    <string name="context_menu_remove_account">Remove</string>
 
-  <!-- Remove/Delete button in the dialog displayed when the user attempts to remove an account.
-       -->
-  <string name="remove_account_dialog_button_remove">Remove account</string>
+    <!-- Remove/Delete button in the dialog displayed when the user attempts to remove an account.
+         -->
+    <string name="remove_account_dialog_button_remove">Remove account</string>
 
-  <!-- Title of the dialog displayed when the user attempts to remove an account. -->
-  <string name="remove_account_dialog_title">
-    Remove <xliff:g id="account" example="mallory@gmail.com">%1$s</xliff:g>?
-  </string>
+    <!-- Title of the dialog displayed when the user attempts to remove an account. -->
+    <string name="remove_account_dialog_title">
+    Remove <xliff:g example="mallory@gmail.com" id="account">%1$s</xliff:g>?
+    </string>
 
-  <!-- Text (HTML) of the dialog displayed when the user attempts to delete an account.
-       The dialog offers two buttons: Remove (remove_account_dialog_button_remove) and Cancel. -->
-  <string name="remove_account_dialog_message">
+    <!-- Text (HTML) of the dialog displayed when the user attempts to delete an account.
+         The dialog offers two buttons: Remove (remove_account_dialog_button_remove) and Cancel. -->
+    <string name="remove_account_dialog_message">
     <![CDATA[
       Removing this account will <b>remove your ability</b> to generate codes, however, it will
       <b>not</b> turn off 2-factor authentication. This may prevent you from signing into your
@@ -180,13 +179,13 @@
         <li>Ensure you have an alternate mechanism for generating codes.</li>
       </ul>
     ]]>
-  </string>
+    </string>
 
-  <!-- Text (HTML) of the dialog displayed when the user attempts to remove a Google account.
-       The text differs slightly from remove_account_dialog_button_remove which is displayed
-       for non-Google accounts for which we don't know the exact effects of removing the account.
-       The dialog offers two buttons: Remove (remove_account_dialog_button_remove) and Cancel. -->
-  <string name="remove_google_account_dialog_message">
+    <!-- Text (HTML) of the dialog displayed when the user attempts to remove a Google account.
+         The text differs slightly from remove_account_dialog_button_remove which is displayed
+         for non-Google accounts for which we don't know the exact effects of removing the account.
+         The dialog offers two buttons: Remove (remove_account_dialog_button_remove) and Cancel. -->
+    <string name="remove_google_account_dialog_message">
     <![CDATA[
       Removing this account will <b>remove your ability</b> to generate codes, however, it will
       <b>not</b> turn off 2-step verification. This may prevent you from signing into your account.
@@ -197,132 +196,137 @@
         <li>Ensure you have an alternate mechanism for generating codes.</li>
       </ul>
     ]]>
-  </string>
+    </string>
 
-  <!-- Long-press menu item for an account, used to rename that account -->
-  <string name="rename">Rename</string>
+    <!-- Long-press menu item for an account, used to rename that account -->
+    <string name="rename">Rename</string>
 
-  <!-- Text in dialog shown when user selects "Rename" menu item for a given
-       account, with the parameter indicating existing account name -->
-  <string name="rename_message">Rename <xliff:g id="account" example="mallory@gmail.com">%1$s</xliff:g></string>
+    <!-- Text in dialog shown when user selects "Rename" menu item for a given
+         account, with the parameter indicating existing account name -->
+    <string name="rename_message">Rename <xliff:g example="mallory@gmail.com" id="account">%1$s</xliff:g></string>
 
-  <!-- Error message displayed when user tries to rename one account to the same
-       name as another existing account -->
-  <string name="error_exists">Sorry, that name is already in use.</string>
+    <!-- Error message displayed when user tries to rename one account to the same
+         name as another existing account -->
+    <string name="error_exists">Sorry, that name is already in use.</string>
 
-  <!-- Long-press menu item for an account, copies current OTP code for that account
-       to the phone clipboard -->
-  <string name="copy_to_clipboard">Copy to clipboard</string>
+    <!-- Long-press menu item for an account, copies current OTP code for that account
+         to the phone clipboard -->
+    <string name="copy_to_clipboard">Copy to clipboard</string>
 
-  <!-- Text reported to the accessibility system (e.g., on screen reader)
-       when the user selects a counter-based account (from the account list)
-       for which no code is currently displayed/generated.
-       Pressing on the account row will generate the next verification
-       code. -->
-  <string name="counter_pin">Get code</string>
+    <!-- Text reported to the accessibility system (e.g., on screen reader)
+         when the user selects a counter-based account (from the account list)
+         for which no code is currently displayed/generated.
+         Pressing on the account row will generate the next verification
+         code. -->
+    <string name="counter_pin">Get code</string>
 
-  <!-- Placeholder value displayed for OTP before any codes have been generated -->
-  <string name="empty_pin">_ _ _ _ _ _</string>
+    <!-- Placeholder value displayed for OTP before any codes have been generated -->
+    <string name="empty_pin">_ _ _ _ _ _</string>
 
-  <!-- Text on OK button for confirmation dialogs -->
-  <string name="ok">OK</string>
+    <!-- Text on OK button for confirmation dialogs -->
+    <string name="ok">OK</string>
 
-  <!-- Label for the dropdown menu when adding new account manually.
-       Asking user to specify one of the two key types (counter vs. time) -->
-  <string name="type_prompt">Type of key</string>
+    <!-- Label for the dropdown menu when adding new account manually.
+         Asking user to specify one of the two key types (counter vs. time) -->
+    <string name="type_prompt">Type of key</string>
 
-  <!-- NOTE: order matters here and must be the same as AccountDb.TYPE_*
-       TODO(adhintz): make order not matter by using something like enums -->
-  <!-- Different type of OTP accounts, displayed in drop-down menu when manually adding accounts.
-       Codes can be generated either based on time or based on an incrementing counter. -->
-  <string-array name="type">
-    <item>Time based</item>
-    <item>Counter based</item>
-  </string-array>
+    <!-- NOTE: order matters here and must be the same as AccountDb.TYPE_*
+         TODO(adhintz): make order not matter by using something like enums -->
+    <!-- Different type of OTP accounts, displayed in drop-down menu when manually adding accounts.
+         Codes can be generated either based on time or based on an incrementing counter. -->
+    <string-array name="type">
+        <item>Time based</item>
+        <item>Counter based</item>
+    </string-array>
 
-  <!-- Text on the button to uninstall the deprecated/old app. Clicking the button displays the
-       system UI for uninstalling the deprecated/old app. -->
-  <string name="button_uninstall_old_app">Uninstall</string>
+    <!-- Text on the button to uninstall the deprecated/old app. Clicking the button displays the
+         system UI for uninstalling the deprecated/old app. -->
+    <string name="button_uninstall_old_app">Uninstall</string>
 
-  <!-- Title of the "How it works" wizard page which explains that in addition to entering a
-       password during sign in a verification code may need to be entered. -->
-  <string name="howitworks_page_enter_password_title">
+    <!-- Title of the "How it works" wizard page which explains that in addition to entering a
+         password during sign in a verification code may need to be entered. -->
+    <string name="howitworks_page_enter_password_title">
     To sign in, you\'ll enter your password.
-  </string>
+    </string>
 
-  <!-- Details (HTML) of the "How it works" wizard page which explains that in addition to entering
-       a password during sign in a verification code may need to be entered. -->
-  <string name="howitworks_page_enter_password_details">
+    <!-- Details (HTML) of the "How it works" wizard page which explains that in addition to entering
+         a password during sign in a verification code may need to be entered. -->
+    <string name="howitworks_page_enter_password_details">
     However, if you\'re at a new computer or device, you will be asked for a special code to make
     sure it\'s really you.
-  </string>
+    </string>
 
-  <!-- Title of the "How it works" wizard page which explains that a verification code may need to
-       be entered when signing in. -->
-  <string name="howitworks_page_enter_code_title">
+    <!-- Title of the "How it works" wizard page which explains that a verification code may need to
+         be entered when signing in. -->
+    <string name="howitworks_page_enter_code_title">
     If you\'re on a new computer, enter a code from your phone.
-  </string>
+    </string>
 
-  <!-- Details (HTML) of the "How it works" wizard page which explains that a verification code may
-       need to be entered when signing in and that this app will generate the code. -->
-  <string name="howitworks_page_enter_code_details">
+    <!-- Details (HTML) of the "How it works" wizard page which explains that a verification code may
+         need to be entered when signing in and that this app will generate the code. -->
+    <string name="howitworks_page_enter_code_details">
     This app will generate the code needed to proceed with sign in.
-  </string>
+    </string>
 
-  <!-- Title of the "How it works" wizard page which that once a computer/device is verified the
-       user can tell Google not to ask for a verification code when signing in from that
-       computer/device. -->
-  <string name="howitworks_page_verify_device_title">
+    <!-- Title of the "How it works" wizard page which that once a computer/device is verified the
+         user can tell Google not to ask for a verification code when signing in from that
+         computer/device. -->
+    <string name="howitworks_page_verify_device_title">
     Then you\'re signed in.
-  </string>
+    </string>
 
-  <!-- Details (HTML) of the "How it works" wizard page which that once a computer/device is
-       verified the user can tell Google not to ask for a verification code when signing from that
-       computer/device. -->
-  <string name="howitworks_page_verify_device_details">
+    <!-- Details (HTML) of the "How it works" wizard page which that once a computer/device is
+         verified the user can tell Google not to ask for a verification code when signing from that
+         computer/device. -->
+    <string name="howitworks_page_verify_device_details">
     You can also choose to remember the computer and the service won\'t ask you for a code there again.
-  </string>
+    </string>
 
-  <!-- Label of the button to exit the "How it works" introductory flow. -->
-  <string name="button_exit_howitworks_flow">Exit</string>
+    <!-- Label of the button to exit the "How it works" introductory flow. -->
+    <string name="button_exit_howitworks_flow">Exit</string>
 
-  <!-- Heading in the main screen of the app when there are no accounts configured (yet). -->
-  <string name="welcome_page_title">
+    <!-- Heading in the main screen of the app when there are no accounts configured (yet). -->
+    <string name="welcome_page_title">
     Thousands of online accounts are hijacked every day.
-  </string>
+    </string>
 
-  <!-- Subheading in the main screen of the app when there are no accounts configured (yet).  -->
-  <string name="welcome_page_details">
+    <!-- Subheading in the main screen of the app when there are no accounts configured (yet).  -->
+    <string name="welcome_page_details">
     2-step verification protects your accounts even if your password is stolen.
-  </string>
-  
-  <!-- File export strings -->
-  <string name="file_export_title">Export to File</string>
-  <string name="file_export_done">Backup finished</string>
-  <string name="file_export_filename">Enter a name for the backup file. An .abk extension will automatically be applied</string>
-  <string name="file_name">File Name</string>
-  <string name="export">Export</string>
-  
-  <!-- File import strings -->
-  <string name="file_import_title">Import from File</string>
-  <string name="import_passphrase">Enter the passphrase used to encrypt the backup. This is case sensitive.</string>
-  <string name="import_accounts">Import Accounts</string>
-  <string name="import_button">Import</string>
-  <string name="import_loaded">Loaded Backup</string>
-  <string name="import_successful">Import Successful</string>
-  <string name="import_no_accounts">No accounts to import</string>
-  
-  <!-- Both import/export strings -->
-  <string name="passphrase">Passphrase</string>
-  <string name="passphrase_info">Create a passphrase to use to encrypt your backup.
+    </string>
+
+    <!-- File export strings -->
+    <string name="file_export_title">Export to File</string>
+    <string name="file_export_done">Backup finished</string>
+    <string name="file_export_filename">Enter a name for the backup file. An .abk extension will automatically be applied</string>
+    <string name="file_name">File Name</string>
+    <string name="export">Export</string>
+
+    <!-- File import strings -->
+    <string name="file_import_title">Import from File</string>
+    <string name="import_passphrase">Enter the passphrase used to encrypt the backup. This is case sensitive.</string>
+    <string name="import_accounts">Import Accounts</string>
+    <string name="import_button">Import</string>
+    <string name="import_loaded">Loaded Backup</string>
+    <string name="import_successful">Import Successful</string>
+    <string name="import_no_accounts">No accounts to import</string>
+
+    <!-- Both import/export strings -->
+    <string name="passphrase">Passphrase</string>
+    <string name="passphrase_info">Create a passphrase to use to encrypt your backup.
       It must be at least 5 characters and is case sensitive, but the longer it is the more secure it is.\n
       Try using a passphrase instead of just a password - try combining a few easy to remember words.</string>
-  
-  <!-- Import/Export errors -->
-  <string name="error_json_parsing">Error: Malformed backup file</string>
-  <string name="error_wrong_pass">Error: Incorrect passphrase</string>
-  <string name="error_processing">Error processing export</string>
-  <string name="error_unknown">Unknown error occurred</string>
-  
-  
+
+    <!-- Import/Export errors -->
+    <string name="error_json_parsing">Error: Malformed backup file</string>
+    <string name="error_wrong_pass">Error: Incorrect passphrase</string>
+    <string name="error_processing">Error processing export</string>
+    <string name="error_unknown">Unknown error occurred</string>
+
+    <!-- Create account strings -->
+    <string name="create_account_manually">Manually enter account details:</string>
+    <string name="time_based">Time Based</string>
+    <string name="counter_based">Counter Based</string>
+    <string name="no_name">Enter a valid name</string>
+
 </resources>

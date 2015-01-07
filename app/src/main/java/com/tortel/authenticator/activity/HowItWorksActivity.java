@@ -1,4 +1,4 @@
-package com.tortel.authenticator.howitworks;
+package com.tortel.authenticator.activity;
 
 import android.app.Fragment;
 import android.os.Bundle;

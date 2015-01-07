@@ -22,6 +22,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.tortel.authenticator.activity.AddAccountActivity;
+
 /**
  * {@link OptionalFeatures} implementation used in Market builds.
  *
@@ -74,6 +76,6 @@ public class MarketBuildOptionalFeatures implements OptionalFeatures {
 
     @Override
     public void onAuthenticatorActivityAddAccount(AuthenticatorActivity activity) {
-        activity.startActivity(new Intent(activity, AddOtherAccountActivity.class));
+        activity.startActivity(new Intent(activity, AddAccountActivity.class));
     }
 }

@@ -19,7 +19,7 @@ package com.tortel.authenticator;
 import com.tortel.authenticator.AccountDb.OtpType;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
-import com.tortel.authenticator.howitworks.HowItWorksActivity;
+import com.tortel.authenticator.activity.HowItWorksActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
 
 import android.app.Activity;
@@ -615,7 +615,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
      * @param counter only important for the hotp type
      * @return {@code true} if the secret was saved, {@code false} otherwise.
      */
-    static boolean saveSecret(Context context, Integer id, String user, String secret,
+    public static boolean saveSecret(Context context, Integer id, String user, String secret,
                               OtpType type, Integer counter) {
         if (secret != null) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
