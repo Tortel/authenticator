@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,6 +23,7 @@ public class HowItWorksActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.fragment_activity);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Fragment fragment = getFragmentManager().findFragmentById(R.id.content_frame);
         if(fragment == null){
@@ -30,6 +32,15 @@ public class HowItWorksActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     /**
      * Abstract fragment that the different pages will use
