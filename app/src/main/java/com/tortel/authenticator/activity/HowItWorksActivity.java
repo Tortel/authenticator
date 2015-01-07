@@ -1,35 +1,43 @@
 package com.tortel.authenticator.activity;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.tortel.authenticator.R;
 
 /**
- * Activity that
+ * Activity that displays the how it works information
  */
-public class HowItWorksActivity extends ActionBarActivity {
+public class HowItWorksActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener {
+    private static final String TAB = "tab";
+    private int currentTab = 0;
+    private HowItWorksPager pageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.fragment_activity);
+        setContentView(R.layout.swipe_fragment_activity);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.content_frame);
-        if(fragment == null){
-            fragment = new EnterPasswordFrag();
-            getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commitAllowingStateLoss();
+        if(savedInstanceState != null){
+            currentTab = savedInstanceState.getInt(TAB, 0);
         }
+
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        pageAdapter = new HowItWorksPager(getSupportFragmentManager());
+        pager.setAdapter(pageAdapter);
+        pager.setOnPageChangeListener(this);
+        pager.setCurrentItem(currentTab);
     }
 
     @Override
@@ -40,6 +48,46 @@ public class HowItWorksActivity extends ActionBarActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(TAB, currentTab);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        currentTab = position;
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        currentTab = position;
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    private class HowItWorksPager extends FragmentPagerAdapter {
+        IntroFragment frags[] =
+                {new EnterPasswordFrag(), new EnterCodeFrag(), new VerifyDeviceFrag()};
+
+        public HowItWorksPager(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return frags.length;
+        }
+
+        @Override
+        public android.support.v4.app.Fragment getItem(int position) {
+            return frags[position];
+        }
     }
 
     /**
@@ -58,39 +106,21 @@ public class HowItWorksActivity extends ActionBarActivity {
          */
         protected abstract int getLayoutResource();
 
-        /**
-         * Get the id of the detail text to show
-         * @return
-         */
-        protected abstract int getDetailsResource();
-
-        /**
-         * Get the next fragment to show
-         * @return
-         */
-        protected abstract IntroFragment getNextFragment();
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(getLayoutResource(), container, false);
 
-            TextView textView = (TextView) view.findViewById(R.id.details);
-            textView.setText(Html.fromHtml(getActivity().getString(getDetailsResource())));
-
             Button button = (Button) view.findViewById(R.id.next_button);
-            button.setOnClickListener(this);
+            if(button != null) {
+                button.setOnClickListener(this);
+            }
 
             return view;
         }
 
         @Override
         public void onClick(View v) {
-            IntroFragment frag = getNextFragment();
-            if(frag != null){
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, frag).commitAllowingStateLoss();
-            } else {
-                getActivity().finish();
-            }
+            getActivity().finish();
         }
     }
 
@@ -99,33 +129,12 @@ public class HowItWorksActivity extends ActionBarActivity {
         protected int getLayoutResource() {
             return R.layout.howitworks_enter_password;
         }
-
-        @Override
-        protected int getDetailsResource() {
-            return R.string.howitworks_page_enter_password_details;
-        }
-
-        @Override
-        protected IntroFragment getNextFragment() {
-            return new EnterCodeFrag();
-        }
     }
 
     public static class EnterCodeFrag extends IntroFragment {
-
         @Override
         protected int getLayoutResource() {
             return R.layout.howitworks_enter_code;
-        }
-
-        @Override
-        protected int getDetailsResource() {
-            return R.string.howitworks_page_enter_code_details;
-        }
-
-        @Override
-        protected IntroFragment getNextFragment() {
-            return new VerifyDeviceFrag();
         }
     }
 
@@ -134,16 +143,6 @@ public class HowItWorksActivity extends ActionBarActivity {
         @Override
         protected int getLayoutResource() {
             return R.layout.howitworks_verify_device;
-        }
-
-        @Override
-        protected int getDetailsResource() {
-            return R.string.howitworks_page_verify_device_details;
-        }
-
-        @Override
-        protected IntroFragment getNextFragment() {
-            return null;
         }
     }
 

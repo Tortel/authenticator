@@ -329,4 +329,6 @@
     <string name="counter_based">Counter Based</string>
     <string name="no_name">Enter a valid name</string>
 
+    <string name="swipe_continue">Swipe to continue -></string>
+
 </resources>
