@@ -16,7 +16,7 @@
 
 <!-- With the exception of UserRowView, this file should be kept in sync
 with user_row_legacy.xml -->
-<com.tortel.authenticator.UserRowView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tortel.authenticator.view.UserRowView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="10dip"
@@ -71,7 +71,7 @@ with user_row_legacy.xml -->
                         android:layout_height="wrap_content"
                         android:src="@drawable/refresh_button"
                         android:background="@android:color/transparent" />
-                    <com.tortel.authenticator.CountdownIndicator
+                    <com.tortel.authenticator.view.CountdownIndicator
                         android:id="@+id/countdown_icon"
                         android:layout_width="32dip"
                         android:layout_height="32dip"
@@ -83,4 +83,4 @@ with user_row_legacy.xml -->
 
     </android.support.v7.widget.CardView>
 
-</com.tortel.authenticator.UserRowView>
+</com.tortel.authenticator.view.UserRowView>

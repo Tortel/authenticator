@@ -18,6 +18,8 @@ package com.tortel.authenticator;
 
 import com.tortel.authenticator.AccountDb.OtpType;
 import com.tortel.authenticator.PasscodeGenerator.Signer;
+import com.tortel.authenticator.exception.OtpSourceException;
+import com.tortel.authenticator.utils.Utilities;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;

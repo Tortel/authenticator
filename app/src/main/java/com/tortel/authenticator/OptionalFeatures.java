@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.tortel.authenticator.exception.OtpSourceException;
+
 /**
  * Interface for providing functionality not available in Market builds without having to modify
  * the codebase shared between the Market and non-Market builds.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +24,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tortel.authenticator.AccountDb;
+import com.tortel.authenticator.Base32String;
 import com.tortel.authenticator.Base32String.DecodingException;
+import com.tortel.authenticator.PasscodeGenerator;
+import com.tortel.authenticator.R;
 import com.tortel.authenticator.testability.DependencyInjector;
 
 import java.security.GeneralSecurityException;

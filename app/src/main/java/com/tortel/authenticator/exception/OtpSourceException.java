@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.exception;
 
 /**
- * Indicates that {@link OtpSource} failed to generate an OTP because OTP generation is not
- * permitted for the specified account.
+ * Indicates that {@link com.tortel.authenticator.OtpSource} failed to performed the requested operation.
  *
  * @author klyubin@google.com (Alex Klyubin)
  */
-public class OtpGenerationNotPermittedException extends OtpSourceException {
-    private static final long serialVersionUID = 822429897995102097L;
+public class OtpSourceException extends Exception {
+    private static final long serialVersionUID = 5235217078272987970L;
 
-    public OtpGenerationNotPermittedException(String message) {
+    public OtpSourceException(String message) {
         super(message);
+    }
+
+    public OtpSourceException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

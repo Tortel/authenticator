@@ -16,6 +16,8 @@
 
 package com.tortel.authenticator;
 
+import com.tortel.authenticator.exception.OtpSourceException;
+
 import java.util.Collection;
 
 /**

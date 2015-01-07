@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.activity;
 
 import android.app.Fragment;
 import android.content.pm.PackageManager;
@@ -25,6 +25,7 @@ import android.preference.PreferenceScreen;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
+import com.tortel.authenticator.R;
 import com.tortel.authenticator.timesync.AboutDialog;
 
 /**

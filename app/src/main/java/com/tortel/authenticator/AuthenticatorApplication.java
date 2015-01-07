@@ -17,6 +17,7 @@
 package com.tortel.authenticator;
 
 import com.tortel.authenticator.testability.DependencyInjector;
+import com.tortel.authenticator.utils.FileUtilities;
 
 import android.app.Application;
 

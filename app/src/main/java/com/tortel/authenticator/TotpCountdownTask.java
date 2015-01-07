@@ -18,6 +18,8 @@ package com.tortel.authenticator;
 
 import android.os.Handler;
 
+import com.tortel.authenticator.utils.Utilities;
+
 /**
  * Task that periodically notifies its listener about the time remaining until the value of a TOTP
  * counter changes.

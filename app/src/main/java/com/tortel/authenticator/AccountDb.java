@@ -18,6 +18,7 @@ package com.tortel.authenticator;
 
 import com.tortel.authenticator.Base32String.DecodingException;
 import com.tortel.authenticator.PasscodeGenerator.Signer;
+import com.tortel.authenticator.utils.FileUtilities;
 
 import android.content.ContentValues;
 import android.content.Context;

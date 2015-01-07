@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 
 import com.tortel.authenticator.activity.AddAccountActivity;
+import com.tortel.authenticator.exception.OtpSourceException;
 
 /**
  * {@link OptionalFeatures} implementation used in Market builds.

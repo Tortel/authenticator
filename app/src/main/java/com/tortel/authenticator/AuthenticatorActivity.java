@@ -17,10 +17,15 @@
 package com.tortel.authenticator;
 
 import com.tortel.authenticator.AccountDb.OtpType;
+import com.tortel.authenticator.activity.CheckCodeActivity;
+import com.tortel.authenticator.activity.SettingsActivity;
+import com.tortel.authenticator.exception.OtpSourceException;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.activity.HowItWorksActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
+import com.tortel.authenticator.utils.Utilities;
+import com.tortel.authenticator.view.CountdownIndicator;
 
 import android.app.Activity;
 import android.app.AlertDialog;

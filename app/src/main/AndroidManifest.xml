@@ -53,10 +53,10 @@
         <activity android:name=".activity.AddAccountActivity"
                   android:label="@string/add_account_menu_item" />
 
-        <activity android:name=".CheckCodeActivity"
+        <activity android:name=".activity.CheckCodeActivity"
                   android:label="@string/check_code_title" />
 
-        <activity android:name=".SettingsActivity"
+        <activity android:name=".activity.SettingsActivity"
                   android:label="@string/main_preference_screen_title" />
 
         <activity android:name=".export.FileExportActivity"

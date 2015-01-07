@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.tortel.authenticator.utils.Utilities;
+
 /**
  * Clock input for the time-based OTPs (TOTP). The input is based on the current system time
  * and is adjusted by a persistently stored correction value (offset in minutes).
