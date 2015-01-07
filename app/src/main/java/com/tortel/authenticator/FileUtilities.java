@@ -119,10 +119,10 @@ public class FileUtilities {
 
         @Override
         public String toString() {
-            return new String(String.format("StatStruct{ dev: %d, ino: %d, mode: %o (octal), nlink: %d, "
+            return String.format("StatStruct{ dev: %d, ino: %d, mode: %o (octal), nlink: %d, "
                             + "uid: %d, gid: %d, rdev: %d, size: %d, blksize: %d, blocks: %d, atime: %d, mtime: %d, "
                             + "ctime: %d }\n",
-                    dev, ino, mode, nlink, uid, gid, rdev, size, blksize, blocks, atime, mtime, ctime));
+                    dev, ino, mode, nlink, uid, gid, rdev, size, blksize, blocks, atime, mtime, ctime);
         }
     }
 
