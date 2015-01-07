@@ -32,10 +32,6 @@
             @style/AccountListWithVerificationCodesRowCountdownIndicator
         </item>
 
-        <item name="wizardButtonBarStyle">@null</item>
-        <item name="directionalButtonLeftStyle">@style/DirectionalButtonLeft</item>
-        <item name="directionalButtonRightStyle">@style/DirectionalButtonRight</item>
-        <item name="enrollmentWizardDividerHorizontal">?android:attr/dividerHorizontal</item>
     </style>
 
     <style name="AuthenticatorTheme.NoTitleBar" parent="AuthenticatorTheme">
@@ -52,15 +48,6 @@
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
 
-    <style name="DirectionalButtonLeft">
-        <item name="android:background">@drawable/btn_dir_prev_holo_dark</item>
-        <item name="android:paddingLeft">30.0dip</item>
-    </style>
-
-    <style name="DirectionalButtonRight">
-        <item name="android:background">@drawable/btn_dir_next_holo_dark</item>
-        <item name="android:paddingRight">35.0dip</item>
-    </style>
 
     <style name="AccountListWithVerificationCodesRowVerificationCode">
         <item name="android:textColor">?android:attr/textColorPrimary</item>

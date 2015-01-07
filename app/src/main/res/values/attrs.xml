@@ -20,10 +20,6 @@
     <attr name="accountListWithVerificationCodesRowAccountName" format="reference" />
     <attr name="accountListWithVerificationCodesRowVerificationCode" format="reference" />
     <attr name="accountListWithVerificationCodesRowCountdownIndicator" format="reference" />
-    <attr name="wizardButtonBarStyle" format="reference" />
-    <attr name="directionalButtonLeftStyle" format="reference" />
-    <attr name="directionalButtonRightStyle" format="reference" />
-    <attr name="enrollmentWizardDividerHorizontal" format="reference" />
   </declare-styleable>
 
   <declare-styleable name="CountdownIndicator">
