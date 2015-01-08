@@ -48,8 +48,6 @@ import javax.crypto.spec.SecretKeySpec;
 public class AccountDb {
     public static final Integer DEFAULT_HOTP_COUNTER = 0;
 
-    public static final String GOOGLE_CORP_ACCOUNT_NAME = "Google Internal 2Factor";
-
     private static final String ID_COLUMN = "_id";
     private static final String EMAIL_COLUMN = "email";
     private static final String SECRET_COLUMN = "secret";
@@ -339,8 +337,7 @@ public class AccountDb {
                 String emailLowerCase = cursor.getString(cursor.getColumnIndex(EMAIL_COLUMN))
                         .toLowerCase(Locale.US);
                 return (emailLowerCase.endsWith("@gmail.com"))
-                        || (emailLowerCase.endsWith("@google.com"))
-                        || (id.equals(GOOGLE_CORP_ACCOUNT_NAME));
+                        || (emailLowerCase.endsWith("@google.com"));
             }
         } finally {
             tryCloseCursor(cursor);
