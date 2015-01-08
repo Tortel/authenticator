@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.activity;
 
+import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.activity.CheckCodeActivity;
-import com.tortel.authenticator.activity.SettingsActivity;
+import com.tortel.authenticator.OtpSource;
+import com.tortel.authenticator.R;
+import com.tortel.authenticator.TotpClock;
+import com.tortel.authenticator.TotpCountdownTask;
+import com.tortel.authenticator.TotpCounter;
 import com.tortel.authenticator.exception.OtpSourceException;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
-import com.tortel.authenticator.activity.HowItWorksActivity;
 import com.tortel.authenticator.testability.DependencyInjector;
 import com.tortel.authenticator.utils.Utilities;
 import com.tortel.authenticator.view.CountdownIndicator;
@@ -269,7 +272,6 @@ public class AuthenticatorActivity extends ActionBarActivity {
             // This is the first time this Activity is starting (i.e., not
             // restoring previous state which
             // was saved, for example, due to orientation change)
-            DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreated(this);
             handleIntent(getIntent());
         }
     }
@@ -625,8 +627,6 @@ public class AuthenticatorActivity extends ActionBarActivity {
         if (secret != null) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
             accountDb.update(id, user, secret, type, counter);
-            DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAccountSaved(context,
-                    user);
             // TODO: Consider having a display message that activities can call
             // and it
             // will present a toast with a uniform duration, and perhaps update
@@ -798,7 +798,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
     }
 
     private void addAccount() {
-        DependencyInjector.getOptionalFeatures().onAuthenticatorActivityAddAccount(this);
+        startActivity(new Intent(this, AddAccountActivity.class));
     }
 
     private void scanBarcode() {
@@ -832,10 +832,6 @@ public class AuthenticatorActivity extends ActionBarActivity {
      *                          confirmation before updating the otp account information.
      */
     private void interpretScanResult(Uri scanResult, boolean confirmBeforeSave) {
-        if (DependencyInjector.getOptionalFeatures().interpretScanResult(this, scanResult)) {
-            // Scan result consumed by an optional component
-            return;
-        }
         // The scan result is expected to be a URL that adds an account.
 
         // If confirmBeforeSave is true, the user has to confirm/reject the
@@ -953,11 +949,6 @@ public class AuthenticatorActivity extends ActionBarActivity {
                 break;
 
             default:
-                dialog = DependencyInjector.getOptionalFeatures().onAuthenticatorActivityCreateDialog(
-                        this, id);
-                if (dialog == null) {
-                    dialog = super.onCreateDialog(id);
-                }
                 break;
         }
         return dialog;
@@ -1039,9 +1030,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
             try {
                 computeAndDisplayPin(mAccount.id, position, true);
             } catch (OtpSourceException e) {
-                DependencyInjector.getOptionalFeatures().onAuthenticatorActivityGetNextOtpFailed(
-                        AuthenticatorActivity.this, mAccount.user, e);
-                return;
+                throw new RuntimeException("Failed to generate OTP for account", e);
             }
 
             final String pin = mAccount.pin;

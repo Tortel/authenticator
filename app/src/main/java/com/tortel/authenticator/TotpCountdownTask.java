@@ -26,7 +26,7 @@ import com.tortel.authenticator.utils.Utilities;
  *
  * @author klyubin@google.com (Alex Klyubin)
  */
-class TotpCountdownTask implements Runnable {
+public class TotpCountdownTask implements Runnable {
     private final TotpCounter mCounter;
     private final TotpClock mClock;
     private final long mRemainingTimeNotificationPeriod;
@@ -39,19 +39,19 @@ class TotpCountdownTask implements Runnable {
     /**
      * Listener notified of changes to the time remaining until the counter value changes.
      */
-    interface Listener {
+    public interface Listener {
 
         /**
          * Invoked when the time remaining till the TOTP counter changes its value.
          *
          * @param millisRemaining time (milliseconds) remaining.
          */
-        void onTotpCountdown(long millisRemaining);
+        public void onTotpCountdown(long millisRemaining);
 
         /**
          * Invoked when the TOTP counter changes its value.
          */
-        void onTotpCounterValueChanged();
+        public void onTotpCounterValueChanged();
     }
 
     /**
@@ -63,7 +63,7 @@ class TotpCountdownTask implements Runnable {
      *                                        notifies its listener about the time remaining until the @{code counter} changes its
      *                                        value.
      */
-    TotpCountdownTask(TotpCounter counter, TotpClock clock, long remainingTimeNotificationPeriod) {
+    public TotpCountdownTask(TotpCounter counter, TotpClock clock, long remainingTimeNotificationPeriod) {
         mCounter = counter;
         mClock = clock;
         mRemainingTimeNotificationPeriod = remainingTimeNotificationPeriod;
@@ -74,7 +74,7 @@ class TotpCountdownTask implements Runnable {
      *
      * @param listener listener or {@code null} for no listener.
      */
-    void setListener(Listener listener) {
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
@@ -86,7 +86,7 @@ class TotpCountdownTask implements Runnable {
      *
      * @throws IllegalStateException if the task has already been stopped.
      */
-    void startAndNotifyListener() {
+    public void startAndNotifyListener() {
         if (mShouldStop) {
             throw new IllegalStateException("Task already stopped and cannot be restarted.");
         }
@@ -97,7 +97,7 @@ class TotpCountdownTask implements Runnable {
     /**
      * Stops this task. This task will never notify the listener after the task has been stopped.
      */
-    void stop() {
+    public void stop() {
         mShouldStop = true;
     }
 

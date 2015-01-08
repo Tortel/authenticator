@@ -17,8 +17,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.AuthenticatorActivity;
-import com.tortel.authenticator.Base32String;
+import com.tortel.authenticator.utils.Base32String;
 import com.tortel.authenticator.R;
 
 /**

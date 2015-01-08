@@ -16,7 +16,8 @@
 
 package com.tortel.authenticator;
 
-import com.tortel.authenticator.Base32String.DecodingException;
+import com.tortel.authenticator.utils.Base32String;
+import com.tortel.authenticator.utils.Base32String.DecodingException;
 import com.tortel.authenticator.PasscodeGenerator.Signer;
 import com.tortel.authenticator.utils.FileUtilities;
 
@@ -54,11 +55,8 @@ public class AccountDb {
     private static final String SECRET_COLUMN = "secret";
     private static final String COUNTER_COLUMN = "counter";
     private static final String TYPE_COLUMN = "type";
-    // @VisibleForTesting
     static final String PROVIDER_COLUMN = "provider";
-    // @VisibleForTesting
     static final String TABLE_NAME = "accounts";
-    // @VisibleForTesting
     static final String PATH = "databases";
 
     private static final String TABLE_INFO_COLUMN_NAME_COLUMN = "name";
@@ -66,7 +64,6 @@ public class AccountDb {
     private static final int PROVIDER_UNKNOWN = 0;
     private static final int PROVIDER_GOOGLE = 1;
 
-    // @VisibleForTesting
     SQLiteDatabase mDatabase;
 
     private static final String LOCAL_TAG = "GoogleAuthenticator.AccountDb";
@@ -193,8 +190,7 @@ public class AccountDb {
     /**
      * Lists the names of all the columns in the specified table.
      */
-    // @VisibleForTesting
-    static Collection<String> listTableColumnNamesLowerCase(
+    public static Collection<String> listTableColumnNamesLowerCase(
             SQLiteDatabase database, String tableName) {
         Cursor cursor = database.rawQuery(
                 String.format("PRAGMA table_info(%s)", tableName),
@@ -260,7 +256,7 @@ public class AccountDb {
         return null;
     }
 
-    static Signer getSigningOracle(String secret) {
+    public static Signer getSigningOracle(String secret) {
         try {
             byte[] keyBytes = decodeKey(secret);
             final Mac mac = Mac.getInstance("HMACSHA1");
@@ -274,11 +270,7 @@ public class AccountDb {
                     return mac.doFinal(data);
                 }
             };
-        } catch (DecodingException error) {
-            Log.e(LOCAL_TAG, error.getMessage());
-        } catch (NoSuchAlgorithmException error) {
-            Log.e(LOCAL_TAG, error.getMessage());
-        } catch (InvalidKeyException error) {
+        } catch (DecodingException | NoSuchAlgorithmException | InvalidKeyException error) {
             Log.e(LOCAL_TAG, error.getMessage());
         }
 
@@ -302,7 +294,7 @@ public class AccountDb {
         return null;
     }
 
-    void incrementCounter(Integer id) {
+    public void incrementCounter(Integer id) {
         ContentValues values = new ContentValues();
         values.put(EMAIL_COLUMN, id);
         Integer counter = getCounter(id);
@@ -325,7 +317,7 @@ public class AccountDb {
         return null;
     }
 
-    void setType(Integer id, OtpType type) {
+    public void setType(Integer id, OtpType type) {
         ContentValues values = new ContentValues();
         values.put(ID_COLUMN, id);
         values.put(TYPE_COLUMN, type.value);
@@ -354,17 +346,6 @@ public class AccountDb {
             tryCloseCursor(cursor);
         }
         return false;
-    }
-
-    /**
-     * Finds the Google corp account in this database.
-     *
-     * @return the name of the account if it is present or {@code null} if the
-     * account does not exist.
-     */
-    @Deprecated
-    public String findGoogleCorpAccount() {
-        return null;
     }
 
     private static String whereClause(Integer id) {

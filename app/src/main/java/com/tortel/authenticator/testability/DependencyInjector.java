@@ -17,16 +17,12 @@
 package com.tortel.authenticator.testability;
 
 import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.AuthenticatorActivity;
-import com.tortel.authenticator.MarketBuildOptionalFeatures;
-import com.tortel.authenticator.OptionalFeatures;
+import com.tortel.authenticator.OtpProvider;
 import com.tortel.authenticator.OtpSource;
 import com.tortel.authenticator.TotpClock;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.preference.PreferenceManager;
-import android.test.RenamingDelegatingContext;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;
@@ -52,7 +48,6 @@ public final class DependencyInjector {
     private static TotpClock sTotpClock;
     private static PackageManager sPackageManager;
     private static HttpClient sHttpClient;
-    private static OptionalFeatures sOptionalFeatures;
 
     private enum Mode {
         PRODUCTION,
@@ -105,7 +100,7 @@ public final class DependencyInjector {
 
     public static synchronized OtpSource getOtpProvider() {
         if (sOtpProvider == null) {
-            sOtpProvider = getOptionalFeatures().createOtpSource(getAccountDb(), getTotpClock());
+            sOtpProvider = new OtpProvider(getAccountDb(), getTotpClock());;
         }
         return sOtpProvider;
     }
@@ -155,27 +150,6 @@ public final class DependencyInjector {
         return sHttpClient;
     }
 
-    public static synchronized void setOptionalFeatures(OptionalFeatures optionalFeatures) {
-        sOptionalFeatures = optionalFeatures;
-    }
-
-    public static synchronized OptionalFeatures getOptionalFeatures() {
-        if (sOptionalFeatures == null) {
-            try {
-                Class<?> resultClass = Class.forName(
-                        AuthenticatorActivity.class.getPackage().getName() + ".NonMarketBuildOptionalFeatures");
-                try {
-                    sOptionalFeatures = (OptionalFeatures) resultClass.newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to instantiate optional features module", e);
-                }
-            } catch (ClassNotFoundException e) {
-                sOptionalFeatures = new MarketBuildOptionalFeatures();
-            }
-        }
-        return sOptionalFeatures;
-    }
-
     /**
      * Clears any state and configures this injector for production use. Does nothing if the injector
      * is already configured.
@@ -211,6 +185,5 @@ public final class DependencyInjector {
         sTotpClock = null;
         sPackageManager = null;
         sHttpClient = null;
-        sOptionalFeatures = null;
     }
 }

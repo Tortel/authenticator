@@ -34,7 +34,7 @@ public interface OtpSource {
      *               entry; if there are existing items, they will not be removed.
      * @return Number of accounts added to the collection.
      */
-    int enumerateAccounts(Collection<Integer> result);
+    public int enumerateAccounts(Collection<Integer> result);
 
     /**
      * Return the next OTP code for specified username.
@@ -44,7 +44,7 @@ public interface OtpSource {
      * @param id Username, email address or other unique identifier for the account.
      * @return OTP as string code.
      */
-    String getNextCode(Integer id) throws OtpSourceException;
+    public String getNextCode(Integer id) throws OtpSourceException;
 
     /**
      * Generate response to a given challenge based on next OTP code.
@@ -56,15 +56,15 @@ public interface OtpSource {
      * @throws UnsupportedOperationException if the token does not support
      *                                       challenge-response extension for this account.
      */
-    String respondToChallenge(Integer id, String challenge) throws OtpSourceException;
+    public String respondToChallenge(Integer id, String challenge) throws OtpSourceException;
 
     /**
      * Gets the counter for generating or verifying TOTP codes.
      */
-    TotpCounter getTotpCounter();
+    public TotpCounter getTotpCounter();
 
     /**
      * Gets the clock for generating or verifying TOTP codes.
      */
-    TotpClock getTotpClock();
+    public TotpClock getTotpClock();
 }

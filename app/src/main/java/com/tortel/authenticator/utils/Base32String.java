@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.utils;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -49,7 +49,7 @@ public class Base32String {
     private int SHIFT;
     private HashMap<Character, Integer> CHAR_MAP;
 
-    static final String SEPARATOR = "-";
+    private static final String SEPARATOR = "-";
 
     protected Base32String(String alphabet) {
         this.ALPHABET = alphabet;

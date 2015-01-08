@@ -25,8 +25,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.Base32String;
-import com.tortel.authenticator.Base32String.DecodingException;
+import com.tortel.authenticator.utils.Base32String;
+import com.tortel.authenticator.utils.Base32String.DecodingException;
 import com.tortel.authenticator.PasscodeGenerator;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.testability.DependencyInjector;
