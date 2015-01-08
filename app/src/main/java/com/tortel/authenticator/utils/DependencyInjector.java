@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.testability;
+package com.tortel.authenticator.utils;
 
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.otp.OtpProvider;

@@ -9,10 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.export.AccountContainer.Account;
-import com.tortel.authenticator.testability.DependencyInjector;
+import com.tortel.authenticator.utils.DependencyInjector;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;

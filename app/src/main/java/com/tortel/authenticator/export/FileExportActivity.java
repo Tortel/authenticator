@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.testability.DependencyInjector;
+import com.tortel.authenticator.utils.DependencyInjector;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

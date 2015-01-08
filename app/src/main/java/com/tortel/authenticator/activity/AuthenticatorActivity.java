@@ -26,7 +26,7 @@ import com.tortel.authenticator.otp.TotpCounter;
 import com.tortel.authenticator.exception.OtpSourceException;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
-import com.tortel.authenticator.testability.DependencyInjector;
+import com.tortel.authenticator.utils.DependencyInjector;
 import com.tortel.authenticator.utils.Utilities;
 import com.tortel.authenticator.view.CountdownIndicator;
 
