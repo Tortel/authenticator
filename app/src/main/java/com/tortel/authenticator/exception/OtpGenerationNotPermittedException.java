@@ -17,7 +17,7 @@
 package com.tortel.authenticator.exception;
 
 /**
- * Indicates that {@link com.tortel.authenticator.OtpSource} failed to generate an OTP because OTP generation is not
+ * Indicates that {@link com.tortel.authenticator.otp.OtpSource} failed to generate an OTP because OTP generation is not
  * permitted for the specified account.
  *
  * @author klyubin@google.com (Alex Klyubin)

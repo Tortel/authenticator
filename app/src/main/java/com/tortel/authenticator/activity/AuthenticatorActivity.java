@@ -18,11 +18,11 @@ package com.tortel.authenticator.activity;
 
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.OtpSource;
+import com.tortel.authenticator.otp.OtpSource;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.TotpClock;
-import com.tortel.authenticator.TotpCountdownTask;
-import com.tortel.authenticator.TotpCounter;
+import com.tortel.authenticator.otp.TotpClock;
+import com.tortel.authenticator.otp.TotpCountdownTask;
+import com.tortel.authenticator.otp.TotpCounter;
 import com.tortel.authenticator.exception.OtpSourceException;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;

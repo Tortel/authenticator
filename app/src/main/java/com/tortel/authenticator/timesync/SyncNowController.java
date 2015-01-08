@@ -17,7 +17,7 @@
 package com.tortel.authenticator.timesync;
 
 import com.tortel.authenticator.RunOnThisLooperThreadExecutor;
-import com.tortel.authenticator.TotpClock;
+import com.tortel.authenticator.otp.TotpClock;
 import com.tortel.authenticator.utils.Utilities;
 
 import android.os.Handler;

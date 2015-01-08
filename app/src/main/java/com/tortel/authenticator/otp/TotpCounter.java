@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.otp;
 
 /**
  * Counter whose value is a deterministic function of time as described in RFC 6238

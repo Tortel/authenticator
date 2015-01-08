@@ -17,9 +17,9 @@
 package com.tortel.authenticator.testability;
 
 import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.OtpProvider;
-import com.tortel.authenticator.OtpSource;
-import com.tortel.authenticator.TotpClock;
+import com.tortel.authenticator.otp.OtpProvider;
+import com.tortel.authenticator.otp.OtpSource;
+import com.tortel.authenticator.otp.TotpClock;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

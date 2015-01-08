@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.otp;
 
+import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.PasscodeGenerator.Signer;
+import com.tortel.authenticator.otp.PasscodeGenerator.Signer;
 import com.tortel.authenticator.exception.OtpSourceException;
 import com.tortel.authenticator.utils.Utilities;
 

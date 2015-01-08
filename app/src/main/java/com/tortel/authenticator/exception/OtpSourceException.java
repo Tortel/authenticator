@@ -17,7 +17,7 @@
 package com.tortel.authenticator.exception;
 
 /**
- * Indicates that {@link com.tortel.authenticator.OtpSource} failed to performed the requested operation.
+ * Indicates that {@link com.tortel.authenticator.otp.OtpSource} failed to performed the requested operation.
  *
  * @author klyubin@google.com (Alex Klyubin)
  */

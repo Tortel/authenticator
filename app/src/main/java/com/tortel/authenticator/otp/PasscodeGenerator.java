@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.otp;
+
+import com.tortel.authenticator.otp.OtpProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
@@ -59,7 +61,7 @@ public class PasscodeGenerator {
      * Using an interface to allow us to inject different signature
      * implementations.
      */
-    protected interface Signer {
+    public interface Signer {
         /**
          * @param data Preimage to sign, represented as sequence of arbitrary bytes
          * @return Signature as sequence of bytes.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
+package com.tortel.authenticator.otp;
 
 import com.tortel.authenticator.exception.OtpSourceException;
 
