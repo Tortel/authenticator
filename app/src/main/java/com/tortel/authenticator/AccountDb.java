@@ -294,7 +294,7 @@ public class AccountDb {
 
     public void incrementCounter(Integer id) {
         ContentValues values = new ContentValues();
-        values.put(EMAIL_COLUMN, id);
+        values.put(ID_COLUMN, id);
         Integer counter = getCounter(id);
         values.put(COUNTER_COLUMN, counter + 1);
         mDatabase.update(TABLE_NAME, values, whereClause(id), null);
