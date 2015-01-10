@@ -47,6 +47,9 @@
             </intent-filter>
         </activity>
 
+       <activity android:name=".activity.MainActivity"
+            android:label="@string/app_name" />
+
         <activity android:name=".activity.HowItWorksActivity"
             android:label="@string/how_it_works_menu_item" />
 
