@@ -13,74 +13,63 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
-<!-- With the exception of UserRowView, this file should be kept in sync
-with user_row_legacy.xml -->
-<com.tortel.authenticator.view.UserRowView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="10dip"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="4dp"
+    app:cardBackgroundColor="@android:color/white">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        app:cardBackgroundColor="@android:color/white">
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView android:id="@+id/current_user"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            style="?attr/accountListWithVerificationCodesRowAccountName"
+            android:color="@android:color/black"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            tools:text="User Account"
+            android:layout_marginTop="15dip" />
 
-            <TextView android:id="@+id/current_user"
+        <LinearLayout android:id="@+id/pin_area"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_marginBottom="4dip">
+
+            <TextView android:id="@+id/pin_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="?attr/accountListWithVerificationCodesRowAccountName"
-                android:color="@android:color/black"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:text="User Account"
-                android:layout_marginTop="15dip" />
+                tools:text="Pin Value"
+                style="?attr/accountListWithVerificationCodesRowVerificationCode" />
 
-            <LinearLayout android:id="@+id/pin_area"
-                android:orientation="horizontal"
+            <!-- Extra LinearLayout to force gravity="right" to work. -->
+            <LinearLayout android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="4dip">
+                android:gravity="right"
+                android:layout_gravity="center_vertical">
 
-                <TextView android:id="@+id/pin_value"
+                <ImageButton android:id="@+id/next_otp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pin Value"
-                    style="?attr/accountListWithVerificationCodesRowVerificationCode" />
-
-                <!-- Extra LinearLayout to force gravity="right" to work. -->
-                <LinearLayout android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:layout_gravity="center_vertical">
-
-                    <ImageButton android:id="@+id/next_otp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/refresh_button"
-                        android:background="@android:color/transparent" />
-                    <com.tortel.authenticator.view.CountdownIndicator
-                        android:id="@+id/countdown_icon"
-                        android:layout_width="32dip"
-                        android:layout_height="32dip"
-                        style="?attr/accountListWithVerificationCodesRowCountdownIndicator"
-                        />
-                </LinearLayout>
+                    android:src="@drawable/refresh_button"
+                    android:background="@android:color/transparent" />
+                <com.tortel.authenticator.view.CountdownIndicator
+                    android:id="@+id/countdown_icon"
+                    android:layout_width="32dip"
+                    android:layout_height="32dip"
+                    style="?attr/accountListWithVerificationCodesRowCountdownIndicator"
+                    />
             </LinearLayout>
         </LinearLayout>
-
-    </android.support.v7.widget.CardView>
-
-</com.tortel.authenticator.view.UserRowView>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
