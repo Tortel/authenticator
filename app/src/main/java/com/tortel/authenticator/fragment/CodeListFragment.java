@@ -22,6 +22,7 @@ import com.tortel.authenticator.otp.TotpClock;
 import com.tortel.authenticator.otp.TotpCountdownTask;
 import com.tortel.authenticator.otp.TotpCounter;
 import com.tortel.authenticator.utils.DependencyInjector;
+import com.tortel.authenticator.utils.Utilities;
 import com.tortel.authenticator.view.CountdownIndicator;
 
 import java.util.ArrayList;
@@ -127,6 +128,68 @@ public class CodeListFragment extends Fragment {
             }
         }
         mAdapter.notifyDataSetChanged();
+        startTotpCountdownTask();
+    }
+
+    private void startTotpCountdownTask() {
+        stopTotpCountdownTask();
+
+        mTotpCountdownTask = new TotpCountdownTask(mTotpCounter, mTotpClock,
+                TOTP_COUNTDOWN_REFRESH_PERIOD);
+        mTotpCountdownTask.setListener(new TotpCountdownTask.Listener() {
+            @Override
+            public void onTotpCountdown(long millisRemaining) {
+                setTotpCountdownPhaseFromTimeTillNextValue(millisRemaining);
+            }
+
+            @Override
+            public void onTotpCounterValueChanged() {
+                refreshVerificationCodes();
+            }
+        });
+
+        mTotpCountdownTask.startAndNotifyListener();
+    }
+
+    private void stopTotpCountdownTask() {
+        if (mTotpCountdownTask != null) {
+            mTotpCountdownTask.stop();
+            mTotpCountdownTask = null;
+        }
+    }
+
+    private void setTotpCountdownPhase(double phase) {
+        mTotpCountdownPhase = phase;
+        updateCountdownIndicators();
+    }
+
+    private void refreshVerificationCodes() {
+        for(PinInfo info : mPinInfo){
+            // Only update time-based codes
+            if(!info.isHotp) {
+                try {
+                    info.pin = mOtpProvider.getNextCode(info.id);
+                    if (info.holder != null && info.holder.mPinView != null) {
+                        info.holder.mPinView.setText(info.pin);
+                    }
+                } catch (Exception e) {
+                    Log.e("Auth", "Exception updating code for " + info.user);
+                }
+            }
+        }
+    }
+
+    private void updateCountdownIndicators() {
+        for(PinInfo info : mPinInfo){
+            if(info.holder != null && info.holder.mCountdownIndicator != null){
+                info.holder.mCountdownIndicator.setPhase(mTotpCountdownPhase);
+            }
+        }
+    }
+
+    private void setTotpCountdownPhaseFromTimeTillNextValue(long millisRemaining) {
+        setTotpCountdownPhase(((double) millisRemaining)
+                / Utilities.secondsToMillis(mTotpCounter.getTimeStep()));
     }
 
     @Override
@@ -198,6 +261,7 @@ public class CodeListFragment extends Fragment {
 
         public void setPinInfo(PinInfo pin){
             mPinInfo = pin;
+            pin.holder = this;
 
             if(pin.isHotp){
                 // Counter-based code
@@ -237,6 +301,8 @@ public class CodeListFragment extends Fragment {
         public String pin;
         // The username
         public String user;
+        // The viewholder displaying this code
+        public OtpViewHolder holder;
 
         // true if hopt (Counter), otherwise its a time-based code
         public boolean isHotp = false;
