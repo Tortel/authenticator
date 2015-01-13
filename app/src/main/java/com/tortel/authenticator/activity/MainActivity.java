@@ -11,6 +11,7 @@ import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
+import com.tortel.authenticator.fragment.CodeListFragment;
 import com.tortel.authenticator.fragment.NoAccountsFragment;
 import com.tortel.authenticator.utils.DependencyInjector;
 
@@ -36,7 +37,9 @@ public class MainActivity extends ActionBarActivity {
             ArrayList<Integer> ids = new ArrayList<>();
             mAccountDb.getIds(ids);
             if(ids.size() > 0){
-
+                Fragment frag = new CodeListFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_frame, frag).commit();
             } else {
                 Fragment frag = new NoAccountsFragment();
                 getSupportFragmentManager().beginTransaction()

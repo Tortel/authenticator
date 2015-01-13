@@ -761,6 +761,10 @@ public class AuthenticatorActivity extends ActionBarActivity {
         Intent intent;
 
         switch (item.getItemId()) {
+            case R.id.new_main:
+                intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.add_account:
                 addAccount();
                 return true;

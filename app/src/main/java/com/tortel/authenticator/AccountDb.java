@@ -35,6 +35,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import javax.crypto.Mac;
@@ -455,6 +456,16 @@ public class AccountDb {
         } finally {
             tryCloseCursor(cursor);
         }
+    }
+
+    /**
+     * Gets a list of all the account IDs
+     * @return
+     */
+    public List<Integer> getAllIds(){
+        ArrayList<Integer> ids = new ArrayList<>();
+        getIds(ids);
+        return ids;
     }
 
     private static class AccountDbOpenException extends RuntimeException {

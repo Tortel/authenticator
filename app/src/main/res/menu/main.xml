@@ -16,17 +16,16 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:id="@+id/normal_grp">
+        <item android:id="@+id/new_main"
+            android:title="WIP Main Activity" />
         <item
             android:id="@+id/add_account"
-            android:icon="@android:drawable/ic_menu_add"
             android:title="@string/add_account_menu_item" />
         <item
             android:id="@+id/how_it_works"
-            android:icon="@android:drawable/ic_menu_help"
             android:title="@string/how_it_works_menu_item" />
         <item
             android:id="@+id/settings"
-            android:icon="@android:drawable/ic_menu_preferences"
             android:title="@string/settings_menu_item" />
         <item
             android:id="@+id/export_file"
