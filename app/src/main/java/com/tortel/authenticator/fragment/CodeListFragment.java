@@ -104,10 +104,29 @@ public class CodeListFragment extends Fragment {
         mAdapter = new OtpDataAdapter();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopTotpCountdownTask();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshUserList();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopTotpCountdownTask();
+    }
+
     private void refreshUserList() {
         mPinInfo.clear();
 
         List<Integer> ids = mAccountDb.getAllIds();
+        // TODO: Need to not overwrite everything if not needed
         for(Integer id : ids){
             try {
                 PinInfo info = new PinInfo();
