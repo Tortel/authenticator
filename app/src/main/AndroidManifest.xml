@@ -36,10 +36,6 @@
                   android:label="@string/app_name_short"
                   android:launchMode="singleTask" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -47,30 +43,43 @@
             </intent-filter>
         </activity>
 
-       <activity android:name=".activity.MainActivity"
-            android:label="@string/app_name" />
+        <activity android:name=".activity.MainActivity"
+                android:label="@string/app_name"
+                android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-        <activity android:name=".activity.HowItWorksActivity"
+        <activity
+            android:name=".activity.HowItWorksActivity"
             android:label="@string/how_it_works_menu_item" />
 
-        <activity android:name=".activity.AddAccountActivity"
-                  android:label="@string/add_account_menu_item" />
+        <activity
+            android:name=".activity.AddAccountActivity"
+            android:label="@string/add_account_menu_item" />
 
-        <activity android:name=".activity.CheckCodeActivity"
-                  android:label="@string/check_code_title" />
+        <activity
+            android:name=".activity.CheckCodeActivity"
+            android:label="@string/check_code_title" />
 
-        <activity android:name=".activity.SettingsActivity"
-                  android:label="@string/main_preference_screen_title" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/main_preference_screen_title" />
 
-        <activity android:name=".export.FileExportActivity"
-                  android:label="@string/file_export_title" />
+        <activity
+            android:name=".export.FileExportActivity"
+            android:label="@string/file_export_title" />
 
-        <activity android:name=".export.FileImportActivity"
-                  android:label="@string/file_import_title" />
+        <activity
+            android:name=".export.FileImportActivity"
+            android:label="@string/file_import_title" />
 
-        <activity android:name=".timesync.SyncNowActivity"
-                  android:theme="@style/Theme.AppCompat.Dialog"
-                  android:label="@string/timesync_sync_now_screen_title" />
+        <activity
+            android:name=".timesync.SyncNowActivity"
+            android:label="@string/timesync_sync_now_screen_title"
+            android:theme="@style/Theme.AppCompat.Dialog" />
 
     </application>
 
