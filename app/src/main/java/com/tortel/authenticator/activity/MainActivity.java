@@ -1,7 +1,11 @@
 package com.tortel.authenticator.activity;
 
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -9,13 +13,16 @@ import android.view.MenuItem;
 
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
+import com.tortel.authenticator.dialog.DownloadScannerDialog;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.fragment.CodeListFragment;
 import com.tortel.authenticator.fragment.NoAccountsFragment;
 import com.tortel.authenticator.utils.DependencyInjector;
+import com.tortel.authenticator.utils.Log;
+import com.tortel.authenticator.utils.Utilities;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main activity that shows the codes and stuff
@@ -34,8 +41,7 @@ public class MainActivity extends ActionBarActivity {
         // Check if the fragment is null
         if(getSupportFragmentManager().findFragmentById(R.id.content_frame) == null){
             // Display the fragment
-            ArrayList<Integer> ids = new ArrayList<>();
-            mAccountDb.getIds(ids);
+            List<Integer> ids = mAccountDb.getAllIds();
             if(ids.size() > 0){
                 Fragment frag = new CodeListFragment();
                 getSupportFragmentManager().beginTransaction()
@@ -96,11 +102,31 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.d("MainActivity received new intent "+intent);
+        if(intent == null){
+            return;
+        }
+
+        String action = intent.getAction();
+        if(action == null){
+            return;
+        }
+
+    }
+
+    /**
+     * Opens the add account activity
+     */
     public void showAddAccount(){
         Intent intent = new Intent(this, AddAccountActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Opens the how it works activity
+     */
     public void showHowItWorks(){
         Intent intent = new Intent(this, HowItWorksActivity.class);
         startActivity(intent);

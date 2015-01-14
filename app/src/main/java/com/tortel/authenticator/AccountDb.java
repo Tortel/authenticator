@@ -47,7 +47,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @author sweis@google.com (Steve Weis)
  */
 public class AccountDb {
-    public static final Integer DEFAULT_HOTP_COUNTER = 0;
+    public static final int DEFAULT_HOTP_COUNTER = 0;
 
     private static final String ID_COLUMN = "_id";
     private static final String EMAIL_COLUMN = "email";

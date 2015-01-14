@@ -80,6 +80,7 @@ import java.util.Locale;
  * @author cemp@google.com (Cem Paya)
  * @author klyubin@google.com (Alex Klyubin)
  */
+@Deprecated
 public class AuthenticatorActivity extends ActionBarActivity {
 
     /**
