@@ -44,7 +44,7 @@ public class CodeListFragment extends Fragment {
      * Frequency (milliseconds) with which TOTP countdown indicators are
      * updated.
      */
-    private static final long TOTP_COUNTDOWN_REFRESH_PERIOD = 100;
+    private static final long TOTP_COUNTDOWN_REFRESH_PERIOD = 200;
 
     /**
      * Minimum amount of time (milliseconds) that has to elapse from the moment

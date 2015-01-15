@@ -28,4 +28,7 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+
+    <color name="focused">#ECEFF1</color>
+    <color name="selected">#CFD8DC</color>
 </resources>
