@@ -41,8 +41,8 @@ public class MainActivity extends ActionBarActivity {
         // Check if the fragment is null
         if(getSupportFragmentManager().findFragmentById(R.id.content_frame) == null){
             // Display the fragment
-            List<Integer> ids = mAccountDb.getAllIds();
-            if(ids.size() > 0){
+
+            if(mAccountDb.getCount() > 0){
                 Fragment frag = new CodeListFragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, frag).commit();
@@ -72,6 +72,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.removeItem(R.id.new_main);
         return true;
     }
 
@@ -100,20 +101,6 @@ public class MainActivity extends ActionBarActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        Log.d("MainActivity received new intent "+intent);
-        if(intent == null){
-            return;
-        }
-
-        String action = intent.getAction();
-        if(action == null){
-            return;
-        }
-
     }
 
     /**

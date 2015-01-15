@@ -468,6 +468,14 @@ public class AccountDb {
         return ids;
     }
 
+    /**
+     * Get the count of items in the DB
+     * @return the count
+     */
+    public int getCount(){
+        return getIds().getCount();
+    }
+
     private static class AccountDbOpenException extends RuntimeException {
         private static final long serialVersionUID = -4561104600253698948L;
 
