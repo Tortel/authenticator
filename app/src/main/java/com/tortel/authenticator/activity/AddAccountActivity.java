@@ -60,7 +60,7 @@ public class AddAccountActivity extends ActionBarActivity {
 
         // Check to see if we are supposed to save a new code
         Intent intent = getIntent();
-        if(intent.getData() != null){
+        if(savedInstanceState == null && intent.getData() != null){
             // Grab the scan results and convert it into a URI
             interpretScanResult(intent.getData());
         }
