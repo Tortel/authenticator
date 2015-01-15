@@ -14,6 +14,10 @@ public class Log {
         android.util.Log.v(TAG, m);
     }
 
+    public static void w(String m){
+        android.util.Log.w(TAG, m);
+    }
+
     public static void e(String m){
         e(m, null);
     }

@@ -57,6 +57,13 @@ public class AddAccountActivity extends ActionBarActivity {
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame, new NewAccountFragment()).commit();
         }
+
+        // Check to see if we are supposed to save a new code
+        Intent intent = getIntent();
+        if(intent.getData() != null){
+            // Grab the scan results and convert it into a URI
+            interpretScanResult(intent.getData());
+        }
     }
 
     @Override
@@ -91,6 +98,7 @@ public class AddAccountActivity extends ActionBarActivity {
 
         // Sanity check
         if (scanResult == null) {
+            Log.w("Error: Null URI");
             showInvalidQRDialog();
             return;
         }
@@ -99,6 +107,7 @@ public class AddAccountActivity extends ActionBarActivity {
         if (OTP_SCHEME.equals(scanResult.getScheme()) && scanResult.getAuthority() != null) {
             parseSecret(scanResult);
         } else {
+            Log.w("Invalid schema or authority in URI "+scanResult);
             showInvalidQRDialog();
         }
     }
