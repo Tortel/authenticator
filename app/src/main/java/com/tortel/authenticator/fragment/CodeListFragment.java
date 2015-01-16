@@ -5,11 +5,16 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -93,6 +98,9 @@ public class CodeListFragment extends Fragment {
 
     private Handler mHandler;
 
+    private PinInfo mSelectedInfo;
+    private ActionMode mActionMode;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,7 +144,7 @@ public class CodeListFragment extends Fragment {
             startTotpCountdownTask();
             return;
         }
-        
+
         for(Integer id : ids){
             try {
                 PinInfo info = new PinInfo();
@@ -239,11 +247,27 @@ public class CodeListFragment extends Fragment {
 
         refreshUserList();
 
+        // If the action mode is not null, it was open during rotation, so redisplay it
+        if(mActionMode != null){
+            mActionMode = null;
+            showActionMode();
+        }
+
         return view;
     }
 
     private Context getContext(){
         return getActivity().getBaseContext();
+    }
+
+    /**
+     * Displays the contextual action bar
+     */
+    private void showActionMode(){
+        if(mActionMode == null) {
+            ActionBarActivity activity = (ActionBarActivity) getActivity();
+            mActionMode = activity.startSupportActionMode(mActionModeCallback);
+        }
     }
 
     /**
@@ -276,22 +300,23 @@ public class CodeListFragment extends Fragment {
         private TextView mPinView;
         private ImageButton mNextCodeButton;
         private CountdownIndicator mCountdownIndicator;
-        private CardView mCardView;
+        private View mContentView;
+        private View mView;
 
         private PinInfo mPinInfo;
 
         public OtpViewHolder(View view) {
             super(view);
+            mView = view;
 
             mUserNameView = (TextView) view.findViewById(R.id.current_user);
             mPinView = (TextView) view.findViewById(R.id.pin_value);
             mNextCodeButton = (ImageButton) view.findViewById(R.id.next_otp);
             mCountdownIndicator = (CountdownIndicator) view.findViewById(R.id.countdown_icon);
-            mCardView = (CardView) view.findViewById(R.id.card_view);
 
-            View content = view.findViewById(R.id.row_content);
-            content.setOnClickListener(mClickListener);
-            content.setOnLongClickListener(mLongClickListener);
+            mContentView = view.findViewById(R.id.row_content);
+            mContentView.setOnClickListener(mClickListener);
+            mContentView.setOnLongClickListener(mLongClickListener);
         }
 
         public void setPinInfo(PinInfo pin){
@@ -318,6 +343,13 @@ public class CodeListFragment extends Fragment {
                 mPinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
 
                 mCountdownIndicator.setPhase(mTotpCountdownPhase);
+            }
+
+            // Check if the background should be highlighted
+            if(mPinInfo.equals(mSelectedInfo)){
+                mView.setActivated(true);
+            } else {
+                mView.setActivated(false);
             }
 
             mUserNameView.setText(pin.user);
@@ -374,7 +406,16 @@ public class CodeListFragment extends Fragment {
         private View.OnLongClickListener mLongClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                return false;
+                // Clear the old selected view
+                if(mSelectedInfo != null && mSelectedInfo.holder != null){
+                    Log.d("Clearing old selected view");
+                    mSelectedInfo.holder.mView.setActivated(false);
+                }
+
+                mView.setActivated(true);
+                mSelectedInfo = mPinInfo;
+                showActionMode();
+                return true;
             }
         };
 
@@ -397,5 +438,63 @@ public class CodeListFragment extends Fragment {
         public boolean isHotp = false;
         // HOTP only: Whether code generation is allowed for this account.
         public boolean hotpCodeGenerationAllowed;
+
+        @Override
+        public boolean equals(Object o){
+            if(!(o instanceof  PinInfo)){
+                return false;
+            }
+            return id.equals(((PinInfo) o).id);
+        }
     }
+
+    /**
+     * Manages the contextual action bar
+     */
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        // Called when the actionmode is created
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.context_list, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        // Called when a contextual menu item was selected
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch(menuItem.getItemId()){
+                case R.id.context_copy:
+                    // TODO
+                    return true;
+                case R.id.context_edit:
+                    // TODO
+                    return true;
+                case R.id.context_delete:
+                    // TODO
+                    return true;
+                default:
+                    Log.d("Other id: "+menuItem.getItemId());
+            }
+            return false;
+        }
+
+        // Called when the action mode is being dismissed
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            Log.d("Dismissing ActionMode");
+            mActionMode = null;
+            if(mSelectedInfo != null && mSelectedInfo.holder != null){
+                mSelectedInfo.holder.mView.setActivated(false);
+                mSelectedInfo = null;
+            }
+        }
+    };
 }

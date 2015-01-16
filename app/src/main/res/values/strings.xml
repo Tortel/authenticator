@@ -330,5 +330,7 @@
     <string name="no_name">Enter a valid name</string>
 
     <string name="swipe_continue">Swipe to continue -></string>
+    <string name="edit_account">Edit Account</string>
+    <string name="delete_account">Delete Account</string>
 
 </resources>

@@ -19,6 +19,8 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
 
+        <item name="android:actionModeBackground">@color/primary</item>
+
         <item name="accountListWithVerificationCodes">@style/AccountListWithVerificationCodes</item>
         <item name="accountListWithVerificationCodesRowAccountName">
             @style/AccountListWithVerificationCodesRowAccountName
@@ -31,7 +33,6 @@
         <item name="accountListWithVerificationCodesRowCountdownIndicator">
             @style/AccountListWithVerificationCodesRowCountdownIndicator
         </item>
-
     </style>
 
     <style name="AuthenticatorTheme.NoTitleBar" parent="AuthenticatorTheme">

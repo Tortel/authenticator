@@ -2,17 +2,16 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Activated color (When checked) -->
     <item android:state_activated="true"
-        android:drawable="@color/selected" />
+        android:drawable="@color/primary_light" />
     <item android:state_active="true"
-        android:drawable="@color/selected" />
-    <item android:state_checked="true"
-        android:drawable="@color/selected" />
+        android:drawable="@color/primary_light" />
+
     <!-- Touch color -->
     <item android:state_selected="true"
         android:drawable="@color/focused" />
     <item android:state_pressed="true"
         android:drawable="@color/focused" />
-    <!-- Default to white -->
+    <!-- Default to the background color -->
     <item
-        android:drawable="@android:color/white" />
+        android:drawable="@color/background_material_light" />
 </selector>
