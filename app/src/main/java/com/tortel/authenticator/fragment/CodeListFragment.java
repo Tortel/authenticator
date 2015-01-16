@@ -1,12 +1,17 @@
 package com.tortel.authenticator.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,6 +29,7 @@ import android.widget.Toast;
 
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
+import com.tortel.authenticator.dialog.ConfirmDeleteDialog;
 import com.tortel.authenticator.exception.OtpSourceException;
 import com.tortel.authenticator.otp.OtpSource;
 import com.tortel.authenticator.otp.TotpClock;
@@ -41,6 +47,8 @@ import java.util.List;
  * Fragment that shows the OTP codes for all the accounts
  */
 public class CodeListFragment extends Fragment {
+    public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGE";
+
     /**
      * Scale to use for the text displaying the PIN numbers.
      */
@@ -117,6 +125,9 @@ public class CodeListFragment extends Fragment {
 
         mAdapter = new OtpDataAdapter();
         mHandler = new Handler();
+
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_CHANGED));
     }
 
     @Override
@@ -135,6 +146,8 @@ public class CodeListFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         stopTotpCountdownTask();
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
+        broadcastManager.unregisterReceiver(mAccountChangeReceiver);
     }
 
     private void refreshUserList(boolean force) {
@@ -146,6 +159,7 @@ public class CodeListFragment extends Fragment {
             startTotpCountdownTask();
             return;
         }
+        mPinInfo.clear();
 
         for(Integer id : ids){
             try {
@@ -480,19 +494,31 @@ public class CodeListFragment extends Fragment {
         // Called when a contextual menu item was selected
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            DialogFragment dialog;
+            Bundle args;
+
             switch(menuItem.getItemId()){
                 case R.id.context_copy:
                     ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText(mSelectedInfo.user, mSelectedInfo.pin);
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
-                    mActionMode.finish();
+                    actionMode.finish();
                     return true;
                 case R.id.context_edit:
                     // TODO
+
+                    actionMode.finish();
                     return true;
                 case R.id.context_delete:
-                    // TODO
+                    args = new Bundle();
+                    args.putInt(ConfirmDeleteDialog.ID, mSelectedInfo.id);
+                    args.putString(ConfirmDeleteDialog.USERNAME, mSelectedInfo.user);
+                    dialog = new ConfirmDeleteDialog();
+                    dialog.setArguments(args);
+
+                    dialog.show(getFragmentManager(), "delete");
+                    actionMode.finish();
                     return true;
                 default:
                     Log.d("Other id: "+menuItem.getItemId());
@@ -509,6 +535,17 @@ public class CodeListFragment extends Fragment {
                 mSelectedInfo.holder.mView.setActivated(false);
                 mSelectedInfo = null;
             }
+        }
+    };
+
+    /**
+     * Receiver for an account change, which force refreshes the list
+     */
+    private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("Received account changed intent, force refreshing");
+            refreshUserList(true);
         }
     };
 }

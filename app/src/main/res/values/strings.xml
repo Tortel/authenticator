@@ -169,15 +169,21 @@
          The dialog offers two buttons: Remove (remove_account_dialog_button_remove) and Cancel. -->
     <string name="remove_account_dialog_message">
     <![CDATA[
+    <html><body>
+    <p>
       Removing this account will <b>remove your ability</b> to generate codes, however, it will
       <b>not</b> turn off 2-factor authentication. This may prevent you from signing into your
       account.
-      <p>
+    </p>
+    <p>
       Before removing:
-      <ul>
-        <li>Turn off 2-factor authentication for this account, or</li>
-        <li>Ensure you have an alternate mechanism for generating codes.</li>
-      </ul>
+    </p>
+    <p>
+      Turn off 2-factor authentication for this account or
+      ensure you have an alternate mechanism for generating codes.
+    </p>
+    </body>
+    </html>
     ]]>
     </string>
 
