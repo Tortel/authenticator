@@ -24,14 +24,16 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/card_bg"
         app:cardCornerRadius="8dp"
         tools:ignore="RtlHardcoded" >
 
         <LinearLayout
+            android:id="@+id/row_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:background="@drawable/card_bg"
+            android:background="@drawable/ripple"
             android:orientation="vertical">
 
             <TextView android:id="@+id/current_user"

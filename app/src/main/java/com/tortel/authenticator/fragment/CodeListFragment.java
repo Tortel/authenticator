@@ -3,11 +3,12 @@ package com.tortel.authenticator.fragment;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.tortel.authenticator.otp.TotpClock;
 import com.tortel.authenticator.otp.TotpCountdownTask;
 import com.tortel.authenticator.otp.TotpCounter;
 import com.tortel.authenticator.utils.DependencyInjector;
+import com.tortel.authenticator.utils.Log;
 import com.tortel.authenticator.utils.Utilities;
 import com.tortel.authenticator.view.CountdownIndicator;
 
@@ -89,6 +91,8 @@ public class CodeListFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private List<PinInfo> mPinInfo;
 
+    private Handler mHandler;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +106,7 @@ public class CodeListFragment extends Fragment {
         mTotpClock = mOtpProvider.getTotpClock();
 
         mAdapter = new OtpDataAdapter();
+        mHandler = new Handler();
     }
 
     @Override
@@ -143,7 +148,7 @@ public class CodeListFragment extends Fragment {
 
                 mPinInfo.add(info);
             } catch(OtpSourceException e){
-                Log.e("Auth", "Exception preparing account", e);
+                Log.e("Exception preparing account", e);
             }
         }
         mAdapter.notifyDataSetChanged();
@@ -192,7 +197,7 @@ public class CodeListFragment extends Fragment {
                         info.holder.mPinView.setText(info.pin);
                     }
                 } catch (Exception e) {
-                    Log.e("Auth", "Exception updating code for " + info.user);
+                    Log.e("Exception updating code for " + info.user);
                 }
             }
         }
@@ -266,6 +271,7 @@ public class CodeListFragment extends Fragment {
         private TextView mPinView;
         private ImageButton mNextCodeButton;
         private CountdownIndicator mCountdownIndicator;
+        private CardView mCardView;
 
         private PinInfo mPinInfo;
 
@@ -276,6 +282,11 @@ public class CodeListFragment extends Fragment {
             mPinView = (TextView) view.findViewById(R.id.pin_value);
             mNextCodeButton = (ImageButton) view.findViewById(R.id.next_otp);
             mCountdownIndicator = (CountdownIndicator) view.findViewById(R.id.countdown_icon);
+            mCardView = (CardView) view.findViewById(R.id.card_view);
+
+            View content = view.findViewById(R.id.row_content);
+            content.setOnClickListener(mClickListener);
+            content.setOnLongClickListener(mLongClickListener);
         }
 
         public void setPinInfo(PinInfo pin){
@@ -307,6 +318,60 @@ public class CodeListFragment extends Fragment {
             mUserNameView.setText(pin.user);
             mPinView.setText(pin.pin);
         }
+
+        private View.OnClickListener mClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mPinInfo.isHotp && mPinInfo.hotpCodeGenerationAllowed){
+                    try {
+                        // Create final copies for the callbacks
+                        final PinInfo info = mPinInfo;
+                        final TextView pinView = mPinView;
+                        final String pin = mOtpProvider.getNextCode(mPinInfo.id);
+                        Log.d("Generating new code for "+info.user);
+
+                        info.pin = pin;
+                        pinView.setText(info.pin);
+                        mPinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
+
+                        // Prevent generation for a bit
+                        mPinInfo.hotpCodeGenerationAllowed = false;
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("Re-enabling code generation for "+info.user);
+                                info.hotpCodeGenerationAllowed = true;
+                            }
+                        }, HOTP_MIN_TIME_INTERVAL_BETWEEN_CODES);
+
+                        // Clear the generated code after
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!pin.equals(info.pin)) {
+                                    return;
+                                }
+                                Log.d("Clearing code for "+info.user);
+                                info.pin = getString(R.string.empty_pin);
+                                pinView.setText(info.pin);
+                                mPinView.setTextScaleX(PIN_TEXT_SCALEX_UNDERSCORE);
+                            }
+                        }, HOTP_DISPLAY_TIMEOUT);
+
+                    } catch (Exception e) {
+                        Log.e("Exception getting next code", e);
+                        mPinView.setText("Error generating code");
+                    }
+                }
+            }
+        };
+
+        private View.OnLongClickListener mLongClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return false;
+            }
+        };
 
     }
 
