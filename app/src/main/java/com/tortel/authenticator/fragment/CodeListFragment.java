@@ -128,10 +128,15 @@ public class CodeListFragment extends Fragment {
     }
 
     private void refreshUserList() {
-        mPinInfo.clear();
-
         List<Integer> ids = mAccountDb.getAllIds();
-        // TODO: Need to not overwrite everything if not needed
+
+        // Simple check to not constantly clear the list
+        if(ids.size() == mPinInfo.size()){
+            Log.d("IDs and list of data is same size, not reloading");
+            startTotpCountdownTask();
+            return;
+        }
+        
         for(Integer id : ids){
             try {
                 PinInfo info = new PinInfo();
