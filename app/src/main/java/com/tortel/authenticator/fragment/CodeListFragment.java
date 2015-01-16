@@ -1,5 +1,7 @@
 package com.tortel.authenticator.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -7,7 +9,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
@@ -126,7 +128,7 @@ public class CodeListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshUserList();
+        refreshUserList(false);
     }
 
     @Override
@@ -135,11 +137,11 @@ public class CodeListFragment extends Fragment {
         stopTotpCountdownTask();
     }
 
-    private void refreshUserList() {
+    private void refreshUserList(boolean force) {
         List<Integer> ids = mAccountDb.getAllIds();
 
         // Simple check to not constantly clear the list
-        if(ids.size() == mPinInfo.size()){
+        if(ids.size() == mPinInfo.size() && !force){
             Log.d("IDs and list of data is same size, not reloading");
             startTotpCountdownTask();
             return;
@@ -245,7 +247,7 @@ public class CodeListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
 
-        refreshUserList();
+        refreshUserList(false);
 
         // If the action mode is not null, it was open during rotation, so redisplay it
         if(mActionMode != null){
@@ -359,6 +361,17 @@ public class CodeListFragment extends Fragment {
         private View.OnClickListener mClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // If action mode is not null, just change the selection
+                if(mActionMode != null){
+                    if(mSelectedInfo != null && mSelectedInfo.holder != null){
+                        mSelectedInfo.holder.mView.setActivated(false);
+                    }
+                    mView.setActivated(true);
+                    mSelectedInfo = mPinInfo;
+                    return;
+                }
+
+                // No action mode - do normal stuff
                 if(mPinInfo.isHotp && mPinInfo.hotpCodeGenerationAllowed){
                     try {
                         // Create final copies for the callbacks
@@ -441,10 +454,7 @@ public class CodeListFragment extends Fragment {
 
         @Override
         public boolean equals(Object o){
-            if(!(o instanceof  PinInfo)){
-                return false;
-            }
-            return id.equals(((PinInfo) o).id);
+            return o instanceof PinInfo && id.equals(((PinInfo) o).id);
         }
     }
 
@@ -472,7 +482,11 @@ public class CodeListFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             switch(menuItem.getItemId()){
                 case R.id.context_copy:
-                    // TODO
+                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(mSelectedInfo.user, mSelectedInfo.pin);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    mActionMode.finish();
                     return true;
                 case R.id.context_edit:
                     // TODO

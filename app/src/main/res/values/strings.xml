@@ -332,5 +332,6 @@
     <string name="swipe_continue">Swipe to continue -></string>
     <string name="edit_account">Edit Account</string>
     <string name="delete_account">Delete Account</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
 
 </resources>
