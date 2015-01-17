@@ -339,5 +339,6 @@
     <string name="edit_account">Edit Account</string>
     <string name="delete_account">Delete Account</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
+    <string name="invalid_name">Invalid name</string>
 
 </resources>

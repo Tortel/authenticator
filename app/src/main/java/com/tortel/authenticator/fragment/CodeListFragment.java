@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.dialog.ConfirmDeleteDialog;
+import com.tortel.authenticator.dialog.EditAccountDialog;
 import com.tortel.authenticator.exception.OtpSourceException;
 import com.tortel.authenticator.otp.OtpSource;
 import com.tortel.authenticator.otp.TotpClock;
@@ -506,8 +507,13 @@ public class CodeListFragment extends Fragment {
                     actionMode.finish();
                     return true;
                 case R.id.context_edit:
-                    // TODO
+                    args = new Bundle();
+                    args.putInt(ConfirmDeleteDialog.ID, mSelectedInfo.id);
+                    args.putString(ConfirmDeleteDialog.USERNAME, mSelectedInfo.user);
+                    dialog = new EditAccountDialog();
+                    dialog.setArguments(args);
 
+                    dialog.show(getFragmentManager(), "edit");
                     actionMode.finish();
                     return true;
                 case R.id.context_delete:

@@ -316,10 +316,10 @@ public class AccountDb {
         return null;
     }
 
-    public void setType(Integer id, OtpType type) {
+    public void setEmail(Integer id, String email) {
         ContentValues values = new ContentValues();
         values.put(ID_COLUMN, id);
-        values.put(TYPE_COLUMN, type.value);
+        values.put(EMAIL_COLUMN, email);
         mDatabase.update(TABLE_NAME, values, whereClause(id), null);
     }
 
