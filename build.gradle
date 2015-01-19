@@ -18,4 +18,5 @@ allprojects {
 project.ext.set("buildVersion", "1.0")
 project.ext.set("buildNumber", 1)
 project.ext.set("targetSdk", 21)
+project.ext.set("appMinSdk", 14)
 project.ext.set("appId", "com.tortel.authenticator")

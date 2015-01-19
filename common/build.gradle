@@ -1,13 +1,11 @@
-apply plugin: 'com.android.application'
-
+apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion project.targetSdk
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId project.appId
-        minSdkVersion 21
+        minSdkVersion project.appMinSdk
         targetSdkVersion project.targetSdk
         versionCode project.buildNumber
         versionName project.buildVersion
@@ -21,8 +19,5 @@ android {
 }
 
 dependencies {
-    project(':common')
 
-    compile 'com.google.android.support:wearable:1.1.0'
-    compile 'com.google.android.gms:play-services-wearable:6.5.87'
 }

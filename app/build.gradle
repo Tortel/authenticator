@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion project.targetSdk
     buildToolsVersion "21.1.2"
 
     defaultConfig {
         applicationId project.appId
-        minSdkVersion 14
+        minSdkVersion project.appMinSdk
         targetSdkVersion project.targetSdk
         versionCode project.buildNumber
         versionName project.buildVersion
@@ -35,7 +35,9 @@ android {
 }
 
 dependencies {
+    project(':common')
     wearApp project(':wear')
+
     compile 'com.android.support:recyclerview-v7:21.0.+'
     compile 'com.android.support:cardview-v7:21.0.+'
     compile 'com.android.support:appcompat-v7:21.0.+'
