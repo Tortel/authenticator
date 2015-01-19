@@ -1,12 +1,15 @@
 package com.tortel.authenticator.activity;
 
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +31,7 @@ import java.util.List;
  * Main activity that shows the codes and stuff
  */
 public class MainActivity extends ActionBarActivity {
+    public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGE";
 
     private AccountDb mAccountDb;
 
@@ -38,19 +42,23 @@ public class MainActivity extends ActionBarActivity {
 
         mAccountDb = DependencyInjector.getAccountDb();
 
-        // Check if the fragment is null
-        if(getSupportFragmentManager().findFragmentById(R.id.content_frame) == null){
-            // Display the fragment
+        showFragment();
 
-            if(mAccountDb.getCount() > 0){
-                Fragment frag = new CodeListFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, frag).commit();
-            } else {
-                Fragment frag = new NoAccountsFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, frag).commit();
-            }
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getBaseContext());
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(MainActivity.ACCOUNT_CHANGED));
+    }
+
+    private void showFragment(){
+        Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+
+        if(mAccountDb.getCount() > 0 && !(currentFrag instanceof CodeListFragment)){
+            Fragment frag = new CodeListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, frag).commitAllowingStateLoss();
+        } else {
+            Fragment frag = new NoAccountsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, frag).commitAllowingStateLoss();
         }
     }
 
@@ -67,6 +75,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getBaseContext());
+        broadcastManager.unregisterReceiver(mAccountChangeReceiver);
     }
 
     @Override
@@ -118,4 +128,11 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(this, HowItWorksActivity.class);
         startActivity(intent);
     }
+
+    private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            showFragment();
+        }
+    };
 }

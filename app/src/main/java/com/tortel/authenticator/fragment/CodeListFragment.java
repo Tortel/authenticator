@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
+import com.tortel.authenticator.activity.MainActivity;
 import com.tortel.authenticator.dialog.ConfirmDeleteDialog;
 import com.tortel.authenticator.dialog.EditAccountDialog;
 import com.tortel.authenticator.exception.OtpSourceException;
@@ -48,8 +49,6 @@ import java.util.List;
  * Fragment that shows the OTP codes for all the accounts
  */
 public class CodeListFragment extends Fragment {
-    public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGE";
-
     /**
      * Scale to use for the text displaying the PIN numbers.
      */
@@ -128,7 +127,7 @@ public class CodeListFragment extends Fragment {
         mHandler = new Handler();
 
         LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
-        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_CHANGED));
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(MainActivity.ACCOUNT_CHANGED));
     }
 
     @Override

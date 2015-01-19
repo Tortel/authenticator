@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.fragment.CodeListFragment;
+import com.tortel.authenticator.activity.MainActivity;
 import com.tortel.authenticator.utils.DependencyInjector;
 
 /**
@@ -68,7 +68,7 @@ public class ConfirmDeleteDialog extends DialogFragment {
         public void onPositive(MaterialDialog materialDialog) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
             accountDb.delete(id);
-            Intent intent = new Intent(CodeListFragment.ACCOUNT_CHANGED);
+            Intent intent = new Intent(MainActivity.ACCOUNT_CHANGED);
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
             broadcastManager.sendBroadcast(intent);
 
