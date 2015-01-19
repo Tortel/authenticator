@@ -5,11 +5,11 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.tortel.authenticator"
+        applicationId project.appId
         minSdkVersion 14
-        targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion project.targetSdk
+        versionCode project.buildNumber
+        versionName project.buildVersion
     }
 
     buildTypes {
