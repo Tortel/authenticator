@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.utils;
+package com.tortel.authenticator.common.utils;
 
 import android.content.Context;
 import android.os.Build;

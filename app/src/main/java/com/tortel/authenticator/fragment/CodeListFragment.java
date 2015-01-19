@@ -27,19 +27,19 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.activity.MainActivity;
+import com.tortel.authenticator.common.exception.OtpSourceException;
+import com.tortel.authenticator.common.otp.OtpSource;
+import com.tortel.authenticator.common.otp.TotpClock;
+import com.tortel.authenticator.common.otp.TotpCountdownTask;
+import com.tortel.authenticator.common.otp.TotpCounter;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.Log;
+import com.tortel.authenticator.common.utils.Utilities;
 import com.tortel.authenticator.dialog.ConfirmDeleteDialog;
 import com.tortel.authenticator.dialog.EditAccountDialog;
-import com.tortel.authenticator.exception.OtpSourceException;
-import com.tortel.authenticator.otp.OtpSource;
-import com.tortel.authenticator.otp.TotpClock;
-import com.tortel.authenticator.otp.TotpCountdownTask;
-import com.tortel.authenticator.otp.TotpCounter;
-import com.tortel.authenticator.utils.DependencyInjector;
-import com.tortel.authenticator.utils.Log;
-import com.tortel.authenticator.utils.Utilities;
 import com.tortel.authenticator.view.CountdownIndicator;
 
 import java.util.ArrayList;

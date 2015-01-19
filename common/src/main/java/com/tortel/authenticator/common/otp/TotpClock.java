@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.otp;
+package com.tortel.authenticator.common.otp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.tortel.authenticator.utils.Utilities;
+import com.tortel.authenticator.common.utils.Utilities;
 
 /**
  * Clock input for the time-based OTPs (TOTP). The input is based on the current system time

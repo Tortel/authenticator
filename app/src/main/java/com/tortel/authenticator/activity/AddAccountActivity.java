@@ -18,16 +18,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
-import com.tortel.authenticator.AccountDb;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.Base32String;
+import com.tortel.authenticator.common.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.Log;
 import com.tortel.authenticator.dialog.ConfirmSaveDialog;
 import com.tortel.authenticator.dialog.DownloadScannerDialog;
 import com.tortel.authenticator.dialog.InvalidQRDialog;
 import com.tortel.authenticator.dialog.InvalidSecretDialog;
-import com.tortel.authenticator.utils.Base32String;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.utils.Log;
-import com.tortel.authenticator.utils.Utilities;
 
 import java.util.Locale;
 
@@ -309,9 +310,10 @@ public class AddAccountActivity extends ActionBarActivity {
 
             // Verify the key
             if (validateKeyAndUpdateStatus(true)) {
-                AuthenticatorActivity.saveSecret(getActivity(), null,
-                        name, getEnteredKey(), mode,
-                        AccountDb.DEFAULT_HOTP_COUNTER);
+                // Save it
+                AccountDb accountDb = DependencyInjector.getAccountDb();
+                accountDb.update(null, name, getEnteredKey(), mode, AccountDb.DEFAULT_HOTP_COUNTER);
+                Toast.makeText(getActivity(), R.string.secret_saved, Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
         }

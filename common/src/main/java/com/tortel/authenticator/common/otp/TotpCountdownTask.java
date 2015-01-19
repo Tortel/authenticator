@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.otp;
+package com.tortel.authenticator.common.otp;
 
 import android.os.Handler;
 
-import com.tortel.authenticator.utils.Utilities;
+import com.tortel.authenticator.common.utils.Utilities;
 
 /**
  * Task that periodically notifies its listener about the time remaining until the value of a TOTP

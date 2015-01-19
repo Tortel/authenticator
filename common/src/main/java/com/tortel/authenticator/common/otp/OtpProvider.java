@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.otp;
+package com.tortel.authenticator.common.otp;
 
-import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.otp.PasscodeGenerator.Signer;
-import com.tortel.authenticator.exception.OtpSourceException;
-import com.tortel.authenticator.utils.Utilities;
+import com.tortel.authenticator.common.exception.OtpSourceException;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.Utilities;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -81,16 +79,16 @@ public class OtpProvider implements OtpSource {
             throw new OtpSourceException("No account id");
         }
 
-        OtpType type = mAccountDb.getType(id);
+        AccountDb.OtpType type = mAccountDb.getType(id);
         String secret = getSecret(id);
 
         long otp_state = 0;
 
-        if (type == OtpType.TOTP) {
+        if (type == AccountDb.OtpType.TOTP) {
             // For time-based OTP, the state is derived from clock.
             otp_state =
                     mTotpCounter.getValueAtTime(Utilities.millisToSeconds(mTotpClock.currentTimeMillis()));
-        } else if (type == OtpType.HOTP) {
+        } else if (type == AccountDb.OtpType.HOTP) {
             // For counter-based OTP, the state is obtained by incrementing stored counter.
             mAccountDb.incrementCounter(id);
             Integer counter = mAccountDb.getCounter(id);
@@ -125,7 +123,7 @@ public class OtpProvider implements OtpSource {
         }
 
         try {
-            Signer signer = AccountDb.getSigningOracle(secret);
+            PasscodeGenerator.Signer signer = AccountDb.getSigningOracle(secret);
             PasscodeGenerator pcg = new PasscodeGenerator(signer,
                     (challenge == null) ? PIN_LENGTH : REFLECTIVE_PIN_LENGTH);
 

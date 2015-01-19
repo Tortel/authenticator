@@ -16,10 +16,10 @@
 
 package com.tortel.authenticator;
 
-import com.tortel.authenticator.utils.DependencyInjector;
-import com.tortel.authenticator.utils.FileUtilities;
-
 import android.app.Application;
+
+import com.tortel.authenticator.common.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.FileUtilities;
 
 /**
  * Authenticator application which is one of the first things instantiated when our process starts.

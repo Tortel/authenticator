@@ -24,12 +24,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.utils.Base32String;
-import com.tortel.authenticator.utils.Base32String.DecodingException;
-import com.tortel.authenticator.otp.PasscodeGenerator;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.utils.DependencyInjector;
+import com.tortel.authenticator.common.otp.PasscodeGenerator;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.Base32String;
+import com.tortel.authenticator.common.utils.DependencyInjector;
 
 import java.security.GeneralSecurityException;
 
@@ -80,7 +79,7 @@ public class CheckCodeActivity extends ActionBarActivity {
             checkCode = getCheckCode(secret);
         } catch (GeneralSecurityException e) {
             errorMessage = getString(R.string.general_security_exception);
-        } catch (DecodingException e) {
+        } catch (Base32String.DecodingException e) {
             errorMessage = getString(R.string.decoding_exception);
         }
         if (errorMessage != null) {
@@ -96,7 +95,7 @@ public class CheckCodeActivity extends ActionBarActivity {
         findViewById(R.id.code_area).setVisibility(View.VISIBLE);
     }
 
-    static String getCheckCode(String secret) throws GeneralSecurityException, DecodingException {
+    static String getCheckCode(String secret) throws GeneralSecurityException, Base32String.DecodingException {
         final byte[] keyBytes = Base32String.decode(secret);
         Mac mac = Mac.getInstance("HMACSHA1");
         mac.init(new SecretKeySpec(keyBytes, ""));

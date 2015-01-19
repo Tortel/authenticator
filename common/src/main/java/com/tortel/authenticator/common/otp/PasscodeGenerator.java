@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.otp;
-
-import com.tortel.authenticator.otp.OtpProvider;
+package com.tortel.authenticator.common.otp;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;

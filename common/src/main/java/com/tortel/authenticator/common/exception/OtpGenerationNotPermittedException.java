@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.exception;
+package com.tortel.authenticator.common.exception;
 
 /**
  * Indicates that {@link com.tortel.authenticator.otp.OtpSource} failed to generate an OTP because OTP generation is not

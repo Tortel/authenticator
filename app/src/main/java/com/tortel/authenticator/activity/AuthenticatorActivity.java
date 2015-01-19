@@ -16,18 +16,17 @@
 
 package com.tortel.authenticator.activity;
 
-import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.AccountDb.OtpType;
-import com.tortel.authenticator.otp.OtpSource;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.otp.TotpClock;
-import com.tortel.authenticator.otp.TotpCountdownTask;
-import com.tortel.authenticator.otp.TotpCounter;
-import com.tortel.authenticator.exception.OtpSourceException;
+import com.tortel.authenticator.common.exception.OtpSourceException;
+import com.tortel.authenticator.common.otp.OtpSource;
+import com.tortel.authenticator.common.otp.TotpClock;
+import com.tortel.authenticator.common.otp.TotpCountdownTask;
+import com.tortel.authenticator.common.otp.TotpCounter;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.Utilities;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
-import com.tortel.authenticator.utils.DependencyInjector;
-import com.tortel.authenticator.utils.Utilities;
 import com.tortel.authenticator.view.CountdownIndicator;
 
 import android.app.Activity;
@@ -483,8 +482,8 @@ public class AuthenticatorActivity extends ActionBarActivity {
             currentPin.hotpCodeGenerationAllowed = true;
         }
 
-        OtpType type = mAccountDb.getType(id);
-        currentPin.isHotp = (type == OtpType.HOTP);
+        AccountDb.OtpType type = mAccountDb.getType(id);
+        currentPin.isHotp = (type == AccountDb.OtpType.HOTP);
 
         currentPin.user = mAccountDb.getEmail(id);
 
@@ -516,7 +515,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
         final String authority = uri.getAuthority();
         final String user;
         final String secret;
-        final OtpType type;
+        final AccountDb.OtpType type;
         final Integer counter;
 
         if (!OTP_SCHEME.equals(scheme)) {
@@ -526,11 +525,11 @@ public class AuthenticatorActivity extends ActionBarActivity {
         }
 
         if (TOTP.equals(authority)) {
-            type = OtpType.TOTP;
+            type = AccountDb.OtpType.TOTP;
             counter = AccountDb.DEFAULT_HOTP_COUNTER; // only interesting for
             // HOTP
         } else if (HOTP.equals(authority)) {
-            type = OtpType.HOTP;
+            type = AccountDb.OtpType.HOTP;
             String counterParameter = uri.getQueryParameter(COUNTER_PARAM);
             if (counterParameter != null) {
                 try {
@@ -608,7 +607,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
      * @param counter only important for the hotp type
      */
     private void saveSecretAndRefreshUserList(Integer id, String user, String secret,
-                                              OtpType type, Integer counter) {
+                                              AccountDb.OtpType type, Integer counter) {
         if (saveSecret(this, id, user, secret, type, counter)) {
             refreshUserList(true);
         }
@@ -624,7 +623,7 @@ public class AuthenticatorActivity extends ActionBarActivity {
      * @return {@code true} if the secret was saved, {@code false} otherwise.
      */
     public static boolean saveSecret(Context context, Integer id, String user, String secret,
-                              OtpType type, Integer counter) {
+                              AccountDb.OtpType type, Integer counter) {
         if (secret != null) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
             accountDb.update(id, user, secret, type, counter);
@@ -658,11 +657,11 @@ public class AuthenticatorActivity extends ActionBarActivity {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         Integer id = idToDatabaseId(info.id);
         String email = mAccountDb.getEmail(id);
-        OtpType type = mAccountDb.getType(id);
+        AccountDb.OtpType type = mAccountDb.getType(id);
         menu.setHeaderTitle(email);
         menu.add(0, COPY_TO_CLIPBOARD_ID, 0, R.string.copy_to_clipboard);
         // Option to display the check-code is only available for HOTP accounts.
-        if (type == OtpType.HOTP) {
+        if (type == AccountDb.OtpType.HOTP) {
             menu.add(0, CHECK_KEY_VALUE_ID, 0, R.string.check_code_menu_item);
         }
         menu.add(0, RENAME_ID, 0, R.string.rename);
@@ -1168,10 +1167,10 @@ public class AuthenticatorActivity extends ActionBarActivity {
         private final Integer id;
         private final String user;
         private final String secret;
-        private final OtpType type;
+        private final AccountDb.OtpType type;
         private final Integer counter;
 
-        private SaveKeyDialogParams(Integer id, String user, String secret, OtpType type,
+        private SaveKeyDialogParams(Integer id, String user, String secret, AccountDb.OtpType type,
                                     Integer counter) {
             this.id = id;
             this.user = user;

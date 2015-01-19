@@ -6,8 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.AccountDb.OtpType;
+import com.tortel.authenticator.common.utils.AccountDb;
 
 /**
  * A POJO container for account details
@@ -79,22 +78,22 @@ public class AccountContainer {
         private String email;
         private String secret;
         private Integer counter;
-        private OtpType type;
+        private AccountDb.OtpType type;
         private Integer provider;
 
         @JsonIgnore
-        public OtpType getType() {
+        public AccountDb.OtpType getType() {
             return type;
         }
 
         @JsonIgnore
-        public void setType(OtpType otpType) {
+        public void setType(AccountDb.OtpType otpType) {
             this.type = otpType;
         }
 
         @JsonProperty("type")
         public int getIntType() {
-            if (type == OtpType.HOTP) {
+            if (type == AccountDb.OtpType.HOTP) {
                 return 1;
             }
             return 0;
@@ -103,9 +102,9 @@ public class AccountContainer {
         @JsonProperty("type")
         public void setIntType(int type) {
             if (type == 1) {
-                this.type = OtpType.HOTP;
+                this.type = AccountDb.OtpType.HOTP;
             } else {
-                this.type = OtpType.TOTP;
+                this.type = AccountDb.OtpType.TOTP;
             }
         }
 

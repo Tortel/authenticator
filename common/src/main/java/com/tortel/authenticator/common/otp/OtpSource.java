@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.otp;
+package com.tortel.authenticator.common.otp;
 
-import com.tortel.authenticator.exception.OtpSourceException;
+import com.tortel.authenticator.common.exception.OtpSourceException;
 
 import java.util.Collection;
 
@@ -56,7 +56,7 @@ public interface OtpSource {
      * @throws UnsupportedOperationException if the token does not support
      *                                       challenge-response extension for this account.
      */
-    public String respondToChallenge(Integer id, String challenge) throws OtpSourceException;
+    public String respondToChallenge(Integer id, String challenge) throws OtpSourceException, OtpSourceException;
 
     /**
      * Gets the counter for generating or verifying TOTP codes.

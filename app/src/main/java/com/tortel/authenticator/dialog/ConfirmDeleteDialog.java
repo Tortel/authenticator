@@ -9,10 +9,10 @@ import android.text.Html;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.activity.MainActivity;
-import com.tortel.authenticator.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.DependencyInjector;
 
 /**
  * Dialog that confirms and deletes an account

@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator;
-
-import com.tortel.authenticator.utils.Base32String;
-import com.tortel.authenticator.utils.Base32String.DecodingException;
-import com.tortel.authenticator.otp.PasscodeGenerator.Signer;
-import com.tortel.authenticator.utils.FileUtilities;
+package com.tortel.authenticator.common.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,6 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Process;
 import android.util.Log;
+
+import com.tortel.authenticator.common.otp.PasscodeGenerator;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -255,7 +252,7 @@ public class AccountDb {
         return null;
     }
 
-    public static Signer getSigningOracle(String secret) {
+    public static PasscodeGenerator.Signer getSigningOracle(String secret) {
         try {
             byte[] keyBytes = decodeKey(secret);
             final Mac mac = Mac.getInstance("HMACSHA1");
@@ -263,20 +260,20 @@ public class AccountDb {
 
             // Create a signer object out of the standard Java MAC
             // implementation.
-            return new Signer() {
+            return new PasscodeGenerator.Signer() {
                 @Override
                 public byte[] sign(byte[] data) {
                     return mac.doFinal(data);
                 }
             };
-        } catch (DecodingException | NoSuchAlgorithmException | InvalidKeyException error) {
+        } catch (Base32String.DecodingException | NoSuchAlgorithmException | InvalidKeyException error) {
             Log.e(LOCAL_TAG, error.getMessage());
         }
 
         return null;
     }
 
-    private static byte[] decodeKey(String secret) throws DecodingException {
+    private static byte[] decodeKey(String secret) throws Base32String.DecodingException, Base32String.DecodingException {
         return Base32String.decode(secret);
     }
 

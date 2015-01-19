@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.utils;
-
-import com.tortel.authenticator.AccountDb;
-import com.tortel.authenticator.otp.OtpProvider;
-import com.tortel.authenticator.otp.OtpSource;
-import com.tortel.authenticator.otp.TotpClock;
+package com.tortel.authenticator.common.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+
+import com.tortel.authenticator.common.otp.OtpProvider;
+import com.tortel.authenticator.common.otp.OtpSource;
+import com.tortel.authenticator.common.otp.TotpClock;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;

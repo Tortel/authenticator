@@ -1,31 +1,24 @@
 package com.tortel.authenticator.activity;
 
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.tortel.authenticator.AccountDb;
+
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.dialog.DownloadScannerDialog;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.fragment.CodeListFragment;
 import com.tortel.authenticator.fragment.NoAccountsFragment;
-import com.tortel.authenticator.utils.DependencyInjector;
-import com.tortel.authenticator.utils.Log;
-import com.tortel.authenticator.utils.Utilities;
-
-import java.util.List;
 
 /**
  * Main activity that shows the codes and stuff

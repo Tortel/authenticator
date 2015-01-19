@@ -18,7 +18,7 @@ package com.tortel.authenticator.timesync;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.DependencyInjector;
 
 import android.app.Activity;
 import android.app.Dialog;

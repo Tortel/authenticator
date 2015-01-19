@@ -1,4 +1,4 @@
-package com.tortel.authenticator.utils;
+package com.tortel.authenticator.common.utils;
 
 /**
  * Log wrapper that uses a fixed tag

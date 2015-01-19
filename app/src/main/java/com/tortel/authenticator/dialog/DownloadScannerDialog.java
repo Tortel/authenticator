@@ -9,7 +9,7 @@ import android.support.v4.app.DialogFragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.utils.Utilities;
+import com.tortel.authenticator.common.utils.Utilities;
 
 /**
  * Fragment for offering to download the barcode scanner app

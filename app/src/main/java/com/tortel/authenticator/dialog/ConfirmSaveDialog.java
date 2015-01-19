@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.tortel.authenticator.AccountDb;
 import com.tortel.authenticator.R;
-import com.tortel.authenticator.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.utils.DependencyInjector;
 
 /**
  * Dialog which asks for confirmation before saving an account
