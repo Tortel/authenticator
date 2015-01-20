@@ -51,7 +51,7 @@ public class AuthenticatorApplication extends Application {
 
         // During test runs the injector may have been configured already. Thus we take care to avoid
         // overwriting any existing configuration here.
-        DependencyInjector.configureForProductionIfNotConfigured(getApplicationContext());
+        DependencyInjector.configure(getApplicationContext());
     }
 
     @Override

@@ -277,8 +277,8 @@ public class AccountDb {
         return Base32String.decode(secret);
     }
 
-    public Integer getCounter(Integer email) {
-        Cursor cursor = getAccount(email);
+    public Integer getCounter(Integer id) {
+        Cursor cursor = getAccount(id);
         try {
             if (!cursorIsEmpty(cursor)) {
                 cursor.moveToFirst();
@@ -320,27 +320,27 @@ public class AccountDb {
         mDatabase.update(TABLE_NAME, values, whereClause(id), null);
     }
 
+    @Deprecated
     public boolean isGoogleAccount(Integer id) {
+        return false;
+    }
+
+    /**
+     * Get the provider of an account
+     * @param id
+     * @return
+     */
+    public int getProvider(Integer id){
         Cursor cursor = getAccount(id);
         try {
             if (!cursorIsEmpty(cursor)) {
                 cursor.moveToFirst();
-                if (cursor.getInt(cursor.getColumnIndex(PROVIDER_COLUMN)) == PROVIDER_GOOGLE) {
-                    // The account is marked as source: Google
-                    return true;
-                }
-                // The account is from an unknown source. Could be a Google
-                // account added by scanning
-                // a QR code or by manually entering a key
-                String emailLowerCase = cursor.getString(cursor.getColumnIndex(EMAIL_COLUMN))
-                        .toLowerCase(Locale.US);
-                return (emailLowerCase.endsWith("@gmail.com"))
-                        || (emailLowerCase.endsWith("@google.com"));
+                return cursor.getInt(cursor.getColumnIndex(PROVIDER_COLUMN));
             }
         } finally {
             tryCloseCursor(cursor);
         }
-        return false;
+        return 0;
     }
 
     private static String whereClause(Integer id) {
@@ -371,22 +371,16 @@ public class AccountDb {
      * @param secret        the secret key.
      * @param type          hotp vs totp
      * @param counter       only important for the hotp type
-     * @param googleAccount whether the key is for a Google account or {@code null} to
-     *                      preserve the previous value (or use a default if adding a
-     *                      key).
+     * @param provider        the id of the provider
      */
     public void update(Integer id, String email, String secret,
-                       OtpType type, Integer counter, Boolean googleAccount) {
+                       OtpType type, Integer counter, Integer provider) {
         ContentValues values = new ContentValues();
         values.put(EMAIL_COLUMN, email);
         values.put(SECRET_COLUMN, secret);
         values.put(TYPE_COLUMN, type.ordinal());
         values.put(COUNTER_COLUMN, counter);
-        if (googleAccount != null) {
-            values.put(PROVIDER_COLUMN,
-                    (googleAccount.booleanValue()) ? PROVIDER_GOOGLE
-                            : PROVIDER_UNKNOWN);
-        }
+        values.put(PROVIDER_COLUMN, provider != null ? provider : PROVIDER_UNKNOWN);
 
         int updated = 0;
         // Don't bother trying it if no ID was specified

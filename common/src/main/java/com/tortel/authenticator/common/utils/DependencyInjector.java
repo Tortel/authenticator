@@ -32,7 +32,7 @@ import org.apache.http.conn.ClientConnectionManager;
  * creators/constructors and enables the injection of these objects for testing purposes.
  * <p/>
  * <p>The injector is singleton. It needs to be configured for production or test use using
- * {@link #configureForProductionIfNotConfigured(Context)}
+ * {@link #configure(Context)}
  * After that its clients can access the various objects such as {@link AccountDb} using the
  * respective getters (e.g., {@link #getAccountDb()}.
  * <p/>
@@ -153,7 +153,7 @@ public final class DependencyInjector {
      * Clears any state and configures this injector for production use. Does nothing if the injector
      * is already configured.
      */
-    public static synchronized void configureForProductionIfNotConfigured(Context context) {
+    public static synchronized void configure(Context context) {
         if (sMode != null) {
             return;
         }

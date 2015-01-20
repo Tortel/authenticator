@@ -12,26 +12,48 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.tortel.authenticator.R;
+import com.tortel.authenticator.common.sync.SyncUtils;
 import com.tortel.authenticator.common.utils.AccountDb;
 import com.tortel.authenticator.common.utils.DependencyInjector;
+import com.tortel.authenticator.common.utils.Log;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.fragment.CodeListFragment;
 import com.tortel.authenticator.fragment.NoAccountsFragment;
 
+import java.sql.Connection;
+import java.util.List;
+
 /**
  * Main activity that shows the codes and stuff
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGE";
 
     private AccountDb mAccountDb;
+    private GoogleApiClient mGoogleApiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
 
         mAccountDb = DependencyInjector.getAccountDb();
 
@@ -53,6 +75,34 @@ public class MainActivity extends ActionBarActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, frag).commitAllowingStateLoss();
         }
+    }
+
+    private void syncData(){
+        if(mGoogleApiClient.isConnected()){
+            List<Integer> ids = mAccountDb.getAllIds();
+            for(Integer id : ids){
+                PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
+                PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, req.asPutDataRequest());
+                pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                    @Override
+                    public void onResult(DataApi.DataItemResult dataItemResult) {
+                        Log.d("Sent "+dataItemResult.toString());
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -126,6 +176,23 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             showFragment();
+            syncData();
         }
     };
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d("Connection failed "+connectionResult);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d("Google API Connected");
+        syncData();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d("Connection suspended");
+    }
 }

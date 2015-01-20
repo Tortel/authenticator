@@ -29,7 +29,7 @@
     <application android:label="@string/app_name_short"
                android:icon="@drawable/ic_launcher_authenticator"
                android:theme="@style/AuthenticatorTheme"
-               android:name="com.tortel.authenticator.AuthenticatorApplication"
+               android:name=".AuthenticatorApplication"
                android:allowBackup="false" >
 
         <activity android:name=".activity.AuthenticatorActivity"
