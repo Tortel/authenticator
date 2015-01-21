@@ -9,7 +9,7 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 import com.tortel.authenticator.common.sync.SyncUtils;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.common.utils.Log;
 

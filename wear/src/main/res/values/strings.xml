@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Placeholder value displayed for OTP before any codes have been generated -->
+    <string name="empty_pin">_ _ _ _ _ _</string>
+
     <string name="app_name">Authenticator+</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
