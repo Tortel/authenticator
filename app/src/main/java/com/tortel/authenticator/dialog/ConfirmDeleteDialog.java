@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.activity.MainActivity;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 
 /**

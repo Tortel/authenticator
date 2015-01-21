@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.common.otp.PasscodeGenerator;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.Base32String;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 

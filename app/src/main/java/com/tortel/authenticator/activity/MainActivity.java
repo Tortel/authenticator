@@ -21,7 +21,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.common.sync.SyncUtils;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.common.utils.Log;
 import com.tortel.authenticator.export.FileExportActivity;
@@ -29,7 +29,6 @@ import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.fragment.CodeListFragment;
 import com.tortel.authenticator.fragment.NoAccountsFragment;
 
-import java.sql.Connection;
 import java.util.List;
 
 /**

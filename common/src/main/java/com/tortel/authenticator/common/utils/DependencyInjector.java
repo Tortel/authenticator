@@ -19,6 +19,7 @@ package com.tortel.authenticator.common.utils;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.otp.OtpProvider;
 import com.tortel.authenticator.common.otp.OtpSource;
 import com.tortel.authenticator.common.otp.TotpClock;
@@ -33,7 +34,7 @@ import org.apache.http.conn.ClientConnectionManager;
  * <p/>
  * <p>The injector is singleton. It needs to be configured for production or test use using
  * {@link #configure(Context)}
- * After that its clients can access the various objects such as {@link AccountDb} using the
+ * After that its clients can access the various objects such as {@link com.tortel.authenticator.common.data.AccountDb} using the
  * respective getters (e.g., {@link #getAccountDb()}.
  * <p/>
  * @author klyubin@google.com (Alex Klyubin)

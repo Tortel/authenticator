@@ -22,7 +22,7 @@ import com.tortel.authenticator.common.otp.OtpSource;
 import com.tortel.authenticator.common.otp.TotpClock;
 import com.tortel.authenticator.common.otp.TotpCountdownTask;
 import com.tortel.authenticator.common.otp.TotpCounter;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.common.utils.Utilities;
 import com.tortel.authenticator.export.FileExportActivity;

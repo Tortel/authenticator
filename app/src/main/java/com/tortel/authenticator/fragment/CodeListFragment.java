@@ -29,12 +29,13 @@ import android.widget.Toast;
 
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.activity.MainActivity;
+import com.tortel.authenticator.common.data.AccountInfo;
 import com.tortel.authenticator.common.exception.OtpSourceException;
 import com.tortel.authenticator.common.otp.OtpSource;
 import com.tortel.authenticator.common.otp.TotpClock;
 import com.tortel.authenticator.common.otp.TotpCountdownTask;
 import com.tortel.authenticator.common.otp.TotpCounter;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.common.utils.Log;
 import com.tortel.authenticator.common.utils.Utilities;
@@ -104,18 +105,18 @@ public class CodeListFragment extends Fragment {
     private OtpSource mOtpProvider;
 
     private RecyclerView.Adapter mAdapter;
-    private List<PinInfo> mPinInfo;
+    private List<AccountWrapper> mAccountWrapper;
 
     private Handler mHandler;
 
-    private PinInfo mSelectedInfo;
+    private AccountWrapper mSelectedWrapper;
     private ActionMode mActionMode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mPinInfo = new ArrayList<>();
+        mAccountWrapper = new ArrayList<>();
 
         mAccountDb = DependencyInjector.getAccountDb();
         mOtpProvider = DependencyInjector.getOtpProvider();
@@ -151,31 +152,28 @@ public class CodeListFragment extends Fragment {
     }
 
     private void refreshUserList(boolean force) {
-        List<Integer> ids = mAccountDb.getAllIds();
+        List<AccountInfo> accounts = mAccountDb.getAllAccounts();
 
         // Simple check to not constantly clear the list
-        if(ids.size() == mPinInfo.size() && !force){
+        if(accounts.size() == mAccountWrapper.size() && !force){
             Log.d("IDs and list of data is same size, not reloading");
             startTotpCountdownTask();
             return;
         }
-        mPinInfo.clear();
+        mAccountWrapper.clear();
 
-        for(Integer id : ids){
+        for(AccountInfo account : accounts){
             try {
-                PinInfo info = new PinInfo();
-                info.id = id;
-                info.pin = getString(R.string.empty_pin);
-                info.hotpCodeGenerationAllowed = true;
+                AccountWrapper wrapper = new AccountWrapper();
+                wrapper.info = account;
+                account.setCode(getString(R.string.empty_pin));
+                wrapper.hotpCodeGenerationAllowed = true;
 
-                info.isHotp = mAccountDb.getType(id) == AccountDb.OtpType.HOTP;
-                info.user = mAccountDb.getEmail(id);
-
-                if (!info.isHotp) {
-                    info.pin = mOtpProvider.getNextCode(id);
+                if (!account.isHtop()) {
+                    account.setCode(mOtpProvider.getNextCode(account.getId()));
                 }
 
-                mPinInfo.add(info);
+                mAccountWrapper.add(wrapper);
             } catch(OtpSourceException e){
                 Log.e("Exception preparing account", e);
             }
@@ -217,23 +215,23 @@ public class CodeListFragment extends Fragment {
     }
 
     private void refreshVerificationCodes() {
-        for(PinInfo info : mPinInfo){
+        for(AccountWrapper wrapper : mAccountWrapper){
             // Only update time-based codes
-            if(!info.isHotp) {
+            if(!wrapper.info.isHtop()) {
                 try {
-                    info.pin = mOtpProvider.getNextCode(info.id);
-                    if (info.holder != null && info.holder.mPinView != null) {
-                        info.holder.mPinView.setText(info.pin);
+                    wrapper.info.setCode(mOtpProvider.getNextCode(wrapper.info.getId()));
+                    if (wrapper.holder != null && wrapper.holder.mPinView != null) {
+                        wrapper.holder.mPinView.setText(wrapper.info.getCode());
                     }
                 } catch (Exception e) {
-                    Log.e("Exception updating code for " + info.user);
+                    Log.e("Exception updating code for " + wrapper.info.getName());
                 }
             }
         }
     }
 
     private void updateCountdownIndicators() {
-        for(PinInfo info : mPinInfo){
+        for(AccountWrapper info : mAccountWrapper){
             if(info.holder != null && info.holder.mCountdownIndicator != null){
                 info.holder.mCountdownIndicator.setPhase(mTotpCountdownPhase);
             }
@@ -299,12 +297,12 @@ public class CodeListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(OtpViewHolder holder, int position) {
-            holder.setPinInfo(mPinInfo.get(position));
+            holder.setPinInfo(mAccountWrapper.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return mPinInfo != null ? mPinInfo.size() : 0;
+            return mAccountWrapper != null ? mAccountWrapper.size() : 0;
         }
     }
 
@@ -319,7 +317,7 @@ public class CodeListFragment extends Fragment {
         private View mContentView;
         private View mView;
 
-        private PinInfo mPinInfo;
+        private AccountWrapper mAccountWrapper;
 
         public OtpViewHolder(View view) {
             super(view);
@@ -335,11 +333,12 @@ public class CodeListFragment extends Fragment {
             mContentView.setOnLongClickListener(mLongClickListener);
         }
 
-        public void setPinInfo(PinInfo pin){
-            mPinInfo = pin;
+        public void setPinInfo(AccountWrapper pin){
+            mAccountWrapper = pin;
             pin.holder = this;
+            AccountInfo info = pin.info;
 
-            if(pin.isHotp){
+            if(info.isHtop()){
                 // Counter-based code
                 mNextCodeButton.setVisibility(View.VISIBLE);
                 mCountdownIndicator.setVisibility(View.GONE);
@@ -347,7 +346,7 @@ public class CodeListFragment extends Fragment {
                 mNextCodeButton.setEnabled(pin.hotpCodeGenerationAllowed);
 
                 // Scale down the empty pin
-                if (getString(R.string.empty_pin).equals(pin.pin)) {
+                if (getString(R.string.empty_pin).equals(info.getCode())) {
                     mPinView.setTextScaleX(PIN_TEXT_SCALEX_UNDERSCORE);
                 } else {
                     mPinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
@@ -362,14 +361,14 @@ public class CodeListFragment extends Fragment {
             }
 
             // Check if the background should be highlighted
-            if(mPinInfo.equals(mSelectedInfo)){
+            if(mAccountWrapper.equals(mSelectedWrapper)){
                 mView.setActivated(true);
             } else {
                 mView.setActivated(false);
             }
 
-            mUserNameView.setText(pin.user);
-            mPinView.setText(pin.pin);
+            mUserNameView.setText(info.getName());
+            mPinView.setText(info.getCode());
         }
 
         private View.OnClickListener mClickListener = new View.OnClickListener() {
@@ -377,34 +376,35 @@ public class CodeListFragment extends Fragment {
             public void onClick(View v) {
                 // If action mode is not null, just change the selection
                 if(mActionMode != null){
-                    if(mSelectedInfo != null && mSelectedInfo.holder != null){
-                        mSelectedInfo.holder.mView.setActivated(false);
+                    if(mSelectedWrapper != null && mSelectedWrapper.holder != null){
+                        mSelectedWrapper.holder.mView.setActivated(false);
                     }
                     mView.setActivated(true);
-                    mSelectedInfo = mPinInfo;
+                    mSelectedWrapper = mAccountWrapper;
                     return;
                 }
+                final AccountWrapper wrapper = mAccountWrapper;
+                final AccountInfo info = mAccountWrapper.info;
 
                 // No action mode - do normal stuff
-                if(mPinInfo.isHotp && mPinInfo.hotpCodeGenerationAllowed){
+                if(info.isHtop() && mAccountWrapper.hotpCodeGenerationAllowed){
                     try {
                         // Create final copies for the callbacks
-                        final PinInfo info = mPinInfo;
                         final TextView pinView = mPinView;
-                        final String pin = mOtpProvider.getNextCode(mPinInfo.id);
-                        Log.d("Generating new code for "+info.user);
+                        final String pin = mOtpProvider.getNextCode(info.getId());
+                        Log.d("Generating new code for "+info.getName());
 
-                        info.pin = pin;
-                        pinView.setText(info.pin);
+                        info.setCode(pin);
+                        pinView.setText(info.getCode());
                         mPinView.setTextScaleX(PIN_TEXT_SCALEX_NORMAL);
 
                         // Prevent generation for a bit
-                        mPinInfo.hotpCodeGenerationAllowed = false;
+                        mAccountWrapper.hotpCodeGenerationAllowed = false;
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d("Re-enabling code generation for "+info.user);
-                                info.hotpCodeGenerationAllowed = true;
+                                Log.d("Re-enabling code generation for "+info.getName());
+                                wrapper.hotpCodeGenerationAllowed = true;
                             }
                         }, HOTP_MIN_TIME_INTERVAL_BETWEEN_CODES);
 
@@ -412,12 +412,12 @@ public class CodeListFragment extends Fragment {
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (!pin.equals(info.pin)) {
+                                if (!pin.equals(info.getCode())) {
                                     return;
                                 }
-                                Log.d("Clearing code for "+info.user);
-                                info.pin = getString(R.string.empty_pin);
-                                pinView.setText(info.pin);
+                                Log.d("Clearing code for "+info.getName());
+                                info.setCode(getString(R.string.empty_pin));
+                                pinView.setText(info.getCode());
                                 mPinView.setTextScaleX(PIN_TEXT_SCALEX_UNDERSCORE);
                             }
                         }, HOTP_DISPLAY_TIMEOUT);
@@ -434,13 +434,13 @@ public class CodeListFragment extends Fragment {
             @Override
             public boolean onLongClick(View v) {
                 // Clear the old selected view
-                if(mSelectedInfo != null && mSelectedInfo.holder != null){
+                if(mSelectedWrapper != null && mSelectedWrapper.holder != null){
                     Log.d("Clearing old selected view");
-                    mSelectedInfo.holder.mView.setActivated(false);
+                    mSelectedWrapper.holder.mView.setActivated(false);
                 }
 
                 mView.setActivated(true);
-                mSelectedInfo = mPinInfo;
+                mSelectedWrapper = mAccountWrapper;
                 showActionMode();
                 return true;
             }
@@ -451,24 +451,17 @@ public class CodeListFragment extends Fragment {
     /**
      * Wrapper that contains relevant pin information
      */
-    private static class PinInfo {
-        // Account id
-        public Integer id;
-        // The calculated code, or a placeholder
-        public String pin;
-        // The username
-        public String user;
+    private static class AccountWrapper {
+        public AccountInfo info;
         // The viewholder displaying this code
         public OtpViewHolder holder;
 
-        // true if hopt (Counter), otherwise its a time-based code
-        public boolean isHotp = false;
         // HOTP only: Whether code generation is allowed for this account.
         public boolean hotpCodeGenerationAllowed;
 
         @Override
         public boolean equals(Object o){
-            return o instanceof PinInfo && id.equals(((PinInfo) o).id);
+            return o instanceof AccountWrapper && info.equals(((AccountWrapper) o).info);
         }
     }
 
@@ -496,19 +489,20 @@ public class CodeListFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             DialogFragment dialog;
             Bundle args;
+            AccountInfo info = mSelectedWrapper.info;
 
             switch(menuItem.getItemId()){
                 case R.id.context_copy:
                     ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(mSelectedInfo.user, mSelectedInfo.pin);
+                    ClipData clip = ClipData.newPlainText(info.getName(), info.getCode());
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
                     actionMode.finish();
                     return true;
                 case R.id.context_edit:
                     args = new Bundle();
-                    args.putInt(ConfirmDeleteDialog.ID, mSelectedInfo.id);
-                    args.putString(ConfirmDeleteDialog.USERNAME, mSelectedInfo.user);
+                    args.putInt(ConfirmDeleteDialog.ID, info.getId());
+                    args.putString(ConfirmDeleteDialog.USERNAME, info.getName());
                     dialog = new EditAccountDialog();
                     dialog.setArguments(args);
 
@@ -517,8 +511,8 @@ public class CodeListFragment extends Fragment {
                     return true;
                 case R.id.context_delete:
                     args = new Bundle();
-                    args.putInt(ConfirmDeleteDialog.ID, mSelectedInfo.id);
-                    args.putString(ConfirmDeleteDialog.USERNAME, mSelectedInfo.user);
+                    args.putInt(ConfirmDeleteDialog.ID, info.getId());
+                    args.putString(ConfirmDeleteDialog.USERNAME, info.getName());
                     dialog = new ConfirmDeleteDialog();
                     dialog.setArguments(args);
 
@@ -536,9 +530,9 @@ public class CodeListFragment extends Fragment {
         public void onDestroyActionMode(ActionMode actionMode) {
             Log.d("Dismissing ActionMode");
             mActionMode = null;
-            if(mSelectedInfo != null && mSelectedInfo.holder != null){
-                mSelectedInfo.holder.mView.setActivated(false);
-                mSelectedInfo = null;
+            if(mSelectedWrapper != null && mSelectedWrapper.holder != null){
+                mSelectedWrapper.holder.mView.setActivated(false);
+                mSelectedWrapper = null;
             }
         }
     };

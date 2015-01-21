@@ -2,7 +2,7 @@ package com.tortel.authenticator.common.sync;
 
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.PutDataMapRequest;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 
 /**
  * Contains constants for syncing data between the phone and wear apps

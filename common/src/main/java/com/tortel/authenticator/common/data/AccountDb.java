@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.common.utils;
+package com.tortel.authenticator.common.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,6 +26,8 @@ import android.os.Process;
 import android.util.Log;
 
 import com.tortel.authenticator.common.otp.PasscodeGenerator;
+import com.tortel.authenticator.common.utils.Base32String;
+import com.tortel.authenticator.common.utils.FileUtilities;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -457,6 +459,38 @@ public class AccountDb {
         ArrayList<Integer> ids = new ArrayList<>();
         getIds(ids);
         return ids;
+    }
+
+    /**
+     * Get a list of all the account info
+     * @return
+     */
+    public List<AccountInfo> getAllAccounts(){
+        Cursor c = getIds();
+        int count = c.getCount();
+        List<AccountInfo> accounts = new ArrayList<>(count);
+        try {
+            int idIndex = c.getColumnIndex(ID_COLUMN);
+            int emailIndex = c.getColumnIndex(EMAIL_COLUMN);
+            int typeIndex = c.getColumnIndex(TYPE_COLUMN);
+            int secretIndex = c.getColumnIndex(SECRET_COLUMN);
+            int counterIndex = c.getColumnIndex(COUNTER_COLUMN);
+
+            for(int i =0; i < count; i++){
+                c.moveToPosition(i);
+                int id = c.getInt(idIndex);
+                String email = c.getString(emailIndex);
+                String secret = c.getString(secretIndex);
+                OtpType type = c.getInt(typeIndex) == 0 ? OtpType.TOTP : OtpType.HOTP;
+                int counter = c.getInt(counterIndex);
+
+                accounts.add(new AccountInfo(id, email, secret, type, counter));
+            }
+
+        } finally {
+            tryCloseCursor(c);
+        }
+        return accounts;
     }
 
     /**

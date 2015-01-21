@@ -17,7 +17,7 @@
 package com.tortel.authenticator.common.otp;
 
 import com.tortel.authenticator.common.exception.OtpSourceException;
-import com.tortel.authenticator.common.utils.AccountDb;
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.Utilities;
 
 import java.io.UnsupportedEncodingException;
