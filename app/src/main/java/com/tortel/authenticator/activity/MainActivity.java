@@ -64,8 +64,16 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     private void showFragment(){
         Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        int count = mAccountDb.getCount();
 
-        if(mAccountDb.getCount() > 0 && !(currentFrag instanceof CodeListFragment)){
+        Log.d("Current fragment: "+currentFrag);
+        Log.d("Count: "+count);
+
+        if(count > 0){
+            if(currentFrag instanceof CodeListFragment){
+                // Already showing the correct fragment
+                return;
+            }
             Fragment frag = new CodeListFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, frag).commitAllowingStateLoss();
