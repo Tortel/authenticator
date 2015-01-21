@@ -224,7 +224,7 @@ public class AccountDb {
         return true;
     }
 
-    public String getSecret(Integer id) {
+    public String getSecret(int id) {
         Cursor cursor = getAccount(id);
         try {
             if (!cursorIsEmpty(cursor)) {
@@ -241,7 +241,7 @@ public class AccountDb {
      * @param id
      * @return
      */
-    public String getEmail(Integer id) {
+    public String getEmail(int id) {
         Cursor cursor = getAccount(id);
         try {
             if (!cursorIsEmpty(cursor)) {
@@ -279,7 +279,7 @@ public class AccountDb {
         return Base32String.decode(secret);
     }
 
-    public Integer getCounter(Integer id) {
+    public Integer getCounter(int id) {
         Cursor cursor = getAccount(id);
         try {
             if (!cursorIsEmpty(cursor)) {
@@ -292,7 +292,7 @@ public class AccountDb {
         return null;
     }
 
-    public void incrementCounter(Integer id) {
+    public void incrementCounter(int id) {
         ContentValues values = new ContentValues();
         values.put(ID_COLUMN, id);
         Integer counter = getCounter(id);
@@ -300,7 +300,7 @@ public class AccountDb {
         mDatabase.update(TABLE_NAME, values, whereClause(id), null);
     }
 
-    public OtpType getType(Integer id) {
+    public OtpType getType(int id) {
         Cursor cursor = getAccount(id);
         try {
             if (!cursorIsEmpty(cursor)) {
@@ -315,7 +315,7 @@ public class AccountDb {
         return null;
     }
 
-    public void setEmail(Integer id, String email) {
+    public void setEmail(int id, String email) {
         ContentValues values = new ContentValues();
         values.put(ID_COLUMN, id);
         values.put(EMAIL_COLUMN, email);
@@ -332,7 +332,7 @@ public class AccountDb {
      * @param id
      * @return
      */
-    public int getProvider(Integer id){
+    public int getProvider(int id){
         Cursor cursor = getAccount(id);
         try {
             if (!cursorIsEmpty(cursor)) {
@@ -345,11 +345,11 @@ public class AccountDb {
         return 0;
     }
 
-    private static String whereClause(Integer id) {
+    private static String whereClause(int id) {
         return ID_COLUMN + " = " + id;
     }
 
-    public void delete(Integer id) {
+    public void delete(int id) {
         mDatabase.delete(TABLE_NAME, whereClause(id), null);
     }
 
@@ -401,7 +401,7 @@ public class AccountDb {
                 null);
     }
 
-    private Cursor getAccount(Integer id) {
+    private Cursor getAccount(int id) {
         return mDatabase.query(TABLE_NAME, null, ID_COLUMN + "= ?",
                 new String[]{"" + id}, null, null, null);
     }
@@ -459,6 +459,28 @@ public class AccountDb {
         ArrayList<Integer> ids = new ArrayList<>();
         getIds(ids);
         return ids;
+    }
+
+    public AccountInfo getAccountInfo(int id){
+        Cursor c = getAccount(id);
+        try{
+            if(!c.moveToFirst()){
+                return null;
+            }
+            int emailIndex = c.getColumnIndex(EMAIL_COLUMN);
+            int typeIndex = c.getColumnIndex(TYPE_COLUMN);
+            int secretIndex = c.getColumnIndex(SECRET_COLUMN);
+            int counterIndex = c.getColumnIndex(COUNTER_COLUMN);
+
+            String email = c.getString(emailIndex);
+            String secret = c.getString(secretIndex);
+            OtpType type = c.getInt(typeIndex) == 0 ? OtpType.TOTP : OtpType.HOTP;
+            int counter = c.getInt(counterIndex);
+
+            return new AccountInfo(id, email, secret, type, counter);
+        } finally {
+            tryCloseCursor(c);
+        }
     }
 
     /**

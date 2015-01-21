@@ -28,6 +28,9 @@ public class AccountInfo {
         return type == AccountDb.OtpType.HOTP;
     }
 
+    public AccountDb.OtpType getType(){
+        return type;
+    }
     public int getId() {
         return id;
     }

@@ -3,6 +3,7 @@ package com.tortel.authenticator.common.sync;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.tortel.authenticator.common.data.AccountDb;
+import com.tortel.authenticator.common.data.AccountInfo;
 
 /**
  * Contains constants for syncing data between the phone and wear apps
@@ -22,14 +23,17 @@ public class SyncUtils {
      * @param accountDb
      * @return
      */
-    public static PutDataMapRequest createDataMap(Integer id, AccountDb accountDb){
+    public static PutDataMapRequest createDataMap(int id, AccountDb accountDb){
         PutDataMapRequest data = PutDataMapRequest.create(ACCOUNT_PATH+id);
         DataMap map = data.getDataMap();
-        map.putString(ACCOUNT_EMAIL, accountDb.getEmail(id));
-        map.putString(ACCOUNT_SECRET, accountDb.getSecret(id));
-        map.putInt(ACCOUNT_TYPE, accountDb.getType(id).value);
-        map.putInt(ACCOUNT_COUNTER, accountDb.getCounter(id));
-        map.putInt(ACCOUNT_PROVIDER, accountDb.getProvider(id));
+        AccountInfo info = accountDb.getAccountInfo(id);
+
+        map.putString(ACCOUNT_EMAIL, info.getName());
+        map.putString(ACCOUNT_SECRET, info.getSecret());
+        map.putInt(ACCOUNT_TYPE, info.getType().value);
+        map.putInt(ACCOUNT_COUNTER, info.getCounter());
+        // TODO - provider
+        map.putInt(ACCOUNT_PROVIDER, 0);
 
         return data;
     }
