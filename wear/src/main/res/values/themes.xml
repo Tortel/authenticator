@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AuthenticatorWearTheme" parent="@android:style/Theme.DeviceDefault.Light">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+
+        <item name="com.tortel.authenticator:countdown_color">@color/countdown_indicator</item>
+        <item name="com.tortel.authenticator:countdown_bgcolor">@color/countdown_indicator_bg</item>
+    </style>
+</resources>

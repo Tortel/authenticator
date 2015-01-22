@@ -9,7 +9,7 @@
         android:name=".WearAuthenticatorApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.DeviceDefault.Light" >
+        android:theme="@style/AuthenticatorWearTheme" >
         <activity
             android:name=".activity.CodeActivity"
             android:label="@string/app_name" >

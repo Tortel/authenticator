@@ -64,7 +64,6 @@ public class CodeActivity extends Activity {
 
         @Override
         public Fragment getFragment(int row, int column) {
-
             if(frags.get(row) == null){
                 AccountInfo info = mAccounts.get(row);
                 Bundle args = new Bundle();

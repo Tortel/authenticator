@@ -2,7 +2,6 @@ package com.tortel.authenticator.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.wearable.view.CardScrollView;
 import android.view.Gravity;
@@ -33,7 +32,7 @@ public class CodeFragment extends Fragment {
      * Frequency (milliseconds) with which TOTP countdown indicators are
      * updated.
      */
-    private static final long TOTP_COUNTDOWN_REFRESH_PERIOD = 400;
+    private static final long TOTP_COUNTDOWN_REFRESH_PERIOD = 500;
 
     /**
      * Counter used for generating TOTP verification codes.
@@ -53,8 +52,6 @@ public class CodeFragment extends Fragment {
     private TotpCountdownTask mTotpCountdownTask;
 
     private OtpSource mOtpProvider;
-    private double mTotpCountdownPhase;
-    private Handler mHandler;
 
     private TextView mNameView;
     private TextView mCodeView;
@@ -69,7 +66,6 @@ public class CodeFragment extends Fragment {
         Bundle args = getArguments();
         mAccountInfo = args.getParcelable(ACCOUNT);
 
-        mHandler = new Handler();
         mOtpProvider = DependencyInjector.getOtpProvider();
         mTotpCounter = mOtpProvider.getTotpCounter();
         mTotpClock = mOtpProvider.getTotpClock();
@@ -85,10 +81,13 @@ public class CodeFragment extends Fragment {
         mNameView = (TextView) view.findViewById(R.id.account_name);
         mCodeView = (TextView) view.findViewById(R.id.account_code);
         mIndicator = (CountdownIndicator) view.findViewById(R.id.indicator);
-        mIndicator.setPhase(0.75);
+        mIndicator.setPhase(1);
 
         mNameView.setText(mAccountInfo.getName());
         mCodeView.setText(getString(R.string.empty_pin));
+
+        refreshCode();
+        startTotpCountdownTask();
         return view;
     }
 
@@ -122,39 +121,38 @@ public class CodeFragment extends Fragment {
     }
 
     private void startTotpCountdownTask() {
-        stopTotpCountdownTask();
+        if(mTotpCountdownTask != null){
+            //mTotpCountdownTask.stop();
+            Log.d("TOTP countdown task for "+mAccountInfo.getId()+" already running");
+            return;
+        }
+        Log.d("Starting TOTP countdown task for id "+mAccountInfo.getId());
 
         mTotpCountdownTask = new TotpCountdownTask(mTotpCounter, mTotpClock,
                 TOTP_COUNTDOWN_REFRESH_PERIOD);
-        mTotpCountdownTask.setListener(new TotpCountdownTask.Listener() {
-            @Override
-            public void onTotpCountdown(long millisRemaining) {
-                setTotpCountdownPhaseFromTimeTillNextValue(millisRemaining);
-            }
-
-            @Override
-            public void onTotpCounterValueChanged() {
-                refreshCode();
-            }
-        });
+        mTotpCountdownTask.setListener(mListener);
 
         mTotpCountdownTask.startAndNotifyListener();
     }
 
     private void stopTotpCountdownTask() {
         if (mTotpCountdownTask != null) {
+            Log.d("Stopping TOTP countdown task for id "+mAccountInfo.getId());
             mTotpCountdownTask.stop();
             mTotpCountdownTask = null;
         }
     }
 
-    private void setTotpCountdownPhaseFromTimeTillNextValue(long millisRemaining) {
-        setTotpCountdownPhase(((double) millisRemaining)
-                / Utilities.secondsToMillis(mTotpCounter.getTimeStep()));
-    }
+    private TotpCountdownTask.Listener mListener = new TotpCountdownTask.Listener() {
+        @Override
+        public void onTotpCountdown(long millisRemaining) {
+            mIndicator.setPhase(((double) millisRemaining)
+                    / Utilities.secondsToMillis(mTotpCounter.getTimeStep()));
+        }
 
-    private void setTotpCountdownPhase(double phase) {
-        mTotpCountdownPhase = phase;
-        mIndicator.setPhase(mTotpCountdownPhase);
-    }
+        @Override
+        public void onTotpCounterValueChanged() {
+            refreshCode();
+        }
+    };
 }
