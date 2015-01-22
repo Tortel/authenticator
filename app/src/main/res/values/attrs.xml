@@ -21,10 +21,4 @@
     <attr name="accountListWithVerificationCodesRowVerificationCode" format="reference" />
     <attr name="accountListWithVerificationCodesRowCountdownIndicator" format="reference" />
   </declare-styleable>
-
-  <declare-styleable name="CountdownIndicator">
-    <!-- Color. -->
-    <attr name="countdown_color" format="reference|color" />
-    <attr name="countdown_bgcolor" format="reference|color" />
-  </declare-styleable>
 </resources>

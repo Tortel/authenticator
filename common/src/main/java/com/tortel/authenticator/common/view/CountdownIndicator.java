@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.tortel.authenticator.view;
-
-import com.tortel.authenticator.R;
+package com.tortel.authenticator.common.view;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -26,6 +24,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.tortel.authenticator.common.R;
 
 /**
  * Circular countdown indicator. The indicator is a filled arc which starts as a full circle ({@code
@@ -37,8 +37,12 @@ public class CountdownIndicator extends View {
     private static final int DEFAULT_BG_COLOR = 0xffffff;
     private final Paint mBackgroundPaint;
     private final Paint mRemainingSectorPaint;
-    // private final Paint mBorderPaint;
     private static final int DEFAULT_COLOR = 0xff3060c0;
+    // Drawing variables
+    private RectF mDrawingRect;
+    private float mRemainingSectorSweepAngle;
+    private float mRemainingSectorStartAngle;
+
 
     /**
      * Countdown phase starting with {@code 1} when a full cycle is remaining and shrinking to
@@ -62,55 +66,51 @@ public class CountdownIndicator extends View {
             int n = appearance.getIndexCount();
             for (int i = 0; i < n; i++) {
                 int attr = appearance.getIndex(i);
-
-                switch (attr) {
-                    case R.styleable.CountdownIndicator_countdown_color:
-                        color = appearance.getColor(attr, DEFAULT_COLOR);
-                        break;
-                    case R.styleable.CountdownIndicator_countdown_bgcolor:
-                        bgColor = appearance.getColor(attr, DEFAULT_COLOR);
-                        break;
+                if(attr == R.styleable.CountdownIndicator_countdown_bgcolor){
+                    bgColor = appearance.getColor(attr, DEFAULT_COLOR);
+                } else if(attr == R.styleable.CountdownIndicator_countdown_color){
+                    color = appearance.getColor(attr, DEFAULT_COLOR);
                 }
             }
         }
 
-        // mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        // mBorderPaint.setStrokeWidth(0); // hairline
-        // mBorderPaint.setStyle(Style.STROKE);
-        // mBorderPaint.setColor(color);
         mRemainingSectorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mRemainingSectorPaint.setColor(color);
         mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBackgroundPaint.setColor(bgColor);
+        mDrawingRect = new RectF(1, 1, getWidth() - 1, getHeight() - 1);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        float remainingSectorSweepAngle = (float) (mPhase * 360);
-        float remainingSectorStartAngle = 270 - remainingSectorSweepAngle;
+        mRemainingSectorSweepAngle = (float) (mPhase * 360);
+        mRemainingSectorStartAngle = 270 - mRemainingSectorSweepAngle;
 
         // Draw the sector/filled arc
         // We need to leave the leftmost column and the topmost row out of the drawingRect because
         // in anti-aliased mode drawArc and drawOval use these areas for some reason.
-        RectF drawingRect = new RectF(1, 1, getWidth() - 1, getHeight() - 1);
 
         // Draw the background first
-        canvas.drawOval(drawingRect, mBackgroundPaint);
+        canvas.drawOval(mDrawingRect, mBackgroundPaint);
 
-        if (remainingSectorStartAngle < 360) {
+        if (mRemainingSectorStartAngle < 360) {
             canvas.drawArc(
-                    drawingRect,
-                    remainingSectorStartAngle,
-                    remainingSectorSweepAngle,
+                    mDrawingRect,
+                    mRemainingSectorStartAngle,
+                    mRemainingSectorSweepAngle,
                     true,
                     mRemainingSectorPaint);
         } else {
             // 360 degrees is equivalent to 0 degrees for drawArc, hence the drawOval below.
-            canvas.drawOval(drawingRect, mRemainingSectorPaint);
+            canvas.drawOval(mDrawingRect, mRemainingSectorPaint);
         }
+    }
 
-        // Draw the outer border
-        //canvas.drawOval(drawingRect, mBorderPaint);
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        // Set the drawing bounds
+        mDrawingRect.set(1, 1, getWidth() - 1, getHeight() - 1);
     }
 
     /**

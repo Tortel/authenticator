@@ -27,7 +27,7 @@ import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.common.utils.Utilities;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
-import com.tortel.authenticator.view.CountdownIndicator;
+import com.tortel.authenticator.common.view.CountdownIndicator;
 
 import android.app.Activity;
 import android.app.AlertDialog;

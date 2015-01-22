@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="countdown_indicator">#63a1f7</color>
+    <color name="countdown_indicator_bg">#c8d5db</color>
+</resources>

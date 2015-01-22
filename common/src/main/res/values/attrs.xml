@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CountdownIndicator">
+        <!-- Color. -->
+        <attr name="countdown_color" format="reference|color" />
+        <attr name="countdown_bgcolor" format="reference|color" />
+    </declare-styleable>
+</resources>

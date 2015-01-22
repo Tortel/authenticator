@@ -41,7 +41,7 @@ import com.tortel.authenticator.common.utils.Log;
 import com.tortel.authenticator.common.utils.Utilities;
 import com.tortel.authenticator.dialog.ConfirmDeleteDialog;
 import com.tortel.authenticator.dialog.EditAccountDialog;
-import com.tortel.authenticator.view.CountdownIndicator;
+import com.tortel.authenticator.common.view.CountdownIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
