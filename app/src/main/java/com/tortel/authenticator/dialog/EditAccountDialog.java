@@ -82,8 +82,8 @@ public class EditAccountDialog extends DialogFragment {
             accountDb.setEmail(id, newUsername);
 
             Intent intent = new Intent(MainActivity.ACCOUNT_CHANGED);
-            LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
-            broadcastManager.sendBroadcast(intent);
+            intent.putExtra(MainActivity.ACCOUNT_ID, id);
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 
             dismiss();
         }

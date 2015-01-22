@@ -1,11 +1,14 @@
 package com.tortel.authenticator.dialog;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.authenticator.R;
+import com.tortel.authenticator.activity.MainActivity;
 import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 
@@ -64,6 +67,11 @@ public class ConfirmSaveDialog extends DialogFragment {
         public void onPositive(MaterialDialog materialDialog) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
             accountDb.update(null, user, secret, type, counter);
+
+            // Send the notification
+            Intent intent = new Intent(MainActivity.ACCOUNT_CREATED);
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+
             dismiss();
             getActivity().finish();
         }

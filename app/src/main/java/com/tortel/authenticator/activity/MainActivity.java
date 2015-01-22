@@ -36,7 +36,10 @@ import java.util.List;
  */
 public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
-    public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGE";
+    public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGED";
+    public static final String ACCOUNT_DELETED = "com.tortel.authenticator.ACCOUNT_DELETED";
+    public static final String ACCOUNT_CREATED = "com.tortel.authenticator.ACCOUNT_CREATED";
+    public static final String ACCOUNT_ID = "id";
 
     private AccountDb mAccountDb;
     private GoogleApiClient mGoogleApiClient;
@@ -58,8 +61,11 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         showFragment();
 
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getBaseContext());
-        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(MainActivity.ACCOUNT_CHANGED));
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
+        // Register the receiver for all the events
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_CHANGED));
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_DELETED));
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_CREATED));
     }
 
     private void showFragment(){
@@ -182,8 +188,19 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            showFragment();
-            syncData();
+            switch(intent.getAction()){
+                case ACCOUNT_CREATED:
+                    showFragment();
+                    syncData();
+                    return;
+                case ACCOUNT_DELETED:
+                    // TODO - Propigate delete to wear
+                    showFragment();
+                    return;
+                case ACCOUNT_CHANGED:
+                    // TODO - Propigate to wear
+                    return;
+            }
         }
     };
 

@@ -128,7 +128,10 @@ public class CodeListFragment extends Fragment {
         mHandler = new Handler();
 
         LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getContext());
+        // Register the receiver for all events
         broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(MainActivity.ACCOUNT_CHANGED));
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(MainActivity.ACCOUNT_DELETED));
+        broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(MainActivity.ACCOUNT_CREATED));
     }
 
     @Override
@@ -140,7 +143,7 @@ public class CodeListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshUserList(false);
+        refreshUserList();
     }
 
     @Override
@@ -151,18 +154,16 @@ public class CodeListFragment extends Fragment {
         broadcastManager.unregisterReceiver(mAccountChangeReceiver);
     }
 
-    private void refreshUserList(boolean force) {
-        List<AccountInfo> accounts = mAccountDb.getAllAccounts();
-
-        // Simple check to not constantly clear the list
-        if(accounts.size() == mAccountWrapper.size() && !force){
-            Log.d("IDs and list of data is same size, not reloading");
-            startTotpCountdownTask();
-            return;
+    private void refreshUserList() {
+        List<Integer> allIds = mAccountDb.getAllIds();
+        for(AccountWrapper wrapper : mAccountWrapper){
+            allIds.remove(Integer.valueOf(wrapper.info.getId()));
         }
-        mAccountWrapper.clear();
 
-        for(AccountInfo account : accounts){
+        // Anything remaining must be new
+        for(int id : allIds){
+            Log.d("Adding account to list with id "+id);
+            AccountInfo account = mAccountDb.getAccountInfo(id);
             try {
                 AccountWrapper wrapper = new AccountWrapper();
                 wrapper.info = account;
@@ -179,6 +180,7 @@ public class CodeListFragment extends Fragment {
             }
         }
         mAdapter.notifyDataSetChanged();
+
         startTotpCountdownTask();
     }
 
@@ -259,7 +261,7 @@ public class CodeListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
 
-        refreshUserList(false);
+        refreshUserList();
 
         // If the action mode is not null, it was open during rotation, so redisplay it
         if(mActionMode != null){
@@ -282,6 +284,20 @@ public class CodeListFragment extends Fragment {
             ActionBarActivity activity = (ActionBarActivity) getActivity();
             mActionMode = activity.startSupportActionMode(mActionModeCallback);
         }
+    }
+
+    /**
+     * Gets the account wrapper for a provided id
+     * @param id the account's id
+     * @return the wrapper
+     */
+    private AccountWrapper getAccountWrappper(int id){
+        for(AccountWrapper wrapper : mAccountWrapper){
+            if(wrapper.info.getId() == id){
+                return wrapper;
+            }
+        }
+        return null;
     }
 
     /**
@@ -543,8 +559,37 @@ public class CodeListFragment extends Fragment {
     private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("Received account changed intent, force refreshing");
-            refreshUserList(true);
+            Log.d("Received account changed intent");
+            int id;
+            switch(intent.getAction()){
+                case MainActivity.ACCOUNT_CHANGED:
+                    id = intent.getIntExtra(MainActivity.ACCOUNT_ID, -1);
+                    if(id >= 0){
+                        Log.d("Refreshing name of account "+id);
+                        AccountWrapper wrapper = getAccountWrappper(id);
+                        wrapper.info.setName(mAccountDb.getEmail(id));
+                        if(wrapper.holder != null && wrapper.holder.mUserNameView != null) {
+                            wrapper.holder.mUserNameView.setText(wrapper.info.getName());
+                        }
+                    }
+                    return;
+                case MainActivity.ACCOUNT_CREATED:
+                    refreshUserList();
+                    return;
+                case MainActivity.ACCOUNT_DELETED:
+                    id = intent.getIntExtra(MainActivity.ACCOUNT_ID, -1);
+                    Log.d("Account with id "+id+" deleted, removing from list");
+                    if(id >= 0){
+                        for(AccountWrapper wrapper : mAccountWrapper){
+                            if(wrapper.info.getId() == id){
+                                mAccountWrapper.remove(wrapper);
+                                mAdapter.notifyDataSetChanged();
+                                return;
+                            }
+                        }
+                    }
+                    return;
+            }
         }
     };
 }

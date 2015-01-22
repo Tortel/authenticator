@@ -68,7 +68,8 @@ public class ConfirmDeleteDialog extends DialogFragment {
         public void onPositive(MaterialDialog materialDialog) {
             AccountDb accountDb = DependencyInjector.getAccountDb();
             accountDb.delete(id);
-            Intent intent = new Intent(MainActivity.ACCOUNT_CHANGED);
+            Intent intent = new Intent(MainActivity.ACCOUNT_DELETED);
+            intent.putExtra(MainActivity.ACCOUNT_ID, id);
             LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getActivity().getBaseContext());
             broadcastManager.sendBroadcast(intent);
 
