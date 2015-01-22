@@ -18,6 +18,7 @@ import com.tortel.authenticator.common.otp.OtpProvider;
 import com.tortel.authenticator.common.otp.OtpSource;
 import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.common.utils.Log;
+import com.tortel.authenticator.fragment.CodeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class CodeActivity extends Activity {
     }
 
     public class AccountGridPagerAdapter extends FragmentGridPagerAdapter{
-        private SparseArray<CardFragment> frags = new SparseArray<>();
+        private SparseArray<Fragment> frags = new SparseArray<>();
 
         public AccountGridPagerAdapter(){
             super(getFragmentManager());
@@ -63,14 +64,16 @@ public class CodeActivity extends Activity {
 
         @Override
         public Fragment getFragment(int row, int column) {
-            AccountInfo info = mAccounts.get(row);
-            String code = getString(R.string.empty_pin);
-            try{
-                code = mOtpProvider.getNextCode(info.getId());
-            } catch (OtpSourceException e) {
-                Log.e("Error getting code for " + info.getName(), e);
+
+            if(frags.get(row) == null){
+                AccountInfo info = mAccounts.get(row);
+                Bundle args = new Bundle();
+                args.putParcelable(CodeFragment.ACCOUNT, info);
+                Fragment frag = new CodeFragment();
+                frag.setArguments(args);
+                frags.put(row, frag);
             }
-            return CardFragment.create(info.getName(), code, R.drawable.ic_launcher);
+            return frags.get(row);
         }
     }
 }
