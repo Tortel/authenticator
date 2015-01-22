@@ -6,12 +6,12 @@
 
     <application
         android:allowBackup="false"
-        android:name=".AuthenticatorApplication"
+        android:name=".WearAuthenticatorApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.DeviceDefault.Light" >
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.CodeActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

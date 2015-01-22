@@ -7,7 +7,7 @@ import com.tortel.authenticator.common.utils.DependencyInjector;
 /**
  * Application wrapper that sets up/closes the dependency injector
  */
-public class AuthenticatorApplication extends Application {
+public class WearAuthenticatorApplication extends Application {
 
     @Override
     public void onCreate() {

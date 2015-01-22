@@ -1,4 +1,4 @@
-package com.tortel.authenticator;
+package com.tortel.authenticator.activity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -11,6 +11,7 @@ import android.support.wearable.view.GridViewPager;
 import android.util.SparseArray;
 import android.widget.TextView;
 
+import com.tortel.authenticator.R;
 import com.tortel.authenticator.common.data.AccountInfo;
 import com.tortel.authenticator.common.exception.OtpSourceException;
 import com.tortel.authenticator.common.otp.OtpProvider;
@@ -21,7 +22,10 @@ import com.tortel.authenticator.common.utils.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity {
+/**
+ * Activity which displays the OTP codes
+ */
+public class CodeActivity extends Activity {
     private AccountGridPagerAdapter mAdapter;
     private OtpSource mOtpProvider;
     private List<AccountInfo> mAccounts;
