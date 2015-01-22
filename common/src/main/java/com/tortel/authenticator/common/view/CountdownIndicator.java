@@ -35,9 +35,12 @@ import com.tortel.authenticator.common.R;
  */
 public class CountdownIndicator extends View {
     private static final int DEFAULT_BG_COLOR = 0xffffff;
+    private static final int DEFAULT_COLOR = 0xff3060c0;
+
+
     private final Paint mBackgroundPaint;
     private final Paint mRemainingSectorPaint;
-    private static final int DEFAULT_COLOR = 0xff3060c0;
+
     // Drawing variables
     private RectF mDrawingRect;
     private float mRemainingSectorSweepAngle;
@@ -89,6 +92,7 @@ public class CountdownIndicator extends View {
         // Draw the sector/filled arc
         // We need to leave the leftmost column and the topmost row out of the drawingRect because
         // in anti-aliased mode drawArc and drawOval use these areas for some reason.
+        mDrawingRect.set(1, 1, getWidth() - 1, getHeight() - 1);
 
         // Draw the background first
         canvas.drawOval(mDrawingRect, mBackgroundPaint);
@@ -104,13 +108,6 @@ public class CountdownIndicator extends View {
             // 360 degrees is equivalent to 0 degrees for drawArc, hence the drawOval below.
             canvas.drawOval(mDrawingRect, mRemainingSectorPaint);
         }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        // Set the drawing bounds
-        mDrawingRect.set(1, 1, getWidth() - 1, getHeight() - 1);
     }
 
     /**
