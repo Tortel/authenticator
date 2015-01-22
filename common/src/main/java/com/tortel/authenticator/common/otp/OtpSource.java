@@ -16,6 +16,7 @@
 
 package com.tortel.authenticator.common.otp;
 
+import com.tortel.authenticator.common.data.AccountDb;
 import com.tortel.authenticator.common.exception.OtpSourceException;
 
 import java.util.Collection;
@@ -45,6 +46,8 @@ public interface OtpSource {
      * @return OTP as string code.
      */
     public String getNextCode(Integer id) throws OtpSourceException;
+
+    public String getNextTotpCode(String secret) throws OtpSourceException;
 
     /**
      * Generate response to a given challenge based on next OTP code.

@@ -46,6 +46,12 @@ public class OtpProvider implements OtpSource {
         return getCurrentCode(id, null);
     }
 
+    @Override
+    public String getNextTotpCode(String secret) throws OtpSourceException {
+        long otp_state = mTotpCounter.getValueAtTime(Utilities.millisToSeconds(mTotpClock.currentTimeMillis()));
+        return computePin(secret, otp_state, null);
+    }
+
     // This variant is used when an additional challenge, such as URL or
     // transaction details, are included in the OTP request.
     // The additional string is appended to standard HOTP/TOTP state before
