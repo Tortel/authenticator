@@ -90,7 +90,10 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         }
     }
 
-    private void syncData(){
+    /**
+     * Sync all accounts to wear
+     */
+    private void syncAllAccounts(){
         if(mGoogleApiClient.isConnected()){
             List<Integer> ids = mAccountDb.getAllIds();
             for(Integer id : ids){
@@ -103,6 +106,40 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
                     }
                 });
             }
+        }
+    }
+
+    /**
+     * Sync a specific account to wear
+     * @param id
+     */
+    private void syncAccount(int id){
+        if(mGoogleApiClient.isConnected()) {
+            PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
+            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, req.asPutDataRequest());
+            pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                @Override
+                public void onResult(DataApi.DataItemResult dataItemResult) {
+                    Log.d("Sent "+dataItemResult.toString());
+                }
+            });
+        }
+    }
+
+    /**
+     * Delete a specific account from wear
+     * @param id
+     */
+    private void deleteAccount(int id){
+        if(mGoogleApiClient.isConnected()) {
+            PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
+            PendingResult<DataApi.DeleteDataItemsResult> pendingResult = Wearable.DataApi.deleteDataItems(mGoogleApiClient, req.getUri());
+            pendingResult.setResultCallback(new ResultCallback<DataApi.DeleteDataItemsResult>() {
+                @Override
+                public void onResult(DataApi.DeleteDataItemsResult dataItemResult) {
+                    Log.d("Deleted "+dataItemResult.toString());
+                }
+            });
         }
     }
 
@@ -188,17 +225,25 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            int id;
             switch(intent.getAction()){
                 case ACCOUNT_CREATED:
                     showFragment();
-                    syncData();
+                    syncAllAccounts();
                     return;
                 case ACCOUNT_DELETED:
                     // TODO - Propigate delete to wear
+                    id = intent.getIntExtra(ACCOUNT_ID, -1);
+                    if(id > 0){
+                        syncAccount(id);
+                    }
                     showFragment();
                     return;
                 case ACCOUNT_CHANGED:
-                    // TODO - Propigate to wear
+                    id = intent.getIntExtra(ACCOUNT_ID, -1);
+                    if(id > 0){
+                        syncAccount(id);
+                    }
                     return;
             }
         }
@@ -212,7 +257,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     @Override
     public void onConnected(Bundle bundle) {
         Log.d("Google API Connected");
-        syncData();
+        syncAllAccounts();
     }
 
     @Override
