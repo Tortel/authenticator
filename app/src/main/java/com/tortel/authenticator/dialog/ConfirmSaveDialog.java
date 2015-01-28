@@ -57,7 +57,7 @@ public class ConfirmSaveDialog extends DialogFragment {
         return builder.build();
     }
 
-    private MaterialDialog.ButtonCallback callback = new MaterialDialog.Callback() {
+    private MaterialDialog.ButtonCallback callback = new MaterialDialog.ButtonCallback() {
         @Override
         public void onNegative(MaterialDialog materialDialog) {
             dismiss();

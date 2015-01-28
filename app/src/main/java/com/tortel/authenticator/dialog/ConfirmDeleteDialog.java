@@ -58,7 +58,7 @@ public class ConfirmDeleteDialog extends DialogFragment {
         return builder.build();
     }
 
-    private MaterialDialog.Callback callback = new MaterialDialog.Callback() {
+    private MaterialDialog.ButtonCallback callback = new MaterialDialog.ButtonCallback() {
         @Override
         public void onNegative(MaterialDialog materialDialog) {
             dismiss();
