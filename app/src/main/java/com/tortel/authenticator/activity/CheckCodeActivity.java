@@ -18,7 +18,7 @@ package com.tortel.authenticator.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
@@ -41,7 +41,7 @@ import javax.crypto.spec.SecretKeySpec;
  *
  * @author sweis@google.com (Steve Weis)
  */
-public class CheckCodeActivity extends ActionBarActivity {
+public class CheckCodeActivity extends AppCompatActivity {
     public static final String EXTRA_ID = "id";
 
     private TextView mCheckCodeTextView;

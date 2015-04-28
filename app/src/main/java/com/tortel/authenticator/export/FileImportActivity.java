@@ -19,7 +19,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -28,7 +28,7 @@ import android.widget.Toast;
 /**
  * Class for handling importing the accounts from a file
  */
-public class FileImportActivity extends ActionBarActivity {
+public class FileImportActivity extends AppCompatActivity {
     private static final String DIALOG_TAG = "dialog";
 
     private EditText passPhraseInput;

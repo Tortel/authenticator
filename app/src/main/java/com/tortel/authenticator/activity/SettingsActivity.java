@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.tortel.authenticator.R;
@@ -32,7 +32,7 @@ import com.tortel.authenticator.timesync.AboutDialog;
  * Top-level settings Activity.
  *
  */
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends AppCompatActivity {
     private static final String KEY_ABOUT = "about_time";
 
     @Override
@@ -79,7 +79,7 @@ public class SettingsActivity extends ActionBarActivity {
         @Override
         public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
             if(KEY_ABOUT.equals(preference.getKey())){
-                ActionBarActivity activity = (ActionBarActivity) getActivity();
+                AppCompatActivity activity = (AppCompatActivity) getActivity();
                 AboutDialog dialog = new AboutDialog();
                 dialog.show(activity.getSupportFragmentManager(), "about");
                 return true;

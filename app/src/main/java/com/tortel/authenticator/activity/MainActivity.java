@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Main activity that shows the codes and stuff
  */
-public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
     public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGED";
     public static final String ACCOUNT_DELETED = "com.tortel.authenticator.ACCOUNT_DELETED";

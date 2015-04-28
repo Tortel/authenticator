@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +17,7 @@ import com.tortel.authenticator.R;
 /**
  * Activity that displays the how it works information
  */
-public class HowItWorksActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener {
+public class HowItWorksActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private static final String TAB = "tab";
     private int currentTab = 0;
     private HowItWorksPager pageAdapter;

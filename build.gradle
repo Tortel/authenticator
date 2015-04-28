@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.1.0'
     }
 }
 
@@ -17,6 +17,6 @@ allprojects {
 // Set global build variables
 project.ext.set("buildVersion", "1.0")
 project.ext.set("buildNumber", 1)
-project.ext.set("targetSdk", 21)
+project.ext.set("targetSdk", 22)
 project.ext.set("appMinSdk", 14)
 project.ext.set("appId", "com.tortel.authenticator")

@@ -11,7 +11,7 @@ import com.tortel.authenticator.common.utils.DependencyInjector;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,7 +19,7 @@ import android.widget.Toast;
 /**
  * Class for handling exporting the accounts to a file
  */
-public class FileExportActivity extends ActionBarActivity {
+public class FileExportActivity extends AppCompatActivity {
     private EditText passPhraseInput;
 
     public void onCreate(Bundle savedInstanceState) {
