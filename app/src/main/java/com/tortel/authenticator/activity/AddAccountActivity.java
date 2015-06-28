@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.tortel.authenticator.common.data.AccountDb;
@@ -41,9 +40,7 @@ public class AddAccountActivity extends AppCompatActivity {
 
     private static final String OTP_SCHEME = "otpauth";
     private static final String TOTP = "totp"; // time-based
-    private static final String HOTP = "hotp"; // counter-based
     private static final String SECRET_PARAM = "secret";
-    private static final String COUNTER_PARAM = "counter";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,20 +153,6 @@ public class AddAccountActivity extends AppCompatActivity {
             type = AccountDb.OtpType.TOTP;
             counter = AccountDb.DEFAULT_HOTP_COUNTER; // only interesting for
             // HOTP
-        } else if (HOTP.equals(authority)) {
-            type = AccountDb.OtpType.HOTP;
-            String counterParameter = uri.getQueryParameter(COUNTER_PARAM);
-            if (counterParameter != null) {
-                try {
-                    counter = Integer.parseInt(counterParameter);
-                } catch (NumberFormatException e) {
-                    Log.e("Invalid counter in uri");
-                    showInvalidQRDialog();
-                    return;
-                }
-            } else {
-                counter = AccountDb.DEFAULT_HOTP_COUNTER;
-            }
         } else {
             Log.e("Invalid or missing authority in uri");
             showInvalidQRDialog();
@@ -269,11 +252,6 @@ public class AddAccountActivity extends AppCompatActivity {
             button = (Button) view.findViewById(R.id.button_add_account);
             button.setOnClickListener(this);
 
-            RadioButton radio = (RadioButton) view.findViewById(R.id.create_account_counter_base);
-            radio.setOnClickListener(this);
-            radio = (RadioButton) view.findViewById(R.id.create_account_time_base);
-            radio.setOnClickListener(this);
-
             return view;
         }
 
@@ -286,12 +264,6 @@ public class AddAccountActivity extends AppCompatActivity {
                     return;
                 case R.id.button_add_account:
                     addAccount();
-                    return;
-                case R.id.create_account_time_base:
-                    timeBased = true;
-                    return;
-                case R.id.create_account_counter_base:
-                    timeBased = false;
                     return;
             }
         }
