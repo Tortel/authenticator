@@ -44,7 +44,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -80,7 +80,7 @@ import java.util.Locale;
  * @author klyubin@google.com (Alex Klyubin)
  */
 @Deprecated
-public class AuthenticatorActivity extends ActionBarActivity {
+public class AuthenticatorActivity extends AppCompatActivity {
 
     /**
      * The tag for log messages

@@ -12,7 +12,7 @@ import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -272,16 +272,12 @@ public class CodeListFragment extends Fragment {
         return view;
     }
 
-    private Context getContext(){
-        return getActivity().getBaseContext();
-    }
-
     /**
      * Displays the contextual action bar
      */
     private void showActionMode(){
         if(mActionMode == null) {
-            ActionBarActivity activity = (ActionBarActivity) getActivity();
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
             mActionMode = activity.startSupportActionMode(mActionModeCallback);
         }
     }
