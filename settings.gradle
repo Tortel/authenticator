@@ -1,2 +1,2 @@
-include ':app', ':wear'
+include ':app'
 include ':common'

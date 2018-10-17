@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion project.targetSdk
-    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId project.appId
@@ -35,15 +34,14 @@ android {
 }
 
 dependencies {
-    compile project(':common')
-    wearApp project(':wear')
+    implementation project(':common')
+    // wearApp project(':wear')
 
-    compile 'com.android.support:recyclerview-v7:22.2.+'
-    compile 'com.android.support:cardview-v7:22.2.+'
-    compile 'com.android.support:appcompat-v7:22.2.+'
-    compile 'com.afollestad:material-dialogs:0.7.5.+'
+    implementation 'com.android.support:recyclerview-v7:' + project.supportVersion
+    implementation 'com.android.support:cardview-v7:' + project.supportVersion
+    implementation 'com.android.support:appcompat-v7:' + project.supportVersion
 
-    compile 'com.fasterxml.jackson.core:jackson-core:2.5.0'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.0'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.5.0'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.5.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.5.0'
 }

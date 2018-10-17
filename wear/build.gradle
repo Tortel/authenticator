@@ -2,12 +2,11 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion project.targetSdk
 
     defaultConfig {
         applicationId project.appId
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion project.targetSdk
         versionCode project.buildNumber
         versionName project.buildVersion
@@ -21,7 +20,9 @@ android {
 }
 
 dependencies {
-    compile project(':common')
+    implementation project(':common')
 
-    compile 'com.google.android.support:wearable:1.1.0'
+    implementation 'com.android.support:wear:' + project.supportVersion
+    implementation 'com.google.android.support:wearable:2.3.0'
+    compileOnly 'com.google.android.wearable:wearable:2.3.0'
 }
