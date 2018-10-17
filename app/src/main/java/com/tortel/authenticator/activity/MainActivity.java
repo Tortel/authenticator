@@ -1,22 +1,22 @@
 package com.tortel.authenticator.activity;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.tasks.Tasks;
+import com.google.android.gms.wearable.DataClient;
+import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.tortel.authenticator.R;
@@ -29,33 +29,25 @@ import com.tortel.authenticator.export.FileImportActivity;
 import com.tortel.authenticator.fragment.CodeListFragment;
 import com.tortel.authenticator.fragment.NoAccountsFragment;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Main activity that shows the codes and stuff
  */
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity {
     public static final String ACCOUNT_CHANGED = "com.tortel.authenticator.ACCOUNT_CHANGED";
     public static final String ACCOUNT_DELETED = "com.tortel.authenticator.ACCOUNT_DELETED";
     public static final String ACCOUNT_CREATED = "com.tortel.authenticator.ACCOUNT_CREATED";
     public static final String ACCOUNT_ID = "id";
 
     private AccountDb mAccountDb;
-    private GoogleApiClient mGoogleApiClient;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_activity);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
 
         mAccountDb = DependencyInjector.getAccountDb();
 
@@ -93,65 +85,83 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     /**
      * Sync all accounts to wear
      */
+    @SuppressLint("StaticFieldLeak")
     private void syncAllAccounts(){
-        if(mGoogleApiClient.isConnected()){
-            List<Integer> ids = mAccountDb.getAllIds();
-            for(Integer id : ids){
-                PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
-                PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, req.asPutDataRequest());
-                pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-                    @Override
-                    public void onResult(DataApi.DataItemResult dataItemResult) {
-                        Log.d("Sent "+dataItemResult.toString());
-                    }
-                });
-            }
+        final DataClient dataClient = Wearable.getDataClient(this);
+        final List<PutDataMapRequest> requests = new ArrayList<>();
+        for(Integer id : mAccountDb.getAllIds()) {
+            requests.add(SyncUtils.createDataMap(id, mAccountDb));
         }
+
+        (new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    for (PutDataMapRequest req : requests) {
+                        DataItem item = Tasks.await(dataClient.putDataItem(req.asPutDataRequest()));
+                        Log.d("Sent " + item.toString());
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    Log.e("Exception deleting wear data", e);
+                }
+                return null;
+            }
+        }).execute();
     }
 
     /**
      * Sync a specific account to wear
      * @param id
      */
-    private void syncAccount(int id){
-        if(mGoogleApiClient.isConnected()) {
-            PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
-            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, req.asPutDataRequest());
-            pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-                @Override
-                public void onResult(DataApi.DataItemResult dataItemResult) {
-                    Log.d("Sent "+dataItemResult.toString());
+    @SuppressLint("StaticFieldLeak")
+    private void syncAccount(final int id){
+        final DataClient dataClient = Wearable.getDataClient(this);
+        final PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
+
+        (new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    DataItem item = Tasks.await(dataClient.putDataItem(req.asPutDataRequest()));
+                    Log.d("Sent " + item.toString());
+                } catch (InterruptedException | ExecutionException e) {
+                    Log.e("Exception deleting wear data", e);
                 }
-            });
-        }
+                return null;
+            }
+        }).execute();
     }
 
     /**
      * Delete a specific account from wear
      * @param id
      */
-    private void deleteAccount(int id){
-        if(mGoogleApiClient.isConnected()) {
-            PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
-            PendingResult<DataApi.DeleteDataItemsResult> pendingResult = Wearable.DataApi.deleteDataItems(mGoogleApiClient, req.getUri());
-            pendingResult.setResultCallback(new ResultCallback<DataApi.DeleteDataItemsResult>() {
-                @Override
-                public void onResult(DataApi.DeleteDataItemsResult dataItemResult) {
-                    Log.d("Deleted "+dataItemResult.toString());
+    @SuppressLint("StaticFieldLeak")
+    private void deleteAccount(final int id){
+        final DataClient dataClient = Wearable.getDataClient(this);
+        final PutDataMapRequest req = SyncUtils.createDataMap(id, mAccountDb);
+
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    int result = Tasks.await(dataClient.deleteDataItems(req.getUri()));
+                    Log.d("Deleted " + req.getUri() + " with result " + result);
+                } catch (InterruptedException | ExecutionException e) {
+                    Log.e("Exception deleting wear data", e);
                 }
-            });
-        }
+                return null;
+            }
+        }).execute();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
-        mGoogleApiClient.disconnect();
         super.onStop();
     }
 
@@ -224,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, @NonNull Intent intent) {
             int id;
             switch(intent.getAction()){
                 case ACCOUNT_CREATED:
@@ -249,19 +259,4 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     };
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("Connection failed "+connectionResult);
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d("Google API Connected");
-        syncAllAccounts();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d("Connection suspended");
-    }
 }
