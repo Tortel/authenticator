@@ -1,12 +1,13 @@
 package com.tortel.authenticator.dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.activity.MainActivity;
 import com.tortel.authenticator.common.data.AccountDb;
@@ -47,33 +48,31 @@ public class ConfirmSaveDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
-        builder.title(R.string.save_key_message);
-        builder.content(user);
-        builder.positiveText(R.string.ok);
-        builder.negativeText(R.string.cancel);
-        builder.callback(callback);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.save_key_message);
+        builder.setMessage(user);
+        builder.setPositiveButton(R.string.ok, callback);
+        builder.setNegativeButton(R.string.cancel, callback);
 
-        return builder.build();
+        return builder.create();
     }
 
-    private MaterialDialog.ButtonCallback callback = new MaterialDialog.ButtonCallback() {
+    private DialogInterface.OnClickListener callback = new DialogInterface.OnClickListener() {
         @Override
-        public void onNegative(MaterialDialog materialDialog) {
-            dismiss();
-        }
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                AccountDb accountDb = DependencyInjector.getAccountDb();
+                accountDb.update(null, user, secret, type, counter);
 
-        @Override
-        public void onPositive(MaterialDialog materialDialog) {
-            AccountDb accountDb = DependencyInjector.getAccountDb();
-            accountDb.update(null, user, secret, type, counter);
+                // Send the notification
+                Intent intent = new Intent(MainActivity.ACCOUNT_CREATED);
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 
-            // Send the notification
-            Intent intent = new Intent(MainActivity.ACCOUNT_CREATED);
-            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-
-            dismiss();
-            getActivity().finish();
+                dismiss();
+                getActivity().finish();
+            } else {
+                dismiss();
+            }
         }
     };
 }
