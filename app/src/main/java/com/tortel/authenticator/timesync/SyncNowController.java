@@ -233,7 +233,7 @@ class SyncNowController {
         try {
             networkTimeMillis = mNetworkTimeProvider.getNetworkTime();
         } catch (IOException e) {
-            Log.w(LOG_TAG, "Failed to obtain network time due to connectivity issues");
+            Log.e(LOG_TAG, "Failed to obtain network time due to connectivity issues", e);
             callbackExecutor.execute(new Runnable() {
                 @Override
                 public void run() {

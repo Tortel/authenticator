@@ -24,8 +24,7 @@ import com.tortel.authenticator.common.otp.OtpProvider;
 import com.tortel.authenticator.common.otp.OtpSource;
 import com.tortel.authenticator.common.otp.TotpClock;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
+import okhttp3.OkHttpClient;
 
 
 /**
@@ -47,7 +46,7 @@ public final class DependencyInjector {
     private static OtpSource sOtpProvider;
     private static TotpClock sTotpClock;
     private static PackageManager sPackageManager;
-    private static HttpClient sHttpClient;
+    private static OkHttpClient sHttpClient;
 
     private enum Mode {
         PRODUCTION,
@@ -136,14 +135,14 @@ public final class DependencyInjector {
     }
 
     /**
-     * Sets the {@link HttpClient} instance returned by this injector. This will prevent the
+     * Sets the {@link OkHttpClient} instance returned by this injector. This will prevent the
      * injector from creating its own instance.
      */
-    public static synchronized void setHttpClient(HttpClient httpClient) {
+    public static synchronized void setHttpClient(OkHttpClient httpClient) {
         sHttpClient = httpClient;
     }
 
-    public static synchronized HttpClient getHttpClient() {
+    public static synchronized OkHttpClient getHttpClient() {
         if (sHttpClient == null) {
             sHttpClient = HttpClientFactory.createHttpClient(getContext());
         }
@@ -172,10 +171,8 @@ public final class DependencyInjector {
             sAccountDb.close();
         }
         if (sHttpClient != null) {
-            ClientConnectionManager httpClientConnectionManager = sHttpClient.getConnectionManager();
-            if (httpClientConnectionManager != null) {
-                httpClientConnectionManager.shutdown();
-            }
+            sHttpClient.dispatcher().executorService().shutdown();
+            sHttpClient.connectionPool().evictAll();
         }
 
         sMode = null;

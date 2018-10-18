@@ -18,17 +18,15 @@ package com.tortel.authenticator.timesync;
 
 import android.util.Log;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.impl.cookie.DateParseException;
-import org.apache.http.impl.cookie.DateUtils;
-
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Provider of network time that obtains the time by making a network request to Google.
@@ -39,10 +37,11 @@ public class NetworkTimeProvider {
 
     private static final String LOG_TAG = NetworkTimeProvider.class.getSimpleName();
     private static final String URL = "https://www.google.com";
+    private static final String DATE_FORMAT = "EEE, dd LLL yyyy HH:mm:ss zzz";
 
-    private final HttpClient mHttpClient;
+    private final OkHttpClient mHttpClient;
 
-    public NetworkTimeProvider(HttpClient httpClient) {
+    public NetworkTimeProvider(OkHttpClient httpClient) {
         mHttpClient = httpClient;
     }
 
@@ -53,41 +52,33 @@ public class NetworkTimeProvider {
      * @throws IOException if an I/O error occurs.
      */
     public long getNetworkTime() throws IOException {
-        HttpHead request = new HttpHead(URL);
-        Log.i(LOG_TAG, "Sending request to " + request.getURI());
-        HttpResponse httpResponse;
-        try {
-            httpResponse = mHttpClient.execute(request);
-        } catch (ClientProtocolException e) {
-            throw new IOException(String.valueOf(e));
-        } catch (IOException e) {
-            throw new IOException("Failed due to connectivity issues: " + e);
-        }
+        Request request = new Request.Builder()
+                .url(URL)
+                .build();
+        Log.i(LOG_TAG, "Sending request to " + request.url().uri());
+        Response response = mHttpClient.newCall(request).execute();
 
         try {
-            Header dateHeader = httpResponse.getLastHeader("Date");
+            String dateHeader = response.header("Date");
             Log.i(LOG_TAG, "Received response with Date header: " + dateHeader);
             if (dateHeader == null) {
                 throw new IOException("No Date header in response");
             }
-            String dateHeaderValue = dateHeader.getValue();
             try {
-                Date networkDate = DateUtils.parseDate(dateHeaderValue);
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+                Date networkDate = sdf.parse(dateHeader);
                 return networkDate.getTime();
-            } catch (DateParseException e) {
+            } catch (ParseException e) {
                 throw new IOException(
-                        "Invalid Date header format in response: \"" + dateHeaderValue + "\"");
+                        "Invalid Date header format in response: \"" + dateHeader + "\"");
             }
         } finally {
             // Consume all of the content of the response to facilitate HTTP 1.1 persistent connection
             // reuse and to avoid running out of connections when this methods is scheduled on different
             // threads.
             try {
-                HttpEntity responseEntity = httpResponse.getEntity();
-                if (responseEntity != null) {
-                    responseEntity.consumeContent();
-                }
-            } catch (IOException e) {
+                response.close();
+            } catch (Exception e) {
                 // Ignored because this is not an error that is relevant to clients of this transport.
             }
         }
