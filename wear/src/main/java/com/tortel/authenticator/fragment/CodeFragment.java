@@ -2,7 +2,7 @@ package com.tortel.authenticator.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.support.wearable.view.CardScrollView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
