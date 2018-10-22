@@ -33,20 +33,32 @@
             android:padding="5dp"
             android:text="@string/create_account_manually" />
 
-        <EditText
-            android:id="@+id/create_account_name"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:hint="@string/enter_account_label" />
+            android:hint="@string/enter_account_label">
 
-        <EditText
-            android:id="@+id/create_account_code"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/create_account_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:inputType="textNoSuggestions"
-            android:hint="@string/enter_key_hint" />
+            android:hint="@string/enter_key_hint" >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/create_account_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textNoSuggestions" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!--
         <RadioGroup
