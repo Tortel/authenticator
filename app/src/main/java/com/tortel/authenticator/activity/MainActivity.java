@@ -13,12 +13,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tortel.authenticator.R;
 import com.tortel.authenticator.common.sync.SyncUtils;
 import com.tortel.authenticator.common.data.AccountDb;
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_activity);
+        setContentView(R.layout.activity_main);
 
         mAccountDb = DependencyInjector.getAccountDb();
 
@@ -58,6 +60,14 @@ public class MainActivity extends AppCompatActivity {
         broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_CHANGED));
         broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_DELETED));
         broadcastManager.registerReceiver(mAccountChangeReceiver, new IntentFilter(ACCOUNT_CREATED));
+
+        FloatingActionButton fab = findViewById(R.id.add_account_button);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddAccount();
+            }
+        });
     }
 
     private void showFragment(){
