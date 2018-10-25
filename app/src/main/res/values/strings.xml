@@ -342,4 +342,7 @@
     <string name="invalid_name">Invalid name</string>
     <string name="add_account">Add Account</string>
 
+    <string name="scan_barcode">Scan Barcode</string>
+    <string name="enter_code">Enter Code</string>
+
 </resources>

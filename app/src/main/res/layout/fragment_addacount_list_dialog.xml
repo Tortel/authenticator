@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dip"
+    android:orientation="vertical">
+    
+    <TextView
+        android:id="@+id/scan_barcode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@android:style/TextAppearance.Material.Headline"
+        android:text="@string/scan_barcode"
+        android:drawableStart="@drawable/ic_camera_alt"
+        android:drawablePadding="5dip"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="5dip" />
+
+    <TextView
+        android:id="@+id/enter_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@android:style/TextAppearance.Material.Headline"
+        android:text="@string/enter_code"
+        android:drawableStart="@drawable/ic_keyboard"
+        android:drawablePadding="5dip"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="5dip" />
+
+</LinearLayout>

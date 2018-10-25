@@ -28,6 +28,7 @@ import com.tortel.authenticator.common.utils.DependencyInjector;
 import com.tortel.authenticator.common.utils.Log;
 import com.tortel.authenticator.export.FileExportActivity;
 import com.tortel.authenticator.export.FileImportActivity;
+import com.tortel.authenticator.fragment.AddAccountListDialogFragment;
 import com.tortel.authenticator.fragment.CodeListFragment;
 import com.tortel.authenticator.fragment.NoAccountsFragment;
 
@@ -230,8 +231,9 @@ public class MainActivity extends AppCompatActivity {
      * Opens the add account activity
      */
     public void showAddAccount(){
-        Intent intent = new Intent(this, AddAccountActivity.class);
-        startActivity(intent);
+        AddAccountListDialogFragment frag = new AddAccountListDialogFragment();
+
+        frag.show(getSupportFragmentManager(), "add");
     }
 
     /**
