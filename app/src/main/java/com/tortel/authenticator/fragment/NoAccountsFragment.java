@@ -27,9 +27,7 @@ public class NoAccountsFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.no_accounts, container, false);
 
         // Set the listeners
-        Button button = (Button) view.findViewById(R.id.how_it_works_button);
-        button.setOnClickListener(this);
-        button = (Button) view.findViewById(R.id.add_account_button);
+        Button button = view.findViewById(R.id.how_it_works_button);
         button.setOnClickListener(this);
 
         return view;

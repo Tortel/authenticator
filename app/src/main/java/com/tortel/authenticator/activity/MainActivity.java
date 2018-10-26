@@ -196,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.removeItem(R.id.new_main);
         return true;
     }
 
@@ -205,9 +204,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
 
         switch (item.getItemId()) {
-            case R.id.add_account:
-                showAddAccount();
-                return true;
             case R.id.how_it_works:
                 showHowItWorks();
                 return true;

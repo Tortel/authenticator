@@ -34,12 +34,6 @@
             android:layout_marginTop="30sp"
             android:text="@string/button_how_it_works" />
 
-        <Button
-            android:id="@+id/add_account_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10sp"
-            android:text="@string/button_add_account" />
     </LinearLayout>
 
 </ScrollView>
