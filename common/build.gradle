@@ -18,6 +18,5 @@ android {
 }
 
 dependencies {
-    api 'com.google.android.gms:play-services-wearable:16.0.1'
-    api 'com.squareup.okhttp3:okhttp:3.11.0'
+    api 'com.squareup.okhttp3:okhttp:3.14.2'
 }
