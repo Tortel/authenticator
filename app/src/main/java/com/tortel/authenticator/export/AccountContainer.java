@@ -19,7 +19,7 @@ public class AccountContainer {
     private List<Account> accounts;
 
     public AccountContainer() {
-        accounts = new LinkedList<Account>();
+        accounts = new LinkedList<>();
         this.version = CURRENT_VERSION;
     }
 
@@ -51,7 +51,7 @@ public class AccountContainer {
      */
     public static AccountContainer prepareExport(AccountDb accountDb) {
         AccountContainer container = new AccountContainer();
-        List<Integer> ids = new LinkedList<Integer>();
+        List<Integer> ids = new LinkedList<>();
         accountDb.getIds(ids);
 
         for (Integer id : ids) {

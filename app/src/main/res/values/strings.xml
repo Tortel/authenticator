@@ -329,6 +329,8 @@
     <string name="error_processing">Error processing export</string>
     <string name="error_unknown">Unknown error occurred</string>
 
+    <string name="error_generating_code">Error generating code</string>
+
     <!-- Create account strings -->
     <string name="create_account_manually">Manually enter account details:</string>
     <string name="time_based">Time Based</string>

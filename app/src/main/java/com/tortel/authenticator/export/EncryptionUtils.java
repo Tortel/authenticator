@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +42,7 @@ public class EncryptionUtils {
 
         FileOutputStream fos = new FileOutputStream(file);
         CipherOutputStream cos = new CipherOutputStream(fos, cipher);
-        osw = new OutputStreamWriter(cos, "UTF-8");
+        osw = new OutputStreamWriter(cos, StandardCharsets.UTF_8);
 
         BufferedWriter out = new BufferedWriter(osw);
         out.write(content);
@@ -63,7 +64,7 @@ public class EncryptionUtils {
 
         FileInputStream fis = new FileInputStream(file);
         CipherInputStream cis = new CipherInputStream(fis, cipher);
-        isr = new InputStreamReader(cis, "UTF-8");
+        isr = new InputStreamReader(cis, StandardCharsets.UTF_8);
 
         BufferedReader in = new BufferedReader(isr);
         String line = in.readLine();
@@ -72,11 +73,11 @@ public class EncryptionUtils {
         return line;
     }
 
-    private static byte[] getKey(String password) throws UnsupportedEncodingException {
+    private static byte[] getKey(String password) {
         String key = "";
         while (key.length() < 16)
             key += password;
-        return key.substring(0, 16).getBytes("UTF-8");
+        return key.substring(0, 16).getBytes(StandardCharsets.UTF_8);
     }
 
 }

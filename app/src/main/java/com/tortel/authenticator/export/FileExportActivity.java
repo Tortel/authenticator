@@ -26,7 +26,7 @@ public class FileExportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_export);
 
-        passPhraseInput = (EditText) findViewById(R.id.file_export_pass);
+        passPhraseInput = findViewById(R.id.file_export_pass);
     }
 
     private void exportData() {

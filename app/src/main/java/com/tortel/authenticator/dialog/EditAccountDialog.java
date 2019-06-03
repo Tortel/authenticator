@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AlertDialog;
@@ -19,8 +21,8 @@ import com.tortel.authenticator.common.utils.DependencyInjector;
  * Dialog for editing an account
  */
 public class EditAccountDialog extends DialogFragment {
-    public static final String USERNAME = "user";
-    public static final String ID = "id";
+    private static final String USERNAME = "user";
+    private static final String ID = "id";
 
     private String username;
     private int id;
@@ -47,6 +49,7 @@ public class EditAccountDialog extends DialogFragment {
         super.onDestroyView();
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

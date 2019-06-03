@@ -1,6 +1,8 @@
 package com.tortel.authenticator.activity;
 
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -20,7 +22,6 @@ import com.tortel.authenticator.R;
 public class HowItWorksActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private static final String TAB = "tab";
     private int currentTab = 0;
-    private HowItWorksPager pageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +34,8 @@ public class HowItWorksActivity extends AppCompatActivity implements ViewPager.O
             currentTab = savedInstanceState.getInt(TAB, 0);
         }
 
-        ViewPager pager = (ViewPager) findViewById(R.id.pager);
-        pageAdapter = new HowItWorksPager(getSupportFragmentManager());
+        ViewPager pager = findViewById(R.id.pager);
+        HowItWorksPager pageAdapter = new HowItWorksPager(getSupportFragmentManager());
         pager.setAdapter(pageAdapter);
         pager.setOnPageChangeListener(this);
         pager.setCurrentItem(currentTab);
@@ -72,7 +73,7 @@ public class HowItWorksActivity extends AppCompatActivity implements ViewPager.O
     }
 
     private class HowItWorksPager extends FragmentPagerAdapter {
-        IntroFragment frags[] =
+        IntroFragment[] frags =
                 {new EnterPasswordFrag(), new EnterCodeFrag(), new VerifyDeviceFrag()};
 
         public HowItWorksPager(FragmentManager fm) {
@@ -107,7 +108,7 @@ public class HowItWorksActivity extends AppCompatActivity implements ViewPager.O
         protected abstract int getLayoutResource();
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(getLayoutResource(), container, false);
 
             Button button = (Button) view.findViewById(R.id.next_button);

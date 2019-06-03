@@ -9,13 +9,14 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -246,7 +247,7 @@ public class CodeListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.otp_list, container, false);
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -256,7 +257,7 @@ public class CodeListFragment extends Fragment {
         int columns = getActivity().getResources().getConfiguration()
                 .orientation == Configuration.ORIENTATION_PORTRAIT ? 1 : 2;
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), columns,
-                LinearLayoutManager.VERTICAL, false);
+                RecyclerView.VERTICAL, false);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
@@ -302,13 +303,13 @@ public class CodeListFragment extends Fragment {
     private class OtpDataAdapter extends RecyclerView.Adapter<OtpViewHolder> {
 
         @Override
-        public OtpViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public OtpViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = getActivity().getLayoutInflater().inflate(R.layout.user_row, parent, false);
             return new OtpViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(OtpViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull OtpViewHolder holder, int position) {
             holder.setPinInfo(mAccountWrapper.get(position));
         }
 
@@ -335,10 +336,10 @@ public class CodeListFragment extends Fragment {
             super(view);
             mView = view;
 
-            mUserNameView = (TextView) view.findViewById(R.id.current_user);
-            mPinView = (TextView) view.findViewById(R.id.pin_value);
-            mNextCodeButton = (ImageButton) view.findViewById(R.id.next_otp);
-            mCountdownIndicator = (CountdownIndicator) view.findViewById(R.id.countdown_icon);
+            mUserNameView = view.findViewById(R.id.current_user);
+            mPinView = view.findViewById(R.id.pin_value);
+            mNextCodeButton = view.findViewById(R.id.next_otp);
+            mCountdownIndicator = view.findViewById(R.id.countdown_icon);
 
             mContentView = view.findViewById(R.id.row_content);
             mContentView.setOnClickListener(mClickListener);
@@ -436,7 +437,7 @@ public class CodeListFragment extends Fragment {
 
                     } catch (Exception e) {
                         Log.e("Exception getting next code", e);
-                        mPinView.setText("Error generating code");
+                        mPinView.setText(R.string.error_generating_code);
                     }
                 }
             }
@@ -584,7 +585,6 @@ public class CodeListFragment extends Fragment {
                             }
                         }
                     }
-                    return;
             }
         }
     };

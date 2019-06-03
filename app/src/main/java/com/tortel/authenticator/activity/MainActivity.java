@@ -158,16 +158,12 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, @NonNull Intent intent) {
-            int id;
             switch(intent.getAction()){
                 case ACCOUNT_CREATED:
                     showFragment();
                     return;
                 case ACCOUNT_DELETED:
                     showFragment();
-                    return;
-                case ACCOUNT_CHANGED:
-                    id = intent.getIntExtra(ACCOUNT_ID, -1);
                     return;
             }
         }

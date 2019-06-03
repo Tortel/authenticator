@@ -72,8 +72,6 @@ public class FileImportActivity extends AppCompatActivity {
         AccountDb db = DependencyInjector.getAccountDb();
         if (selectedItems.size() > 0) {
             for (Account account : selectedItems) {
-                //TODO: Check for possible duplicates
-                Log.v("Tortel", "Importing " + account.getEmail());
                 db.update(null, account.getEmail(), account.getSecret(), account.getType(), account.getCounter());
             }
 

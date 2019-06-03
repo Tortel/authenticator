@@ -18,6 +18,8 @@ package com.tortel.authenticator;
 
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
+
 import java.util.concurrent.Executor;
 
 /**
@@ -31,7 +33,7 @@ public class RunOnThisLooperThreadExecutor implements Executor {
     private final Handler mHandler = new Handler();
 
     @Override
-    public void execute(Runnable command) {
+    public void execute(@NonNull Runnable command) {
         if (Thread.currentThread() == mHandler.getLooper().getThread()) {
             // The calling thread is the target thread of the Handler -- invoke immediately, blocking
             // the calling thread.

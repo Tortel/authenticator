@@ -70,7 +70,9 @@ public class SettingsActivity extends AppCompatActivity {
             try {
                 packageVersion = getActivity().getPackageManager().getPackageInfo(
                         getActivity().getPackageName(), 0).versionName;
-            } catch (PackageManager.NameNotFoundException e) { }
+            } catch (PackageManager.NameNotFoundException e) {
+                // Ignore
+            }
 
             findPreference("version").setTitle(
                     getActivity().getString(R.string.version_preference_title) + " " + packageVersion);

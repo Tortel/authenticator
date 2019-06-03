@@ -44,10 +44,6 @@ import javax.crypto.spec.SecretKeySpec;
 public class CheckCodeActivity extends AppCompatActivity {
     public static final String EXTRA_ID = "id";
 
-    private TextView mCheckCodeTextView;
-    private TextView mCodeTextView;
-    private TextView mCounterValue;
-
     /**
      * Called when the activity is first created.
      */
@@ -55,9 +51,9 @@ public class CheckCodeActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_code);
-        mCodeTextView = (TextView) findViewById(R.id.code_value);
-        mCheckCodeTextView = (TextView) findViewById(R.id.check_code);
-        mCounterValue = (TextView) findViewById(R.id.counter_value);
+        TextView mCodeTextView = findViewById(R.id.code_value);
+        TextView mCheckCodeTextView = findViewById(R.id.check_code);
+        TextView mCounterValue = findViewById(R.id.counter_value);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();

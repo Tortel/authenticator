@@ -56,9 +56,8 @@ public class NetworkTimeProvider {
                 .url(URL)
                 .build();
         Log.i(LOG_TAG, "Sending request to " + request.url().uri());
-        Response response = mHttpClient.newCall(request).execute();
 
-        try {
+        try (Response response = mHttpClient.newCall(request).execute()) {
             String dateHeader = response.header("Date");
             Log.i(LOG_TAG, "Received response with Date header: " + dateHeader);
             if (dateHeader == null) {
@@ -71,15 +70,6 @@ public class NetworkTimeProvider {
             } catch (ParseException e) {
                 throw new IOException(
                         "Invalid Date header format in response: \"" + dateHeader + "\"");
-            }
-        } finally {
-            // Consume all of the content of the response to facilitate HTTP 1.1 persistent connection
-            // reuse and to avoid running out of connections when this methods is scheduled on different
-            // threads.
-            try {
-                response.close();
-            } catch (Exception e) {
-                // Ignored because this is not an error that is relevant to clients of this transport.
             }
         }
     }

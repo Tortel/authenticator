@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -242,14 +244,14 @@ public class AddAccountActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.new_account, container, false);
-            accountName = (EditText) view.findViewById(R.id.create_account_name);
-            accountCode = (EditText) view.findViewById(R.id.create_account_code);
+            accountName = view.findViewById(R.id.create_account_name);
+            accountCode = view.findViewById(R.id.create_account_code);
 
-            Button button = (Button) view.findViewById(R.id.button_scan_barcode);
+            Button button = view.findViewById(R.id.button_scan_barcode);
             button.setOnClickListener(this);
-            button = (Button) view.findViewById(R.id.button_add_account);
+            button = view.findViewById(R.id.button_add_account);
             button.setOnClickListener(this);
 
             return view;
